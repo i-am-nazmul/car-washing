@@ -48,6 +48,7 @@ export default function SignupPage(){
                   });
                   if (loginResult?.error) {
                         toast.error("Signup succeeded, but login failed. Please login manually.");
+                        setIsLoading(false);
                         router.push("/login");
                         return;
                   }
@@ -63,7 +64,6 @@ export default function SignupPage(){
                   } else {
                         toast.error("Unexpected error occurred. Please try again.");
                   }
-            } finally {
                   setIsLoading(false);
             }
                   
@@ -76,7 +76,7 @@ export default function SignupPage(){
       const SignupWithGoogle = () => {
             setIsLoading(true);
             const safeNextPath = getSafeNextPath();
-            signIn("google", { callbackUrl: safeNextPath });
+            void signIn("google", { callbackUrl: safeNextPath });
       }
 
 

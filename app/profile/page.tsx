@@ -12,6 +12,7 @@ import { signOut } from "next-auth/react";
 export default function ProfilePage(){
       const [user,setUser] = React.useState('');
       const [email,setEmail] = React.useState('');
+      const [loaderMessage, setLoaderMessage] = React.useState("Fetching your details");
       const {isLoading,setIsLoading}=useIsLoading();
       const router = useRouter();
 
@@ -20,24 +21,31 @@ export default function ProfilePage(){
       }
 
       const logout = async function () {
-            await axios.post('/api/logout');
-            await signOut({ redirect: false });
-            router.push('/login');
-            router.refresh();
+            setLoaderMessage("Logging you out");
+            setIsLoading(true);
+            try {
+                  await axios.post('/api/logout');
+                  await signOut({ redirect: false });
+                  setIsLoading(false);
+                  router.push('/login');
+            } catch {
+                  setIsLoading(false);
+            }
       }
 
       const getUserData = useCallback(async function (){
+            setLoaderMessage("Fetching your details");
             setIsLoading(true);
             try {
                   const userData = await axios.get('/api/profile');
-                  setUser(userData.data.username);
-                  setEmail(userData.data.email);
-            } catch (error) {
-                  console.log(error);
+                  setUser(userData.data?.username || "User");
+                  setEmail(userData.data?.email || "");
+            } catch {
+                  router.push('/login');
             }
             setIsLoading(false);
 
-            },[setIsLoading])
+            },[router, setIsLoading])
 
       useEffect(()=>{
             const timerId = window.setTimeout(() => {
@@ -53,9 +61,9 @@ export default function ProfilePage(){
 
       return (
 //outermost div
-<div className="min-h-screen w-full p-1">
+<div className="min-h-screen w-full p-1 bg-black">
       {/* this div conatains all the elements */}
-      {isLoading ? <Loader message={"Fetching your details"}/>:<div className="flex relative min-h-[calc(100vh-0.5rem)] w-full flex-col rounded-sm border border-gray-400 px-2 py-2 sm:px-4 sm:py-4">
+      {isLoading ? <Loader message={loaderMessage}/>:<div className="flex relative min-h-[calc(100vh-0.5rem)] w-full flex-col rounded-sm rounded-b-3xl border bg-white border-gray-400 px-2 py-2 sm:px-4 sm:py-4">
 
             
             {/* this block contains the header */}

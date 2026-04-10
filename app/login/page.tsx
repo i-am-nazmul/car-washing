@@ -49,9 +49,9 @@ export default function LoginPage(){
             }
       
             toast.error("Invalid credentials!");
+            setIsLoading(false);
             } catch {
                   toast.error("Something went wrong. Please try again.");
-            } finally {
                   setIsLoading(false);
             }
       };
@@ -63,7 +63,7 @@ export default function LoginPage(){
       const LoginWithGoogle = () => {
             setIsLoading(true);
             const safeNextPath = getSafeNextPath();
-            signIn("google", { callbackUrl: safeNextPath });
+            void signIn("google", { callbackUrl: safeNextPath });
       }
 
 

@@ -6,6 +6,8 @@ import { useRouter } from "next/navigation";
 import MotionButton from "@/components/MotionButton";
 import SiteFooter from "@/components/SiteFooter";
 import toast from "react-hot-toast";
+import Loader from "@/components/Loader";
+import { useIsLoading } from "@/store/store";
 
 type RazorpayResponse = {
       razorpay_order_id: string;
@@ -40,7 +42,8 @@ declare global {
 
 export default function DashboardPage(){
       const [headline, setHeadline] = React.useState("Hello ");
-                  const [isPaying, setIsPaying] = React.useState<string | null>(null);
+      const [isPaying, setIsPaying] = React.useState<string | null>(null);
+      const { isLoading, setIsLoading } = useIsLoading();
       const router = useRouter();
 
                   const plans = [
@@ -136,6 +139,7 @@ export default function DashboardPage(){
             let intervalId: ReturnType<typeof setInterval> | undefined;
 
             const loadHeadline = async () => {
+                  setIsLoading(true);
                   try {
                         const profile = await axios.get('/api/profile');
                         const rawName = profile.data?.username?.trim() || "there";
@@ -149,10 +153,12 @@ export default function DashboardPage(){
                               setHeadline(`Hello ${fullText.slice(0, index)}`);
                               if (index >= fullText.length && intervalId) {
                                     clearInterval(intervalId);
+                                    setIsLoading(false);
                               }
                         }, 90);
                   } catch {
                         setHeadline("Hello there");
+                        setIsLoading(false);
                   }
             };
 
@@ -163,11 +169,12 @@ export default function DashboardPage(){
                         clearInterval(intervalId);
                   }
             };
-      }, []);
+      }, [setIsLoading]);
 
       return (
-      <div className="min-h-screen w-full bg-blue-200 p-1">
-    <div className="flex h-full min-h-[calc(100vh-0.5rem)] w-full flex-col rounded-sm border border-gray-400 bg-white px-2 py-2 sm:px-4 sm:py-4">
+      <div className="min-h-screen w-full p-1 bg-black">
+    {isLoading && <Loader message={"Loading your dashboard"} />}
+    <div className="flex h-full min-h-[calc(100vh-0.5rem)] w-full flex-col rounded-3xl border border-gray-400 bg-white px-2 py-2 sm:px-4 sm:py-4">
       <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
         <h1 className="text-4xl font-bold tracking-tight text-gray-700 sm:text-5xl lg:text-7xl">
           {headline}
@@ -203,8 +210,8 @@ export default function DashboardPage(){
                         ))}
       </div>
 
-      <SiteFooter />
     </div>
+      <SiteFooter />
   </div>
 );
 }

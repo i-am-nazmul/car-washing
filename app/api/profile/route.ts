@@ -20,7 +20,13 @@ export async function GET(request: NextRequest) {
       const nextAuthUser = await Users.findOne({ email: String(sessionToken.email).toLowerCase() }).select("username email");
 
       if (!nextAuthUser) {
-        return NextResponse.json({ message: "Failed" }, { status: 404 });
+        return NextResponse.json(
+          {
+            username: sessionToken.name || String(sessionToken.email).split("@")[0],
+            email: String(sessionToken.email),
+          },
+          { status: 200 }
+        );
       }
 
       return NextResponse.json(
