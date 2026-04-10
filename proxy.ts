@@ -9,11 +9,12 @@ function isPathMatched(pathname: string, routes: string[]) {
   return routes.some((route) => pathname === route || pathname.startsWith(`${route}/`));
 }
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname, search } = request.nextUrl;
   const secret = process.env.NEXTAUTH_SECRET || process.env.TOKEN_SECRET;
 
-  const sessionToken = await getToken({ req: request, secret });
+  const secureCookie = request.nextUrl.protocol === "https:";
+  const sessionToken = await getToken({ req: request, secret, secureCookie });
   const legacyToken = request.cookies.get("token")?.value;
   const isAuthenticated = Boolean(sessionToken || legacyToken);
 

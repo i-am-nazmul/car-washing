@@ -17,6 +17,14 @@ export default function SignupPage(){
       const {isLoading,setIsLoading}=useIsLoading();
       const router = useRouter();
 
+      const getSafeNextPath = () => {
+            if (typeof window === "undefined") {
+                  return "/dashboard";
+            }
+            const value = new URLSearchParams(window.location.search).get("next");
+            return value && value.startsWith("/") ? value : "/dashboard";
+      };
+
       const Signup = async () => {
             if(!username || !email || !password){
                   toast.error("Please enter all the fields!");
@@ -25,20 +33,26 @@ export default function SignupPage(){
             }
             setIsLoading(true);
             try {
+            const safeNextPath = getSafeNextPath();
             const request = await axios.post('/api/signup', {
                   username,
                   email,
                   password
             });
             if(request.status === 201){
-                  await signIn("credentials", {
+                  const loginResult = await signIn("credentials", {
                         redirect: false,
                         email,
                         password,
-                        callbackUrl: "/dashboard",
+                        callbackUrl: safeNextPath,
                   });
+                  if (loginResult?.error) {
+                        toast.error("Signup succeeded, but login failed. Please login manually.");
+                        router.push("/login");
+                        return;
+                  }
                   toast.success("Signup successful!");
-                  router.push("/dashboard");
+                  router.push(safeNextPath);
                   router.refresh();
             }
       
@@ -61,13 +75,14 @@ export default function SignupPage(){
 
       const SignupWithGoogle = () => {
             setIsLoading(true);
-            signIn("google", { callbackUrl: "/dashboard" });
+            const safeNextPath = getSafeNextPath();
+            signIn("google", { callbackUrl: safeNextPath });
       }
 
 
 
       return(
-            <div className="h-screen w-screen p-1">
+            <div className="h-screen w-full p-1">
                   {isLoading ? <Loader message={"Wait"}/>:<div className="w-full h-full rounded-sm border border-gray-400 flex flex-col px-4 py-2 items-center">
                         <div className="w-full">
                               <h1 className="text-7xl font-bold text-gray-700 tracking-tighter ">
@@ -77,16 +92,16 @@ export default function SignupPage(){
                         <div className="flex flex-col gap-2 font-mono justify-center items-center w-full h-full ">
 
                               <input type="text" 
-                              placeholder="Enter the username" 
+                              placeholder="Enter your name" 
                               className="outline-none text-2xl px-4 py-2 bg-amber-200 rounded-sm text-black border border-gray-400 tracking-tighter"
                               onChange={(e)=>{setUsername(e.target.value)}} />
 
-                              <input type="text" placeholder="Enter the email" className="outline-none text-2xl px-4 py-2 bg-amber-200 rounded-sm text-black border tracking-tighter border-gray-400"
+                              <input type="text" placeholder="Enter your email" className="outline-none text-2xl px-4 py-2 bg-amber-200 rounded-sm text-black border tracking-tighter border-gray-400"
                               onChange={(e)=>{setEmail(e.target.value)}}/>
 
 
                               <input type="password" 
-                              placeholder="Enter the password" className="outline-none tracking-tighter text-2xl px-4 py-2 bg-amber-200 rounded-sm text-black border border-gray-400"
+                              placeholder="Enter your password" className="outline-none tracking-tighter text-2xl px-4 py-2 bg-amber-200 rounded-sm text-black border border-gray-400"
                               onChange={(e)=>{setPassword(e.target.value)}}/>
 
                               <MotionButton className="bg-emerald-900 px-4 py-1 text-white font-semibold tracking-tighter text-2xl cursor-pointer hover:bg-emerald-950 rounded-lg sm:font-normal

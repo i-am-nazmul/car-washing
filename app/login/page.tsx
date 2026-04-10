@@ -16,6 +16,14 @@ export default function LoginPage(){
       const [password,setPassword]=React.useState('');
       const {isLoading,setIsLoading}=useIsLoading();
 
+      const getSafeNextPath = () => {
+            if (typeof window === "undefined") {
+                  return "/dashboard";
+            }
+            const value = new URLSearchParams(window.location.search).get("next");
+            return value && value.startsWith("/") ? value : "/dashboard";
+      };
+
       const Login = async () => {
             if(!email || !password){
                   toast.error("Please enter valid credentials!");
@@ -25,15 +33,16 @@ export default function LoginPage(){
             }
             try {
                   setIsLoading(true);
+            const safeNextPath = getSafeNextPath();
             const result = await signIn("credentials", {
                   redirect: false,
                   email,
                   password,
-                  callbackUrl: "/dashboard",
+                  callbackUrl: safeNextPath,
             });
             if (!result?.error) {
                   toast.success("Login successful!");
-                  router.push("/dashboard");
+                  router.push(safeNextPath);
                   router.refresh();
                   return;
                   
@@ -53,12 +62,13 @@ export default function LoginPage(){
 
       const LoginWithGoogle = () => {
             setIsLoading(true);
-            signIn("google", { callbackUrl: "/dashboard" });
+            const safeNextPath = getSafeNextPath();
+            signIn("google", { callbackUrl: safeNextPath });
       }
 
 
       return(
-            <div className="h-screen w-screen p-1">
+            <div className="h-screen w-full p-1">
                   <div className="w-full h-full rounded-sm border border-gray-400 flex flex-col px-4 py-2 items-center">
                         <div className="w-full">
                               <h1 className="text-7xl font-bold text-gray-700 tracking-tighter">

@@ -23,6 +23,7 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  overflow-x: hidden;
 }
 
 .hover-pop {
@@ -37,4 +38,35 @@ body {
 
 .hover-pop:active {
   transform: translateY(0) scale(0.98);
+}
+
+.footer {
+  display: flex;
+}
+
+.footer-horizontal {
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.footer-center {
+  text-align: center;
+}
+
+.bg-base-200 {
+  background: #eef2f7;
+}
+
+.text-base-content {
+  color: #1f2937;
+}
+
+.link {
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.link-hover:hover {
+  text-decoration: underline;
 }

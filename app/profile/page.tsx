@@ -1,11 +1,11 @@
 "use client"
 import React, { useCallback, useEffect } from "react";
 import axios from "axios";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useIsLoading } from "@/store/store";
 import Loader from "@/components/Loader";
 import MotionButton from "@/components/MotionButton";
+import SiteFooter from "@/components/SiteFooter";
 import { signOut } from "next-auth/react";
 
 
@@ -53,7 +53,7 @@ export default function ProfilePage(){
 
       return (
 //outermost div
-<div className="min-h-screen w-screen p-1">
+<div className="min-h-screen w-full p-1">
       {/* this div conatains all the elements */}
       {isLoading ? <Loader message={"Fetching your details"}/>:<div className="flex relative min-h-[calc(100vh-0.5rem)] w-full flex-col rounded-sm border border-gray-400 px-2 py-2 sm:px-4 sm:py-4">
 
@@ -87,34 +87,11 @@ export default function ProfilePage(){
                         sm:rounded-sm"
                   onClick={logout}>Logout</MotionButton>
                   </div>
-
-
-                  <div className="sm:hidden bg-white w-1/5 h-full flex justify-center items-center rounded-sm">
-                        <Image src="/working.png"
-                        width={200}
-                        height={200}
-                        alt="work"
-                        />
-                  </div>
-
             </div>
-
-            {/* absolutely centered over the entire yellow page */}
-            <div className="hidden absolute inset-0 sm:flex justify-center items-center pointer-events-none">
-            <div className="bg-white w-1/5 h-fit flex justify-center items-center rounded-sm">
-            <Image
-                  src="/working.png"
-                  width={200}
-                  height={200}
-                  alt="work"
-            />    
-            </div>
-            </div>
-
-
-
 
       </div>}
+
+      {!isLoading && <SiteFooter />}
 </div>
             
       )
