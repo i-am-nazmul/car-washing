@@ -40,10 +40,11 @@ export default function ProfilePage(){
                   const userData = await axios.get('/api/profile');
                   setUser(userData.data?.username || "User");
                   setEmail(userData.data?.email || "");
-            } catch {
+                  setIsLoading(false);
+            } catch (error: unknown) {
+                  console.error("Profile API error:", error);
                   router.push('/login');
             }
-            setIsLoading(false);
 
             },[router, setIsLoading])
 
