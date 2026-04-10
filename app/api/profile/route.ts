@@ -15,7 +15,16 @@ export async function GET(request: NextRequest) {
 
   try {
     const authSecret = process.env.NEXTAUTH_SECRET || process.env.TOKEN_SECRET;
-    const sessionToken = await getToken({ req: request, secret: authSecret });
+    const secureCookie = request.nextUrl.protocol === "https:";
+    let sessionToken = await getToken({ req: request, secret: authSecret, secureCookie });
+
+    if (!sessionToken) {
+      sessionToken = await getToken({
+        req: request,
+        secret: authSecret,
+        secureCookie: !secureCookie,
+      });
+    }
     if (sessionToken?.email) {
       const nextAuthUser = await Users.findOne({ email: String(sessionToken.email).toLowerCase() }).select("username email");
 

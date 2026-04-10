@@ -1,4 +1,4 @@
-import { getServerSession } from "next-auth";
+import { getServerSession } from "next-auth/next";
 import jwt from "jsonwebtoken";
 import { cookies } from "next/headers";
 import { authOptions } from "@/lib/auth";
@@ -9,7 +9,25 @@ export async function hasServerAuth() {
     return true;
   }
 
-  const token = (await cookies()).get("token")?.value;
+  const cookieStore = await cookies();
+  const allCookies = cookieStore.getAll();
+
+  const nextAuthSessionCookieNames = [
+    "next-auth.session-token",
+    "__Secure-next-auth.session-token",
+  ];
+
+  const hasNextAuthSessionCookie = allCookies.some((cookie) =>
+    nextAuthSessionCookieNames.some(
+      (name) => cookie.name === name || cookie.name.startsWith(`${name}.`)
+    )
+  );
+
+  if (hasNextAuthSessionCookie) {
+    return true;
+  }
+
+  const token = cookieStore.get("token")?.value;
   if (!token) {
     return false;
   }

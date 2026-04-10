@@ -43,7 +43,16 @@ export default function ProfilePage(){
                   setIsLoading(false);
             } catch (error: unknown) {
                   console.error("Profile API error:", error);
-                  router.push('/login');
+
+                  if (axios.isAxiosError(error)) {
+                        const status = error.response?.status;
+                        if (status === 401 || status === 403) {
+                              router.push('/login');
+                              return;
+                        }
+                  }
+
+                  setIsLoading(false);
             }
 
             },[router, setIsLoading])
