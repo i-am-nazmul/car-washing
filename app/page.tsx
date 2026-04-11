@@ -2,18 +2,24 @@
 import { useRouter } from "next/navigation";
 import MotionButton from "@/components/MotionButton";
 import SiteFooter from "@/components/SiteFooter";
+import { useIsLoading } from "@/store/store";
+import Loader from "@/components/Loader";
 
 export default function Home() {
   const router = useRouter();
+  const { isLoading, setIsLoading } = useIsLoading();
 
   const handleGetStarted = function(){
+    setIsLoading(true);
     router.push('/signup');
   }
   const handleLogin = function(){
+    setIsLoading(true);
     router.push('/login');
   }
   return (
   <div className="min-h-screen w-full p-2 flex flex-col">
+    {isLoading && <Loader message={"Wait"} />}
     <div className="w-full h-full rounded-sm flex-1 flex flex-col items-center text-center px-4 py-6 sm:px-8 sm:py-10">
 
       {/* Heading */}

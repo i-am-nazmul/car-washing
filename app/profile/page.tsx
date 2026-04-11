@@ -47,6 +47,7 @@ export default function ProfilePage(){
                   if (axios.isAxiosError(error)) {
                         const status = error.response?.status;
                         if (status === 401 || status === 403) {
+                              setIsLoading(false);
                               router.push('/login');
                               return;
                         }
@@ -70,10 +71,12 @@ export default function ProfilePage(){
 
 
       return (
-//outermost div
-<div className="min-h-screen w-full p-1 bg-black">
-      {/* this div conatains all the elements */}
-      {isLoading ? <Loader message={loaderMessage}/>:<div className="flex relative min-h-[calc(100vh-0.5rem)] w-full flex-col rounded-sm rounded-b-3xl border bg-white border-gray-400 px-2 py-2 sm:px-4 sm:py-4">
+<div className="min-h-screen w-full p-1">
+      {isLoading && <Loader message={loaderMessage} />}
+
+      {!isLoading && (
+      <>
+      <div className="flex relative min-h-[calc(100vh-0.5rem)] w-full flex-col bg-white px-2 py-2 sm:px-4 sm:py-4">
 
             
             {/* this block contains the header */}
@@ -107,9 +110,11 @@ export default function ProfilePage(){
                   </div>
             </div>
 
-      </div>}
+	</div>
 
-      {!isLoading && <SiteFooter />}
+      <SiteFooter />
+      </>
+      )}
 </div>
             
       )

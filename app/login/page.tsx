@@ -16,6 +16,10 @@ export default function LoginPage(){
       const [password,setPassword]=React.useState('');
       const {isLoading,setIsLoading}=useIsLoading();
 
+      React.useEffect(() => {
+            setIsLoading(false);
+      }, [setIsLoading]);
+
       const getSafeNextPath = () => {
             if (typeof window === "undefined") {
                   return "/dashboard";

@@ -17,6 +17,10 @@ export default function SignupPage(){
       const {isLoading,setIsLoading}=useIsLoading();
       const router = useRouter();
 
+      React.useEffect(() => {
+            setIsLoading(false);
+      }, [setIsLoading]);
+
       const getSafeNextPath = () => {
             if (typeof window === "undefined") {
                   return "/dashboard";
