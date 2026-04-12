@@ -33,6 +33,10 @@ export default function ProfilePage(){
             }
       }
 
+      const moveToHome = function () {
+            router.push('/');
+      }
+
       const getUserData = useCallback(async function (){
             setLoaderMessage("Fetching your details");
             setIsLoading(true);
@@ -104,9 +108,20 @@ export default function ProfilePage(){
                               <li className="w-full text-start px-4 py-2 rounded-xs font-semibold text-gray-700 text-2xl tracking-tighter">{user}</li>
                               <li className="w-full text-start px-4 py-2 rounded-xs font-semibold text-gray-700 text-2xl tracking-tighter">{email}</li>
                         </ul>
-                        <MotionButton className="bg-emerald-800 px-4 py-1 text-white font-mono tracking-tighter text-2xl mt-4 mb-4 sm:cursor-pointer hover:bg-emerald-900 rounded-lg
-                        sm:rounded-sm"
-                  onClick={logout}>Logout</MotionButton>
+                        <div className="mt-4 mb-4 flex items-center gap-3">
+                              <MotionButton
+                                    className="bg-emerald-800 px-4 py-1 text-white font-mono tracking-tighter text-2xl sm:cursor-pointer hover:bg-emerald-900 rounded-lg sm:rounded-sm"
+                                    onClick={logout}
+                              >
+                                    Logout
+                              </MotionButton>
+                              <MotionButton
+                                    className="bg-slate-700 px-4 py-1 text-white font-mono tracking-tighter text-2xl sm:cursor-pointer hover:bg-slate-800 rounded-lg sm:rounded-sm"
+                                    onClick={moveToHome}
+                              >
+                                    Home
+                              </MotionButton>
+                        </div>
                   </div>
             </div>
 

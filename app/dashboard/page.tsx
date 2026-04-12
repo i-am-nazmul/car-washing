@@ -1,9 +1,13 @@
 "use client"
 import React, { useEffect } from "react";
 import axios from "axios";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import MotionButton from "@/components/MotionButton";
+import BikeCard from "@/components/cards/bike";
+import CarStandardCard from "@/components/cards/carStandard";
+import CarPremiumCard from "@/components/cards/carPremium";
+import ComboCard from "@/components/cards/combo";
+import { PlanData } from "@/components/cards/types";
 import SiteFooter from "@/components/SiteFooter";
 import toast from "react-hot-toast";
 import Loader from "@/components/Loader";
@@ -45,76 +49,92 @@ export default function DashboardPage(){
       const [isPaying, setIsPaying] = React.useState<string | null>(null);
       const { isLoading, setIsLoading } = useIsLoading();
       const router = useRouter();
-      const [activePlan, setActivePlan] = React.useState<null | {
-            name: string;
-            amountInPaise: number;
-            displayPrice: string;
-            gradient: string;
-            bubbleOne: string;
-            bubbleTwo: string;
-      }>(null);
+      const [activePlan, setActivePlan] = React.useState<PlanData | null>(null);
       const [isOverlayVisible, setIsOverlayVisible] = React.useState(false);
 
       const isPaymentEnabled = false;
 
-                  const plans = [
-                                    {
-                                          name: "Bike",
-                                          amountInPaise: 40000,
-                                          displayPrice: "Rs.400",
-                                          gradient: "from-orange-50 via-orange-100 to-orange-200",
-                                          bubbleOne: "bg-orange-300/40",
-                                          bubbleTwo: "bg-orange-200/60",
-                                    },
-                                    {
-                                          name: "Car Basic",
-                                          amountInPaise: 90000,
-                                          displayPrice: "Rs.900",
-                                          gradient: "from-violet-100 via-indigo-100 to-violet-200",
-                                          bubbleOne: "bg-indigo-300/40",
-                                          bubbleTwo: "bg-violet-200/60",
-                                    },
-                                    {
-                                          name: "Car Premium",
-                                          amountInPaise: 120000,
-                                          displayPrice: "Rs.1200",
-                                          gradient: "from-cyan-100 via-sky-200 to-teal-200",
-                                          bubbleOne: "bg-cyan-300/40",
-                                          bubbleTwo: "bg-sky-200/60",
-                                    },
-                  ];
+      const bikePlan: PlanData = {
+            name: "BIKE CARE",
+            description: "Simple and reliable bike care",
+            amountInPaise: 49900,
+            displayPrice: "₹499",
+            gradient: "from-orange-50 via-orange-100 to-orange-200",
+            bubbleOne: "bg-orange-300/40",
+            bubbleTwo: "bg-orange-200/60",
+      };
 
-                  const dummyFeatures = ["Dummy feature 1", "Dummy feature 2", "Dummy feature 3", "Dummy feature 4"];
+      const carStandardPlan: PlanData = {
+            name: "CLEAN CARE",
+            description: "Perfect for regular maintenance",
+            amountInPaise: 89900,
+            displayPrice: "₹899",
+            gradient: "from-violet-100 via-indigo-100 to-violet-200",
+            bubbleOne: "bg-indigo-300/40",
+            bubbleTwo: "bg-violet-200/60",
+      };
 
-                  const serviceDetails: Record<string, string[]> = {
-                        Bike: [
-                              "Foam wash and pressure rinse for body panels, wheel arches, and mudguards.",
-                              "Chain area degreasing and careful wipe-down of exposed mechanical surfaces.",
-                              "Tank, visor, and mirror polishing with water-spot protection.",
-                              "Tyre dressing and final microfiber finish for a clean showroom-ready look.",
-                        ],
-                        "Car Basic": [
-                              "Exterior pre-rinse, shampoo hand wash, and soft-cloth drying.",
-                              "Wheel face cleaning with brake-dust removal and tyre shine.",
-                              "Dashboard and console dusting with interior vacuum for seats and mats.",
-                              "Door jamb cleaning plus quick glass wipe for clear visibility.",
-                        ],
-                        "Car Premium": [
-                              "Detailed exterior wash with bug/tar spot treatment and premium drying.",
-                              "Interior deep vacuum with dashboard conditioning and fabric/leather care.",
-                              "All-glass treatment, alloy detailing, and tyre restoration finish.",
-                              "Protective coat for paint gloss retention and improved water beading.",
-                        ],
-                  };
+      const carPremiumPlan: PlanData = {
+            name: "SHINE CARE",
+            description: "Complete care for your car",
+            badge: "MOST POPULAR",
+            amountInPaise: 119900,
+            displayPrice: "₹1199",
+            gradient: "from-cyan-100 via-sky-200 to-teal-200",
+            bubbleOne: "bg-cyan-300/40",
+            bubbleTwo: "bg-sky-200/60",
+      };
 
-      const handleCheckoutClick = (plan: {
-            name: string;
-            amountInPaise: number;
-            displayPrice: string;
-            gradient: string;
-            bubbleOne: string;
-            bubbleTwo: string;
-      }) => {
+      const smartComboPlan: PlanData = {
+            name: "SMART COMBO PLAN",
+            description: "One plan for all your vehicles",
+            badge: "BEST VALUE",
+            amountInPaise: 119900,
+            displayPrice: "₹1199",
+            gradient: "from-emerald-100 via-lime-100 to-emerald-200",
+            bubbleOne: "bg-emerald-300/40",
+            bubbleTwo: "bg-lime-200/60",
+      };
+
+      const planFeatures: Record<string, string[]> = {
+            "CLEAN CARE": [
+                  "Eco-friendly waterless wash",
+                  "5 days/week cleaning",
+                  "Interior touch-up cleaning - 2x/month",
+                  "Dashboard polish - 1x/month",
+                  "Tyre cleaning (dry wipe)",
+                  "Air pressure check and maintenance - monthly once",
+            ],
+            "SHINE CARE": [
+                  "Eco-friendly waterless wash",
+                  "5 days/week cleaning",
+                  "Enhanced interior maintenance - 1x/week",
+                  "Dashboard polish (2x/month)",
+                  "Tyre polish (1x/week)",
+                  "Wax treatment (2x/month)",
+                  "Wiper fluid top-up",
+                  "Air pressure check and maintenance - monthly once",
+            ],
+            "BIKE CARE": [
+                  "5 days/week cleaning",
+                  "Exterior wash + seat cleaning",
+                  "Mirror cleaning",
+                  "Tyre cleaning (dry wipe)",
+                  "Wax (2x/month)",
+                  "Air pressure check",
+            ],
+            "SMART COMBO PLAN": [
+                  "Car cleaning (5 days/week)",
+                  "Bike cleaning (5 days/week)",
+                  "Interior cleaning (2x/month)",
+                  "Glass cleaning",
+                  "Tyre cleaning",
+                  "Air pressure check",
+                  "Wiper fluid top-up",
+            ],
+      };
+
+      const handleCheckoutClick = (plan: PlanData) => {
             if (isPaymentEnabled) {
                   void checkoutPlan(plan.name, plan.amountInPaise);
                   return;
@@ -273,55 +293,49 @@ export default function DashboardPage(){
                         </h1>
 
                         <div className="flex items-center justify-end">
-
-                              <Image
-                                    src="/download.png"
-                                    width={70}
-                                    height={70}
-                                    alt="work"
-                                    className="h-20 w-20 rounded-full bg-amber-400 cursor-pointer shadow-md hover:shadow-lg sm:h-14 sm:w-14"
+                              <button
+                                    type="button"
+                                    aria-label="Open profile"
+                                    className="cursor-pointer rounded-full shadow-md hover:shadow-lg"
                                     onClick={moveToProfilePage}
-                              />
+                              >
+                                    <svg width="70" height="70" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" className="h-20 w-20 sm:h-14 sm:w-14">
+                                          <circle cx="100" cy="100" r="90" fill="#8A90A0"/>
+                                          <circle cx="100" cy="80" r="25" fill="#1F2A4A"/>
+                                          <ellipse cx="100" cy="140" rx="50" ry="25" fill="#1F2A4A"/>
+                                    </svg>
+                              </button>
                         </div>
                   </div>
 
 
 
                   {/*Cards Container  */}
-                  <div className="mt-20 mx-auto grid w-4/5 grid-cols-1 items-start gap-8 rounded-3xl border border-gray-200  p-4 shadow-md md:grid-cols-3">
-                        {plans.map((plan) => (
-                              <div key={plan.name} className="relative overflow-hidden rounded-4xl border border-white/70 shadow-sm">
-                                    <div className={`absolute inset-0 bg-linear-to-br ${plan.gradient}`} />
-                                    <div className={`absolute -right-14 -top-20 h-56 w-56 rounded-full ${plan.bubbleOne}`} />
-                                    <div className={`absolute -left-16 bottom-22 h-56 w-56 rounded-full ${plan.bubbleTwo}`} />
-
-                                    <div className="relative z-10  flex min-h-72 flex-col px-6 py-7 sm:px-8">
-                                          <h2 className="text-4xl font-extrabold tracking-tight text-gray-800">{plan.name}</h2>
-                                          <p className="mt-5 text-5xl font-extrabold tracking-tight text-gray-900">
-                                                {plan.displayPrice}
-                                                <span className="ml-1 text-2xl font-medium text-gray-700">/month</span>
-                                          </p>
-
-                                          <MotionButton
-                                                className="mt-6 w-fit rounded-full border border-gray-900 bg-white/90 px-8 py-2 text-xl font-semibold text-gray-900 
-                                                cursor-pointer hover:bg-white disabled:cursor-not-allowed disabled:border-gray-600 disabled:text-gray-600"
-                                                disabled={isPaying !== null}
-                                                onClick={() => handleCheckoutClick(plan)}
-                                          >
-                                                {isPaying === plan.name ? "Processing..." : "Checkout"}
-                                          </MotionButton>
-
-                                          <ul className="mt-7 space-y-3">
-                                                {dummyFeatures.map((feature) => (
-                                                      <li key={`${plan.name}-${feature}`} className="flex items-center gap-3 text-2xl tracking-tight text-gray-800">
-                                                            <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-black text-sm font-bold text-white">✓</span>
-                                                            <span>{feature}</span>
-                                                      </li>
-                                                ))}
-                                          </ul>
-                                    </div>
-                              </div>
-                        ))}
+                  <div className="mt-20 mx-auto grid w-4/5 grid-cols-1 items-start gap-8 rounded-3xl border border-gray-200 p-4 shadow-md md:grid-cols-2 xl:grid-cols-4">
+                        <BikeCard
+                              plan={bikePlan}
+                              isPaying={isPaying}
+                              features={planFeatures[bikePlan.name]}
+                              onCheckout={handleCheckoutClick}
+                        />
+                        <CarStandardCard
+                              plan={carStandardPlan}
+                              isPaying={isPaying}
+                              features={planFeatures[carStandardPlan.name]}
+                              onCheckout={handleCheckoutClick}
+                        />
+                        <CarPremiumCard
+                              plan={carPremiumPlan}
+                              isPaying={isPaying}
+                              features={planFeatures[carPremiumPlan.name]}
+                              onCheckout={handleCheckoutClick}
+                        />
+                        <ComboCard
+                              plan={smartComboPlan}
+                              isPaying={isPaying}
+                              features={planFeatures[smartComboPlan.name]}
+                              onCheckout={handleCheckoutClick}
+                        />
                   </div>
 
 
@@ -338,12 +352,13 @@ export default function DashboardPage(){
                         >
                               <div className={`absolute inset-0 bg-linear-to-br ${activePlan.gradient}`} />
                               <div className={`absolute -right-20 -top-20 h-64 w-64 rounded-full ${activePlan.bubbleOne}`} />
-                              <div className={`absolute -left-20 bottom-[-6rem] h-64 w-64 rounded-full ${activePlan.bubbleTwo}`} />
+                              <div className={`absolute -left-20 bottom-24 h-64 w-64 rounded-full ${activePlan.bubbleTwo}`} />
 
                               <div className="relative z-10 px-6 py-6 sm:px-8 sm:py-8">
                                     <div className="flex items-start justify-between gap-3">
                                           <div>
                                                 <h2 className="text-4xl font-extrabold tracking-tight text-gray-900 sm:text-5xl">{activePlan.name}</h2>
+                                                {activePlan.description && <p className="mt-1 text-lg font-medium text-gray-800 sm:text-xl">{activePlan.description}</p>}
                                                 <p className="mt-2 text-2xl font-bold text-gray-800 sm:text-3xl">{activePlan.displayPrice} <span className="text-xl font-medium text-gray-700">/month</span></p>
                                           </div>
                                           <button
@@ -358,20 +373,11 @@ export default function DashboardPage(){
                                     <div className="mt-6">
                                           <p className="text-xl font-semibold tracking-tight text-gray-900">Included highlights</p>
                                           <ul className="mt-3 grid gap-2 sm:grid-cols-2">
-                                                {dummyFeatures.map((feature) => (
+                                                {(planFeatures[activePlan.name] || []).map((feature) => (
                                                       <li key={`overlay-${activePlan.name}-${feature}`} className="flex items-center gap-2 text-lg text-gray-800">
                                                             <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-black text-xs font-bold text-white">✓</span>
                                                             <span>{feature}</span>
                                                       </li>
-                                                ))}
-                                          </ul>
-                                    </div>
-
-                                    <div className="mt-6">
-                                          <p className="text-xl font-semibold tracking-tight text-gray-900">Service details</p>
-                                          <ul className="mt-3 space-y-2">
-                                                {(serviceDetails[activePlan.name] || []).map((detail) => (
-                                                      <li key={`${activePlan.name}-${detail}`} className="text-base text-gray-800 sm:text-lg">• {detail}</li>
                                                 ))}
                                           </ul>
                                     </div>
