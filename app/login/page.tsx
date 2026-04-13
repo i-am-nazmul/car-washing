@@ -1,9 +1,11 @@
 "use client"
 import React from "react";
 import { useRouter } from "next/navigation";
+import * as motion from "motion/react-client";
 import { useIsLoading } from "@/store/store";
 import Loader from "@/components/Loader";
 import MotionButton from "@/components/MotionButton";
+import SiteFooter from "@/components/SiteFooter";
 import toast from "react-hot-toast";
 import { signIn } from "next-auth/react";
  
@@ -64,6 +66,10 @@ export default function LoginPage(){
             router.push("/signup");
       }
 
+      const moveHome = () => {
+            router.push("/");
+      };
+
       const LoginWithGoogle = () => {
             setIsLoading(true);
             const safeNextPath = getSafeNextPath();
@@ -72,41 +78,74 @@ export default function LoginPage(){
 
 
       return(
-            <div className="h-screen w-full p-1">
-                  <div className="w-full h-full rounded-sm border border-gray-400 flex flex-col px-4 py-2 items-center">
-                        <div className="w-full">
-                              <h1 className="text-7xl font-bold text-gray-700 tracking-tighter">
-                                    Login
-                              </h1>
-                        </div>
-                        {isLoading ?<Loader message={"Wait"}/>:<div className="flex flex-col gap-2 font-mono justify-center items-center w-full h-full ">
+            <div className="min-h-screen w-full bg-[radial-gradient(circle_at_top,#fde68a,#fff7d6_32%,#fefbf0_68%)] p-2 flex flex-col">
+                  {isLoading && <Loader message={"Wait"} />}
 
-                              
+                  <div className="w-full h-full flex-1 flex flex-col rounded-t-2xl bg-black px-4 py-6 sm:px-8 sm:py-10">
+                        <motion.nav
+                              initial={{ opacity: 0, y: -24 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              transition={{ duration: 0.45 }}
+                              className="w-full flex items-center justify-between"
+                        >
+                              <h1 className="text-lg font-extrabold tracking-tight text-amber-300 drop-shadow-[0_0_8px_rgba(251,191,36,0.35)] sm:text-2xl">The Shine Company.</h1>
+                              <MotionButton
+                                    className="hover-fill-ltr cursor-pointer rounded-full border border-amber-300/70 bg-transparent px-4 py-2 text-sm font-semibold tracking-tight text-amber-200 hover:bg-amber-200/10 sm:text-base"
+                                    onClick={moveHome}
+                              >
+                                    Home
+                              </MotionButton>
+                        </motion.nav>
 
-                              <input type="text" placeholder="Enter the email" className="tracking-tighter outline-none text-2xl px-4 py-2 bg-amber-200 rounded-sm text-black border border-gray-400"
-                              onChange={(e)=>{setEmail(e.target.value)}}/>
+                        <motion.div
+                              initial={{ opacity: 0, y: 24 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              transition={{ delay: 0.1, duration: 0.45 }}
+                              className="mx-auto mt-10 w-full max-w-2xl rounded-3xl border border-amber-300/30 bg-white/95 p-6 shadow-xl sm:p-8"
+                        >
+                              <h2 className="text-center text-5xl font-extrabold tracking-tighter text-gray-800 sm:text-6xl">Login</h2>
 
+                              <form
+                                    className="mt-8 flex flex-col items-center gap-3"
+                                    onSubmit={(event) => {
+                                          event.preventDefault();
+                                          void Login();
+                                    }}
+                              >
+                                    <input
+                                          type="email"
+                                          placeholder="Enter the email"
+                                          className="w-full max-w-xl tracking-tighter outline-none text-2xl px-4 py-2 bg-amber-200 rounded-sm text-black border border-gray-400"
+                                          value={email}
+                                          onChange={(e)=>{setEmail(e.target.value)}}
+                                    />
 
-                              <input type="password" 
-                              placeholder="Enter the password" className="outline-none tracking-tighter text-2xl px-4 py-2 bg-amber-200 rounded-sm text-black border border-gray-400"
-                              onChange={(e)=>{setPassword(e.target.value)}}/>
+                                    <input
+                                          type="password"
+                                          placeholder="Enter the password"
+                                          className="w-full max-w-xl outline-none tracking-tighter text-2xl px-4 py-2 bg-amber-200 rounded-sm text-black border border-gray-400"
+                                          value={password}
+                                          onChange={(e)=>{setPassword(e.target.value)}}
+                                    />
 
-                              <MotionButton className="bg-emerald-900 px-4 py-1 text-white font-semibold tracking-tighter text-2xl cursor-pointer hover:bg-emerald-950 rounded-lg sm:font-normal
-                              sm:text-4xl
-                              sm:py-2"
-                              onClick={Login}>Login</MotionButton>
+                                    <MotionButton
+                                          type="submit"
+                                          className="hover-fill-ltr bg-emerald-900 px-6 py-2 text-white font-semibold tracking-tighter text-2xl cursor-pointer hover:bg-emerald-950 rounded-lg sm:font-normal sm:text-3xl"
+                                    >
+                                          Login
+                                    </MotionButton>
+                              </form>
 
+                              <div className="mt-4 flex flex-col items-center gap-3">
+                                    <MotionButton className="hover-fill-ltr bg-emerald-900 text-white px-3 py-2 cursor-pointer font-medium hover:bg-emerald-950 rounded-lg sm:text-xl" onClick={SignUp}>Signup Instead</MotionButton>
 
-                              <MotionButton className="bg-emerald-900 text-white px-3 py-1 mt-2 cursor-pointer 
-                              font-medium hover:bg-emerald-950 rounded-lg 
-                              sm:py-2 sm:font-medium sm:text-2xl" onClick={SignUp}>Signup Instead</MotionButton>
-
-                              <MotionButton className="bg-purple-800 px-6  text-white font-semibold mt-20 tracking-tighter text-4xl cursor-pointer hover:bg-purple-950 rounded-lg border border-gray-400 sm:font-normal
-                              sm:text-2xl
-                              sm:py-2"
-                              onClick={LoginWithGoogle}>Login with Google</MotionButton>
-                        </div>}
+                                    <MotionButton className="hover-fill-ltr bg-purple-800 px-6 py-2 text-white font-semibold mt-8 tracking-tighter text-2xl cursor-pointer hover:bg-purple-950 rounded-lg border border-gray-400 sm:text-xl"
+                                    onClick={LoginWithGoogle}>Login with Google</MotionButton>
+                              </div>
+                        </motion.div>
                   </div>
+
+                  <SiteFooter />
             </div>
       )
 

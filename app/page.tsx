@@ -1,5 +1,6 @@
 "use client";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import React from "react";
 import * as motion from "motion/react-client";
 import MotionButton from "@/components/MotionButton";
@@ -27,6 +28,10 @@ export default function Home() {
   ];
 
   const planFeatures = Object.fromEntries(pricingPlans.map(({ plan, features }) => [plan.name, features]));
+
+  React.useEffect(() => {
+    setIsLoading(false);
+  }, [setIsLoading]);
 
   const handleGetStarted = function(){
     setIsLoading(true);
@@ -81,44 +86,44 @@ export default function Home() {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: false, amount: 0.8 }}
         transition={{ duration: 0.5 }}
-        className="w-full flex justify-end gap-2 sm:gap-4"
+        className="w-full flex items-center gap-2 sm:gap-4"
       >
-        <MotionButton
-          className="hover-fill-ltr cursor-pointer rounded-full border border-amber-300/70 bg-transparent px-4 py-2 text-sm font-semibold tracking-tight text-amber-200 hover:bg-amber-200/10 sm:text-base"
-          onClick={scrollToPricing}
-        >
-          Pricing
-        </MotionButton>
-        <MotionButton
-          className="hover-fill-ltr cursor-pointer rounded-full border border-amber-300/70 bg-transparent px-4 py-2 text-sm font-semibold tracking-tight text-amber-200 hover:bg-amber-200/10 sm:text-base"
-          onClick={() => document.getElementById("about")?.scrollIntoView({ behavior: "smooth", block: "start" })}
-        >
-          About us
-        </MotionButton>
-        <MotionButton
-          className="hover-fill-ltr cursor-pointer rounded-full bg-amber-300 px-4 py-2 text-sm font-semibold tracking-tight text-black hover:bg-amber-200 sm:text-base"
-          onClick={handleLogin}
-        >
-          Login
-        </MotionButton>
-        <MotionButton
-          className="hover-fill-ltr cursor-pointer rounded-full bg-amber-300 px-4 py-2 text-sm font-semibold tracking-tight text-black hover:bg-amber-200 sm:text-base"
-          onClick={handleGetStarted}
-        >
-          Get Started
-        </MotionButton>
+        <div className="mr-auto flex items-center gap-0">
+          <Image src="/logo_2.png" alt="The Shine Company logo" width={96} height={96} className="-mr-1 rounded-full object-cover sm:-mr-3 sm:h-24 sm:w-24 h-12 w-12" />
+          <h1 className="text-left text-lg font-extrabold tracking-tight text-white drop-shadow-[0_0_8px_rgba(251,191,36,0.35)] sm:text-6xl">
+            The Shine Company
+          </h1>
+        </div>
+
+        <div className="ml-auto flex flex-wrap justify-end gap-2 sm:gap-4">
+          <MotionButton
+            className="hover-fill-ltr cursor-pointer rounded-full border border-amber-300/70 bg-transparent px-4 py-2 text-sm font-semibold tracking-tight text-amber-200 hover:bg-amber-200/10 sm:text-base"
+            onClick={scrollToPricing}
+          >
+            Pricing
+          </MotionButton>
+          <MotionButton
+            className="hover-fill-ltr cursor-pointer rounded-full border border-amber-300/70 bg-transparent px-4 py-2 text-sm font-semibold tracking-tight text-amber-200 hover:bg-amber-200/10 sm:text-base"
+            onClick={() => document.getElementById("about")?.scrollIntoView({ behavior: "smooth", block: "start" })}
+          >
+            About us
+          </MotionButton>
+          <MotionButton
+            className="hover-fill-ltr cursor-pointer rounded-full bg-amber-300 px-4 py-2 text-sm font-semibold tracking-tight text-black hover:bg-amber-200 sm:text-base"
+            onClick={handleLogin}
+          >
+            Login
+          </MotionButton>
+          <MotionButton
+            className="hover-fill-ltr cursor-pointer rounded-full bg-amber-300 px-4 py-2 text-sm font-semibold tracking-tight text-black hover:bg-amber-200 sm:text-base"
+            onClick={handleGetStarted}
+          >
+            Get Started
+          </MotionButton>
+        </div>
       </motion.nav>
 
-      {/* Heading */}
-      <motion.h1
-        initial={{ opacity: 0, y: 24 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: false, amount: 0.8 }}
-        transition={{ delay: 0.15, duration: 0.55 }}
-        className="font-extrabold text-white tracking-tighter text-5xl sm:text-7xl lg:text-9xl mt-6 sm:mt-12 drop-shadow-[0_0_14px_rgba(251,191,36,0.35)]"
-      >
-        The Shine Company.
-      </motion.h1>
+
 
 
 
@@ -157,7 +162,32 @@ export default function Home() {
         transition={{ duration: 0.5 }}
         className="mt-10 w-full max-w-350 px-4 py-6 text-left shadow-xl sm:px-6 sm:py-8"
       >
-        <h2 className="text-center text-3xl font-extrabold tracking-tight text-amber-300 sm:text-5xl">Choose Your Plan</h2>
+        <h2 className="text-center text-2xl font-mono font-extrabold tracking-tight text-amber-300 sm:text-4xl">Choose Your Category</h2>
+        <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
+          {[
+            { label: "Sedan", image: "/sedan.png" },
+            { label: "SUV", image: "/suv.png" },
+            { label: "Bike", image: "/bike.png" },
+          ].map((item, index) => (
+            <motion.button
+              key={item.label}
+              type="button"
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: false, amount: 0.3 }}
+              transition={{ delay: index * 0.08, duration: 0.35 }}
+              whileHover={{ y: -4, scale: 1.02 }}
+              className="group cursor-pointer text-center"
+            >
+              <div className="mx-auto flex h-40 w-40 items-center justify-center rounded-full bg-transparent transition-colors duration-200 group-hover:bg-white">
+                <Image src={item.image} alt={item.label} width={150} height={150} className="h-36 w-36 object-contain" />
+              </div>
+              <p className="mt-3 text-xl font-semibold tracking-tight text-amber-200">{item.label}</p>
+            </motion.button>
+          ))}
+        </div>
+
+        <h2 className="text-center text-3xl font-extrabold tracking-tight text-amber-300 sm:text-5xl mt-20">Choose Your Plan</h2>
         <p className="mt-2 text-center text-base font-medium text-amber-300 sm:text-lg">Flexible monthly plans with reliable doorstep service</p>
 
         <div className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-4">
