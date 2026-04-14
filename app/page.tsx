@@ -14,12 +14,29 @@ import ComboCard, { SMART_COMBO_FEATURES, SMART_COMBO_PLAN } from "@/components/
 import { PlanData } from "@/components/cards/types";
 import WhatsAppIcon from "@/components/WhatsAppIcon";
 
+const ABOUT_SENTENCES = [
+  "New Standard of Vehicle Care.",
+  "Driven by Shine.",
+  "Delivered with Care.",
+  "No random washers.",
+  "No repeated follow ups.",
+  "No micro scratches.",
+  "No water stains.",
+  "Only reliable, waterless, high-quality clean that fits into modern community living.",
+];
+
 export default function Home() {
   const router = useRouter();
   const { isLoading, setIsLoading } = useIsLoading();
   const [isPaying] = React.useState<string | null>(null);
   const [activePlan, setActivePlan] = React.useState<PlanData | null>(null);
   const [isOverlayVisible, setIsOverlayVisible] = React.useState(false);
+  const aboutRef = React.useRef<HTMLElement | null>(null);
+  const howRef = React.useRef<HTMLElement | null>(null);
+  const aboutProgressRef = React.useRef(-1);
+  const howStepRef = React.useRef(-1);
+  const [aboutScrollProgress, setAboutScrollProgress] = React.useState(0);
+  const [howVisibleStep, setHowVisibleStep] = React.useState(0);
   const pricingPlans = [
     { plan: CLEAN_CARE_PLAN, features: CLEAN_CARE_FEATURES, Card: CarStandardCard },
     { plan: SHINE_CARE_PLAN, features: SHINE_CARE_FEATURES, Card: CarPremiumCard },
@@ -32,6 +49,97 @@ export default function Home() {
   React.useEffect(() => {
     setIsLoading(false);
   }, [setIsLoading]);
+
+  React.useEffect(() => {
+    let rafId: number | null = null;
+
+    const runScrollEffects = () => {
+      if (aboutRef.current) {
+        const rect = aboutRef.current.getBoundingClientRect();
+        const viewportCenter = window.innerHeight * 0.5;
+        const totalScrollable = Math.max(1, rect.height - viewportCenter);
+        const scrolled = Math.min(Math.max(viewportCenter - rect.top, 0), totalScrollable);
+        const progress = scrolled / totalScrollable;
+        if (Math.abs(progress - aboutProgressRef.current) > 0.01) {
+          aboutProgressRef.current = progress;
+          setAboutScrollProgress(progress);
+        }
+      }
+
+      if (howRef.current) {
+        const rect = howRef.current.getBoundingClientRect();
+        const enterThreshold = window.innerHeight * 0.78;
+        const exitThreshold = window.innerHeight * 0.2;
+        const pathStartTrigger = window.innerHeight * 0.5;
+
+        if (rect.top > enterThreshold || rect.bottom < exitThreshold) {
+          if (howStepRef.current !== 0) {
+            howStepRef.current = 0;
+            setHowVisibleStep(0);
+          }
+          return;
+        }
+
+        const totalScrollable = Math.max(1, rect.height - window.innerHeight);
+        const scrolled = Math.min(Math.max(pathStartTrigger - rect.top, 0), totalScrollable);
+        const progress = scrolled / totalScrollable;
+        let nextStep = 3;
+
+        if (progress < 0.34) {
+          nextStep = 1;
+        } else if (progress < 0.67) {
+          nextStep = 2;
+        }
+
+        if (howStepRef.current !== nextStep) {
+          howStepRef.current = nextStep;
+          setHowVisibleStep(nextStep);
+        }
+      }
+    };
+
+    const scheduleScrollEffects = () => {
+      if (rafId !== null) {
+        return;
+      }
+
+      rafId = window.requestAnimationFrame(() => {
+        rafId = null;
+        runScrollEffects();
+      });
+    };
+
+    scheduleScrollEffects();
+    window.addEventListener("scroll", scheduleScrollEffects, { passive: true });
+    window.addEventListener("resize", scheduleScrollEffects);
+
+    return () => {
+      window.removeEventListener("scroll", scheduleScrollEffects);
+      window.removeEventListener("resize", scheduleScrollEffects);
+      if (rafId !== null) {
+        window.cancelAnimationFrame(rafId);
+      }
+    };
+  }, []);
+
+  const aboutExactIndex = aboutScrollProgress * (ABOUT_SENTENCES.length - 1);
+  const aboutBaseIndex = Math.floor(aboutExactIndex);
+  const aboutPhase = aboutExactIndex - aboutBaseIndex;
+  const aboutCurrentSentence = ABOUT_SENTENCES[Math.min(aboutBaseIndex, ABOUT_SENTENCES.length - 1)];
+  const aboutNextSentence = ABOUT_SENTENCES[Math.min(aboutBaseIndex + 1, ABOUT_SENTENCES.length - 1)];
+  const aboutTitleOpacity = aboutPhase < 0.5 ? 0.55 + (aboutPhase / 0.5) * 0.45 : 1 - ((aboutPhase - 0.5) / 0.5) * 0.45;
+
+  let aboutSentenceText = aboutCurrentSentence;
+  let aboutSentenceOpacity = 1;
+
+  if (aboutPhase >= 0.45 && aboutPhase < 0.65) {
+    aboutSentenceOpacity = 1 - (aboutPhase - 0.45) / 0.2;
+  } else if (aboutPhase >= 0.65 && aboutPhase < 0.8) {
+    aboutSentenceOpacity = 0;
+  } else if (aboutPhase >= 0.8 && aboutBaseIndex < ABOUT_SENTENCES.length - 1) {
+    aboutSentenceText = aboutNextSentence;
+    aboutSentenceOpacity = (aboutPhase - 0.8) / 0.2;
+  }
 
   const handleGetStarted = function(){
     setIsLoading(true);
@@ -49,6 +157,10 @@ export default function Home() {
 
   const scrollToPricing = () => {
     document.getElementById("pricing")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+  const scrollToSection = (id: string) => {
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
   const handleCheckoutClick = (plan: PlanData) => {
@@ -86,69 +198,181 @@ export default function Home() {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: false, amount: 0.8 }}
         transition={{ duration: 0.5 }}
-        className="w-full flex items-center gap-2 sm:gap-4"
+        className="w-full flex flex-wrap items-center justify-center gap-2 sm:gap-3"
       >
-        <div className="mr-auto flex items-center gap-0">
-          <Image src="/logo_2.png" alt="The Shine Company logo" width={96} height={96} className="-mr-1 rounded-full object-cover sm:-mr-3 sm:h-24 sm:w-24 h-12 w-12" />
-          <h1 className="text-left text-lg font-extrabold tracking-tight text-white drop-shadow-[0_0_8px_rgba(251,191,36,0.35)] sm:text-6xl">
-            The Shine Company
-          </h1>
-        </div>
-
-        <div className="ml-auto flex flex-wrap justify-end gap-2 sm:gap-4">
-          <MotionButton
-            className="hover-fill-ltr cursor-pointer rounded-full border border-amber-300/70 bg-transparent px-4 py-2 text-sm font-semibold tracking-tight text-amber-200 hover:bg-amber-200/10 sm:text-base"
-            onClick={scrollToPricing}
-          >
-            Pricing
-          </MotionButton>
-          <MotionButton
-            className="hover-fill-ltr cursor-pointer rounded-full border border-amber-300/70 bg-transparent px-4 py-2 text-sm font-semibold tracking-tight text-amber-200 hover:bg-amber-200/10 sm:text-base"
-            onClick={() => document.getElementById("about")?.scrollIntoView({ behavior: "smooth", block: "start" })}
-          >
-            About us
-          </MotionButton>
-          <MotionButton
-            className="hover-fill-ltr cursor-pointer rounded-full bg-amber-300 px-4 py-2 text-sm font-semibold tracking-tight text-black hover:bg-amber-200 sm:text-base"
-            onClick={handleLogin}
-          >
-            Login
-          </MotionButton>
-          <MotionButton
-            className="hover-fill-ltr cursor-pointer rounded-full bg-amber-300 px-4 py-2 text-sm font-semibold tracking-tight text-black hover:bg-amber-200 sm:text-base"
-            onClick={handleGetStarted}
-          >
-            Get Started
-          </MotionButton>
-        </div>
+        <MotionButton
+          className="hover-fill-ltr cursor-pointer rounded-full bg-transparent px-4 py-2 text-sm font-semibold tracking-tight text-amber-200 hover:bg-white hover:text-gray-800 sm:text-base"
+          onClick={() => scrollToSection("about")}
+        >
+          About
+        </MotionButton>
+        <MotionButton
+          className="hover-fill-ltr cursor-pointer rounded-full bg-transparent px-4 py-2 text-sm font-semibold tracking-tight text-amber-200 hover:bg-white hover:text-gray-800 sm:text-base"
+          onClick={() => scrollToSection("how-it-works")}
+        >
+          How It Works
+        </MotionButton>
+        <MotionButton
+          className="hover-fill-ltr cursor-pointer rounded-full bg-transparent px-4 py-2 text-sm font-semibold tracking-tight text-amber-200 hover:bg-white hover:text-gray-800 sm:text-base"
+          onClick={() => scrollToSection("services")}
+        >
+          Services
+        </MotionButton>
+        <MotionButton
+          className="hover-fill-ltr cursor-pointer rounded-full bg-transparent px-4 py-2 text-sm font-semibold tracking-tight text-amber-200 hover:bg-white hover:text-gray-800 sm:text-base"
+          onClick={scrollToPricing}
+        >
+          Pricing
+        </MotionButton>
+        <MotionButton
+          className="hover-fill-ltr cursor-pointer rounded-full bg-transparent px-4 py-2 text-sm font-semibold tracking-tight text-amber-200 hover:bg-white hover:text-gray-800 sm:text-base"
+          onClick={() => scrollToSection("contact")}
+        >
+          Contact
+        </MotionButton>
+        <MotionButton
+          className="hover-fill-ltr cursor-pointer rounded-full bg-transparent px-4 py-2 text-sm font-semibold tracking-tight text-amber-200 hover:bg-white hover:text-gray-800 sm:text-base"
+          onClick={handleLogin}
+        >
+          Login
+        </MotionButton>
+        <MotionButton
+          className="hover-fill-ltr cursor-pointer rounded-full bg-transparent px-4 py-2 text-sm font-semibold tracking-tight text-amber-200 hover:bg-white hover:text-gray-800 sm:text-base"
+          onClick={handleGetStarted}
+        >
+          Signup
+        </MotionButton>
       </motion.nav>
 
 
+      {/* Company Info */}
+      <motion.div
+        initial={{ opacity: 0, y: 18 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: false, amount: 0.8 }}
+        transition={{ delay: 0.1, duration: 0.45 }}
+        className="mt-6 flex flex-col items-center"
+      >
+        <Image src="/logo_2.png" alt="The Shine Company logo" width={192} height={192} className="rounded-full object-cover h-32 w-32 sm:h-48 sm:w-48" />
+        <h1 className="mt-3 text-center text-2xl font-bold tracking-tight text-white drop-shadow-[0_0_8px_rgba(251,191,36,0.35)] sm:text-6xl">
+          The Shine Company
+        </h1>
+        <p className="mt-4 max-w-3xl text-center text-sm font-medium tracking-wide text-amber-200/90 sm:text-lg">
+          The New Standard of Vehicle Care.
+        </p>
+        <p className="max-w-3xl text-center text-base font-semibold text-white sm:text-2xl">
+          Driven by Shine. Delivered With Care.
+        </p>
+      </motion.div>
+
+      <section ref={howRef} id="how-it-works" className="mt-10 w-full max-w-6xl">
+        <div className="relative h-[210vh] overflow-hidden">
+          <div className="sticky top-18 h-[78vh] px-6 py-10">
+            <h2 className="text-center text-3xl font-extrabold tracking-tight text-amber-200 sm:text-5xl">How It Works</h2>
+            <p className="mt-2 text-center text-base font-medium text-amber-100/80 sm:text-xl">Three steps to a permanently clean vehicle.</p>
+
+            <div className="relative mx-auto mt-20 max-w-5xl space-y-28">
+              <motion.div
+                initial={false}
+                animate={{ opacity: howVisibleStep >= 1 ? 1 : 0, x: howVisibleStep >= 1 ? 0 : "-120vw" }}
+                transition={{ duration: 0.55, ease: "easeOut" }}
+                className="relative flex justify-start transform-gpu will-change-transform"
+              >
+                <div className="aspect-square w-full max-w-[14rem] rounded-full border border-violet-300 bg-purple-600 p-5 text-center text-white shadow-[0_0_18px_rgba(139,92,246,0.35)] sm:max-w-[16rem] flex flex-col items-center justify-center">
+                  <p className="text-xs font-bold uppercase tracking-wide text-violet-100 sm:text-sm">Step 1</p>
+                  <h3 className="mt-1 text-xl font-bold sm:text-2xl">Choose Your Plan</h3>
+                  <p className="mt-2 text-sm text-violet-100 sm:text-base">Select the subscription that fits your car, bike, or both.</p>
+                </div>
+              </motion.div>
+
+              <motion.div
+                initial={false}
+                animate={{ opacity: howVisibleStep >= 2 ? 1 : 0, x: howVisibleStep >= 2 ? 0 : "120vw" }}
+                transition={{ duration: 0.55, ease: "easeOut" }}
+                className="relative flex justify-end transform-gpu will-change-transform"
+              >
+                <div className="aspect-square w-full max-w-[14rem] rounded-full border border-violet-300 bg-violet-600 p-5 text-center text-white shadow-[0_0_18px_rgba(139,92,246,0.35)] sm:max-w-[16rem] flex flex-col items-center justify-center">
+                  <p className="text-xs font-bold uppercase tracking-wide text-violet-100 sm:text-sm">Step 2</p>
+                  <h3 className="mt-1 text-xl font-bold sm:text-2xl">We Take Over</h3>
+                  <p className="mt-2 text-sm text-violet-100 sm:text-base">Our team arrives at your parking area 5 days a week for professional, eco-friendly cleaning.</p>
+                </div>
+              </motion.div>
+
+              <motion.div
+                initial={false}
+                animate={{ opacity: howVisibleStep >= 3 ? 1 : 0, x: howVisibleStep >= 3 ? 0 : "-120vw" }}
+                transition={{ duration: 0.55, ease: "easeOut" }}
+                className="relative flex justify-start transform-gpu will-change-transform"
+              >
+                <div className="aspect-square w-full max-w-[14rem] rounded-full border border-violet-300 bg-violet-600 p-5 text-center text-white shadow-[0_0_18px_rgba(139,92,246,0.35)] sm:max-w-[16rem] flex flex-col items-center justify-center">
+                  <p className="text-xs font-bold uppercase tracking-wide text-violet-100 sm:text-sm">Step 3</p>
+                  <h3 className="mt-1 text-xl font-bold sm:text-2xl">Enjoy the Shine</h3>
+                  <p className="mt-2 text-sm text-violet-100 sm:text-base">Park. Drive. Repeat. No scheduling. No waiting. Enjoy a clean vehicle without spending your time on it.</p>
+                </div>
+              </motion.div>
+            </div>
+          </div>
+        </div>
+      </section>
 
 
 
       {/* About Us */}
+      <section ref={aboutRef} id="about" className="mt-12 w-full max-w-6xl">
+        <div className="relative h-[210vh]">
+          <div className="sticky top-18 flex h-[72vh] flex-col items-center justify-start px-6 py-10 text-center">
+            <motion.h2
+              initial={{ opacity: 0.45 }}
+              animate={{ opacity: aboutTitleOpacity }}
+              transition={{ duration: 0.22, ease: "linear" }}
+              className="text-4xl font-extrabold tracking-tight text-amber-200 sm:text-6xl"
+            >
+              About Us
+            </motion.h2>
+
+
+            <div className="relative mt-8 h-28 w-full max-w-5xl overflow-hidden">
+              <p
+                style={{
+                  opacity: aboutSentenceOpacity,
+                }}
+                className="absolute inset-0 flex items-center justify-center px-4 text-center text-2xl font-semibold tracking-tight text-white sm:text-5xl"
+              >
+                {aboutSentenceText}
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <motion.section
-        id="about"
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
+        id="services"
+        initial={{ opacity: 0, y: 24 }}
+        whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: false, amount: 0.12 }}
-        transition={{ duration: 0.35 }}
-        className="mt-20 w-full max-w-6xl rounded-3xl border border-amber-300/30 bg-white/95 px-6 py-8 text-left shadow-lg"
+        transition={{ duration: 0.45 }}
+        className="mt-10 w-full max-w-6xl rounded-3xl border border-violet-200/60 bg-linear-to-br from-violet-50 via-white to-indigo-100 px-6 py-10 text-left shadow-xl"
       >
-        <h2 className="text-3xl font-extrabold tracking-tight text-gray-900 sm:text-4xl">About Us</h2>
-        <p className="mt-3 text-base text-gray-700 sm:text-lg">
-          We are a doorstep vehicle care team focused on reliable service, cleaner methods, and consistent quality every week.
-        </p>
-        <p className="mt-2 text-base text-gray-700 sm:text-lg">
-          Our crew handles regular maintenance for cars and bikes with transparent plans, trained staff, and quick customer support.
-        </p>
-        <p className="mt-2 text-base text-gray-700 sm:text-lg">
-          From quick weekday cleanup to complete monthly care, we keep your vehicle ready for daily use with minimal hassle and timely service.
-        </p>
-        <p className="mt-2 text-base text-gray-700 sm:text-lg">
-          We also track service quality through regular checklists so your washing, interior touch-ups, and tyre care stay consistent all month.
-        </p>
+        <h2 className="text-3xl font-extrabold tracking-tight text-gray-900 sm:text-5xl">Services</h2>
+        <p className="mt-2 text-base font-medium text-gray-700 sm:text-xl">Precision Care. Zero Compromise.</p>
+
+        <div className="mt-6 grid gap-4 md:grid-cols-3">
+          <div className="rounded-2xl border border-violet-200 bg-white/85 p-5 shadow-sm">
+            <p className="text-sm font-bold uppercase tracking-wide text-violet-700">Service 1</p>
+            <h3 className="mt-1 text-2xl font-bold text-gray-900">Car Cleaning</h3>
+            <p className="mt-2 text-gray-700">Daily premium care for residents who want a consistently clean car without the hassle.</p>
+          </div>
+          <div className="rounded-2xl border border-violet-200 bg-white/85 p-5 shadow-sm">
+            <p className="text-sm font-bold uppercase tracking-wide text-violet-700">Service 2</p>
+            <h3 className="mt-1 text-2xl font-bold text-gray-900">Bike Cleaning</h3>
+            <p className="mt-2 text-gray-700">Smart, waterless bike cleaning for riders who want a polished, well-kept vehicle every day. Simple, fast, and reliable.</p>
+          </div>
+          <div className="rounded-2xl border border-violet-200 bg-white/85 p-5 shadow-sm">
+            <p className="text-sm font-bold uppercase tracking-wide text-violet-700">Service 3</p>
+            <h3 className="mt-1 text-2xl font-bold text-gray-900">All Shine Combo</h3>
+            <p className="mt-2 text-gray-700">Complete care for your entire fleet. One seamless plan covering both car and bike with full exterior, interior, and maintenance services.</p>
+          </div>
+        </div>
       </motion.section>
 
 
@@ -160,9 +384,9 @@ export default function Home() {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: false, amount: 0.2 }}
         transition={{ duration: 0.5 }}
-        className="mt-10 w-full max-w-350 px-4 py-6 text-left shadow-xl sm:px-6 sm:py-8"
+        className="mt-24 w-full max-w-350 px-4 py-6 text-left shadow-xl sm:px-6 sm:py-8"
       >
-        <h2 className="text-center text-2xl font-mono font-extrabold tracking-tight text-amber-300 sm:text-4xl">Choose Your Category</h2>
+        <h2 className="text-center text-2xl font-extrabold tracking-tight text-amber-300 sm:text-4xl">Categories</h2>
         <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
           {[
             { label: "Sedan", image: "/sedan.png" },
@@ -209,6 +433,33 @@ export default function Home() {
           ))}
         </div>
 
+      </motion.section>
+
+      <motion.section
+        id="contact"
+        initial={{ opacity: 0, y: 24 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: false, amount: 0.12 }}
+        transition={{ duration: 0.45 }}
+        className="mt-10 w-full max-w-6xl rounded-3xl border border-emerald-200/60 bg-gradient-to-br from-emerald-50 via-white to-lime-100 px-6 py-10 text-left shadow-xl"
+      >
+        <h2 className="text-3xl font-extrabold tracking-tight text-gray-900 sm:text-5xl">Contact Us</h2>
+        <p className="mt-3 text-lg font-semibold text-gray-800 sm:text-2xl">Ready for Smarter Routine?</p>
+        <p className="mt-3 text-base text-gray-700 sm:text-lg">Now launching exclusively for Alpine Viva residents.</p>
+        <p className="mt-1 text-base text-gray-700 sm:text-lg">Secure your dedicated cleaning schedule before they&apos;re gone.</p>
+        <p className="mt-1 text-base text-gray-700 sm:text-lg">Click on WhatsApp Button for instant booking and confirmation.</p>
+
+        <div className="mt-6">
+          <MotionButton
+            className="hover-fill-ltr cursor-pointer rounded-full border border-emerald-900 bg-emerald-800 px-6 py-3 text-lg font-semibold text-white hover:bg-emerald-900"
+            onClick={openWhatsApp}
+          >
+            WhatsApp Button
+          </MotionButton>
+        </div>
+
+        <p className="mt-6 text-base font-semibold text-gray-800 sm:text-xl">Professional. Verified. On time. Every time.</p>
+        <p className="text-base font-medium text-gray-700 sm:text-lg">Driven by Shine. Delivered with Care.</p>
       </motion.section>
 
 
