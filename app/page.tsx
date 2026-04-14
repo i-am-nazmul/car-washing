@@ -1,6 +1,5 @@
 "use client";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 import React from "react";
 import * as motion from "motion/react-client";
 import MotionButton from "@/components/MotionButton";
@@ -13,6 +12,11 @@ import CarPremiumCard, { SHINE_CARE_FEATURES, SHINE_CARE_PLAN } from "@/componen
 import ComboCard, { SMART_COMBO_FEATURES, SMART_COMBO_PLAN } from "@/components/cards/combo";
 import { PlanData } from "@/components/cards/types";
 import WhatsAppIcon from "@/components/WhatsAppIcon";
+import HeroSection from "@/components/home/HeroSection";
+import HowItWorksSection from "@/components/home/HowItWorksSection";
+import AboutSection from "@/components/home/AboutSection";
+import ServicesSection from "@/components/home/ServicesSection";
+import PricingSection from "@/components/home/PricingSection";
 
 const ABOUT_SENTENCES = [
   "New Standard of Vehicle Care.",
@@ -37,14 +41,20 @@ export default function Home() {
   const howStepRef = React.useRef(-1);
   const [aboutScrollProgress, setAboutScrollProgress] = React.useState(0);
   const [howVisibleStep, setHowVisibleStep] = React.useState(0);
-  const pricingPlans = [
-    { plan: CLEAN_CARE_PLAN, features: CLEAN_CARE_FEATURES, Card: CarStandardCard },
-    { plan: SHINE_CARE_PLAN, features: SHINE_CARE_FEATURES, Card: CarPremiumCard },
-    { plan: BIKE_CARE_PLAN, features: BIKE_CARE_FEATURES, Card: BikeCard },
-    { plan: SMART_COMBO_PLAN, features: SMART_COMBO_FEATURES, Card: ComboCard },
-  ];
+  const pricingPlans = React.useMemo(
+    () => [
+      { plan: CLEAN_CARE_PLAN, features: CLEAN_CARE_FEATURES, Card: CarStandardCard },
+      { plan: SHINE_CARE_PLAN, features: SHINE_CARE_FEATURES, Card: CarPremiumCard },
+      { plan: BIKE_CARE_PLAN, features: BIKE_CARE_FEATURES, Card: BikeCard },
+      { plan: SMART_COMBO_PLAN, features: SMART_COMBO_FEATURES, Card: ComboCard },
+    ],
+    []
+  );
 
-  const planFeatures = Object.fromEntries(pricingPlans.map(({ plan, features }) => [plan.name, features]));
+  const planFeatures = React.useMemo(
+    () => Object.fromEntries(pricingPlans.map(({ plan, features }) => [plan.name, features])),
+    [pricingPlans]
+  );
 
   React.useEffect(() => {
     setIsLoading(false);
@@ -141,50 +151,55 @@ export default function Home() {
     aboutSentenceOpacity = (aboutPhase - 0.8) / 0.2;
   }
 
-  const handleGetStarted = function(){
+  const handleGetStarted = React.useCallback(function(){
     setIsLoading(true);
     router.push('/signup');
-  }
-  const handleLogin = function(){
+  }, [router, setIsLoading]);
+  const handleLogin = React.useCallback(function(){
     setIsLoading(true);
     router.push('/login');
-  }
+  }, [router, setIsLoading]);
 
-  const openWhatsApp = () => {
+  const openWhatsApp = React.useCallback(() => {
     const message = encodeURIComponent("Hey, I am interested in your services.");
     window.open(`https://wa.me/6002175516?text=${message}`, "_blank", "noopener,noreferrer");
-  };
+  }, []);
 
-  const scrollToPricing = () => {
+  const scrollToPricing = React.useCallback(() => {
     document.getElementById("pricing")?.scrollIntoView({ behavior: "smooth", block: "start" });
-  };
+  }, []);
 
-  const scrollToSection = (id: string) => {
+  const scrollToSection = React.useCallback((id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
-  };
+  }, []);
 
-  const handleCheckoutClick = (plan: PlanData) => {
+  const scrollToAbout = React.useCallback(() => scrollToSection("about"), [scrollToSection]);
+  const scrollToHow = React.useCallback(() => scrollToSection("how-it-works"), [scrollToSection]);
+  const scrollToServices = React.useCallback(() => scrollToSection("services"), [scrollToSection]);
+  const scrollToContact = React.useCallback(() => scrollToSection("contact"), [scrollToSection]);
+
+  const handleCheckoutClick = React.useCallback((plan: PlanData) => {
     setActivePlan(plan);
     window.requestAnimationFrame(() => {
       setIsOverlayVisible(true);
     });
-  };
+  }, []);
 
-  const closeOverlay = () => {
+  const closeOverlay = React.useCallback(() => {
     setIsOverlayVisible(false);
     window.setTimeout(() => {
       setActivePlan(null);
     }, 220);
-  };
+  }, []);
 
-  const contactOnWhatsApp = () => {
+  const contactOnWhatsApp = React.useCallback(() => {
     if (!activePlan) {
       return;
     }
 
     const message = encodeURIComponent(`Hey, I want the ${activePlan.name} service.`);
     window.open(`https://wa.me/6002175516?text=${message}`, "_blank", "noopener,noreferrer");
-  };
+  }, [activePlan]);
 
   return (
   <div className="min-h-screen w-full bg-[radial-gradient(circle_at_top,#fde68a,#fff7d6_32%,#fefbf0_68%)] p-2 flex flex-col">
@@ -192,248 +207,28 @@ export default function Home() {
     <div className="w-full h-full flex-1 flex flex-col items-center rounded-t-2xl text-center bg-black px-4 py-6 sm:px-8 sm:py-10">
 
 
-      {/* Navbar */}
-      <motion.nav
-        initial={{ opacity: 0, y: -24 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: false, amount: 0.8 }}
-        transition={{ duration: 0.5 }}
-        className="w-full flex flex-wrap items-center justify-center gap-2 sm:gap-3"
-      >
-        <MotionButton
-          className="hover-fill-ltr cursor-pointer rounded-full bg-transparent px-4 py-2 text-sm font-semibold tracking-tight text-amber-200 hover:bg-white hover:text-gray-800 sm:text-base"
-          onClick={() => scrollToSection("about")}
-        >
-          About
-        </MotionButton>
-        <MotionButton
-          className="hover-fill-ltr cursor-pointer rounded-full bg-transparent px-4 py-2 text-sm font-semibold tracking-tight text-amber-200 hover:bg-white hover:text-gray-800 sm:text-base"
-          onClick={() => scrollToSection("how-it-works")}
-        >
-          How It Works
-        </MotionButton>
-        <MotionButton
-          className="hover-fill-ltr cursor-pointer rounded-full bg-transparent px-4 py-2 text-sm font-semibold tracking-tight text-amber-200 hover:bg-white hover:text-gray-800 sm:text-base"
-          onClick={() => scrollToSection("services")}
-        >
-          Services
-        </MotionButton>
-        <MotionButton
-          className="hover-fill-ltr cursor-pointer rounded-full bg-transparent px-4 py-2 text-sm font-semibold tracking-tight text-amber-200 hover:bg-white hover:text-gray-800 sm:text-base"
-          onClick={scrollToPricing}
-        >
-          Pricing
-        </MotionButton>
-        <MotionButton
-          className="hover-fill-ltr cursor-pointer rounded-full bg-transparent px-4 py-2 text-sm font-semibold tracking-tight text-amber-200 hover:bg-white hover:text-gray-800 sm:text-base"
-          onClick={() => scrollToSection("contact")}
-        >
-          Contact
-        </MotionButton>
-        <MotionButton
-          className="hover-fill-ltr cursor-pointer rounded-full bg-transparent px-4 py-2 text-sm font-semibold tracking-tight text-amber-200 hover:bg-white hover:text-gray-800 sm:text-base"
-          onClick={handleLogin}
-        >
-          Login
-        </MotionButton>
-        <MotionButton
-          className="hover-fill-ltr cursor-pointer rounded-full bg-transparent px-4 py-2 text-sm font-semibold tracking-tight text-amber-200 hover:bg-white hover:text-gray-800 sm:text-base"
-          onClick={handleGetStarted}
-        >
-          Signup
-        </MotionButton>
-      </motion.nav>
+      <HeroSection
+        onAbout={scrollToAbout}
+        onHowItWorks={scrollToHow}
+        onServices={scrollToServices}
+        onPricing={scrollToPricing}
+        onContact={scrollToContact}
+        onLogin={handleLogin}
+        onSignup={handleGetStarted}
+      />
 
+      <HowItWorksSection howRef={howRef} howVisibleStep={howVisibleStep} />
 
-      {/* Company Info */}
-      <motion.div
-        initial={{ opacity: 0, y: 18 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: false, amount: 0.8 }}
-        transition={{ delay: 0.1, duration: 0.45 }}
-        className="mt-6 flex flex-col items-center"
-      >
-        <Image src="/logo_2.png" alt="The Shine Company logo" width={192} height={192} className="rounded-full object-cover h-32 w-32 sm:h-48 sm:w-48" />
-        <h1 className="mt-3 text-center text-2xl font-bold tracking-tight text-white drop-shadow-[0_0_8px_rgba(251,191,36,0.35)] sm:text-6xl">
-          The Shine Company
-        </h1>
-        <p className="mt-4 max-w-3xl text-center text-sm font-medium tracking-wide text-amber-200/90 sm:text-lg">
-          The New Standard of Vehicle Care.
-        </p>
-        <p className="max-w-3xl text-center text-base font-semibold text-white sm:text-2xl">
-          Driven by Shine. Delivered With Care.
-        </p>
-      </motion.div>
+      <AboutSection
+        aboutRef={aboutRef}
+        titleOpacity={aboutTitleOpacity}
+        sentenceOpacity={aboutSentenceOpacity}
+        sentenceText={aboutSentenceText}
+      />
 
-      <section ref={howRef} id="how-it-works" className="mt-10 w-full max-w-6xl">
-        <div className="relative h-[210vh] overflow-hidden">
-          <div className="sticky top-18 h-[78vh] px-6 py-10">
-            <h2 className="text-center text-3xl font-extrabold tracking-tight text-amber-200 sm:text-5xl">How It Works</h2>
-            <p className="mt-2 text-center text-base font-medium text-amber-100/80 sm:text-xl">Three steps to a permanently clean vehicle.</p>
+      <ServicesSection />
 
-            <div className="relative mx-auto mt-20 max-w-5xl space-y-28">
-              <motion.div
-                initial={false}
-                animate={{ opacity: howVisibleStep >= 1 ? 1 : 0, x: howVisibleStep >= 1 ? 0 : "-120vw" }}
-                transition={{ duration: 0.55, ease: "easeOut" }}
-                className="relative flex justify-start transform-gpu will-change-transform"
-              >
-                <div className="aspect-square w-full max-w-[14rem] rounded-full border border-violet-300 bg-purple-600 p-5 text-center text-white shadow-[0_0_18px_rgba(139,92,246,0.35)] sm:max-w-[16rem] flex flex-col items-center justify-center">
-                  <p className="text-xs font-bold uppercase tracking-wide text-violet-100 sm:text-sm">Step 1</p>
-                  <h3 className="mt-1 text-xl font-bold sm:text-2xl">Choose Your Plan</h3>
-                  <p className="mt-2 text-sm text-violet-100 sm:text-base">Select the subscription that fits your car, bike, or both.</p>
-                </div>
-              </motion.div>
-
-              <motion.div
-                initial={false}
-                animate={{ opacity: howVisibleStep >= 2 ? 1 : 0, x: howVisibleStep >= 2 ? 0 : "120vw" }}
-                transition={{ duration: 0.55, ease: "easeOut" }}
-                className="relative flex justify-end transform-gpu will-change-transform"
-              >
-                <div className="aspect-square w-full max-w-[14rem] rounded-full border border-violet-300 bg-violet-600 p-5 text-center text-white shadow-[0_0_18px_rgba(139,92,246,0.35)] sm:max-w-[16rem] flex flex-col items-center justify-center">
-                  <p className="text-xs font-bold uppercase tracking-wide text-violet-100 sm:text-sm">Step 2</p>
-                  <h3 className="mt-1 text-xl font-bold sm:text-2xl">We Take Over</h3>
-                  <p className="mt-2 text-sm text-violet-100 sm:text-base">Our team arrives at your parking area 5 days a week for professional, eco-friendly cleaning.</p>
-                </div>
-              </motion.div>
-
-              <motion.div
-                initial={false}
-                animate={{ opacity: howVisibleStep >= 3 ? 1 : 0, x: howVisibleStep >= 3 ? 0 : "-120vw" }}
-                transition={{ duration: 0.55, ease: "easeOut" }}
-                className="relative flex justify-start transform-gpu will-change-transform"
-              >
-                <div className="aspect-square w-full max-w-[14rem] rounded-full border border-violet-300 bg-violet-600 p-5 text-center text-white shadow-[0_0_18px_rgba(139,92,246,0.35)] sm:max-w-[16rem] flex flex-col items-center justify-center">
-                  <p className="text-xs font-bold uppercase tracking-wide text-violet-100 sm:text-sm">Step 3</p>
-                  <h3 className="mt-1 text-xl font-bold sm:text-2xl">Enjoy the Shine</h3>
-                  <p className="mt-2 text-sm text-violet-100 sm:text-base">Park. Drive. Repeat. No scheduling. No waiting. Enjoy a clean vehicle without spending your time on it.</p>
-                </div>
-              </motion.div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-
-
-      {/* About Us */}
-      <section ref={aboutRef} id="about" className="mt-12 w-full max-w-6xl">
-        <div className="relative h-[210vh]">
-          <div className="sticky top-18 flex h-[72vh] flex-col items-center justify-start px-6 py-10 text-center">
-            <motion.h2
-              initial={{ opacity: 0.45 }}
-              animate={{ opacity: aboutTitleOpacity }}
-              transition={{ duration: 0.22, ease: "linear" }}
-              className="text-4xl font-extrabold tracking-tight text-amber-200 sm:text-6xl"
-            >
-              About Us
-            </motion.h2>
-
-
-            <div className="relative mt-8 h-28 w-full max-w-5xl overflow-hidden">
-              <p
-                style={{
-                  opacity: aboutSentenceOpacity,
-                }}
-                className="absolute inset-0 flex items-center justify-center px-4 text-center text-2xl font-semibold tracking-tight text-white sm:text-5xl"
-              >
-                {aboutSentenceText}
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <motion.section
-        id="services"
-        initial={{ opacity: 0, y: 24 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: false, amount: 0.12 }}
-        transition={{ duration: 0.45 }}
-        className="mt-10 w-full max-w-6xl rounded-3xl border border-violet-200/60 bg-linear-to-br from-violet-50 via-white to-indigo-100 px-6 py-10 text-left shadow-xl"
-      >
-        <h2 className="text-3xl font-extrabold tracking-tight text-gray-900 sm:text-5xl">Services</h2>
-        <p className="mt-2 text-base font-medium text-gray-700 sm:text-xl">Precision Care. Zero Compromise.</p>
-
-        <div className="mt-6 grid gap-4 md:grid-cols-3">
-          <div className="rounded-2xl border border-violet-200 bg-white/85 p-5 shadow-sm">
-            <p className="text-sm font-bold uppercase tracking-wide text-violet-700">Service 1</p>
-            <h3 className="mt-1 text-2xl font-bold text-gray-900">Car Cleaning</h3>
-            <p className="mt-2 text-gray-700">Daily premium care for residents who want a consistently clean car without the hassle.</p>
-          </div>
-          <div className="rounded-2xl border border-violet-200 bg-white/85 p-5 shadow-sm">
-            <p className="text-sm font-bold uppercase tracking-wide text-violet-700">Service 2</p>
-            <h3 className="mt-1 text-2xl font-bold text-gray-900">Bike Cleaning</h3>
-            <p className="mt-2 text-gray-700">Smart, waterless bike cleaning for riders who want a polished, well-kept vehicle every day. Simple, fast, and reliable.</p>
-          </div>
-          <div className="rounded-2xl border border-violet-200 bg-white/85 p-5 shadow-sm">
-            <p className="text-sm font-bold uppercase tracking-wide text-violet-700">Service 3</p>
-            <h3 className="mt-1 text-2xl font-bold text-gray-900">All Shine Combo</h3>
-            <p className="mt-2 text-gray-700">Complete care for your entire fleet. One seamless plan covering both car and bike with full exterior, interior, and maintenance services.</p>
-          </div>
-        </div>
-      </motion.section>
-
-
-
-      {/* Pricing */}
-      <motion.section
-        id="pricing"
-        initial={{ opacity: 0, y: 28 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: false, amount: 0.2 }}
-        transition={{ duration: 0.5 }}
-        className="mt-24 w-full max-w-350 px-4 py-6 text-left shadow-xl sm:px-6 sm:py-8"
-      >
-        <h2 className="text-center text-2xl font-extrabold tracking-tight text-amber-300 sm:text-4xl">Categories</h2>
-        <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
-          {[
-            { label: "Sedan", image: "/sedan.png" },
-            { label: "SUV", image: "/suv.png" },
-            { label: "Bike", image: "/bike.png" },
-          ].map((item, index) => (
-            <motion.button
-              key={item.label}
-              type="button"
-              initial={{ opacity: 0, y: 16 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: false, amount: 0.3 }}
-              transition={{ delay: index * 0.08, duration: 0.35 }}
-              whileHover={{ y: -4, scale: 1.02 }}
-              className="group cursor-pointer text-center"
-            >
-              <div className="mx-auto flex h-40 w-40 items-center justify-center rounded-full bg-transparent transition-colors duration-200 group-hover:bg-white">
-                <Image src={item.image} alt={item.label} width={150} height={150} className="h-36 w-36 object-contain" />
-              </div>
-              <p className="mt-3 text-xl font-semibold tracking-tight text-amber-200">{item.label}</p>
-            </motion.button>
-          ))}
-        </div>
-
-        <h2 className="text-center text-3xl font-extrabold tracking-tight text-amber-300 sm:text-5xl mt-20">Choose Your Plan</h2>
-        <p className="mt-2 text-center text-base font-medium text-amber-300 sm:text-lg">Flexible monthly plans with reliable doorstep service</p>
-
-        <div className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-4">
-          {pricingPlans.map(({ plan, features, Card }, index) => (
-            <motion.div
-              key={plan.name}
-              initial={{ opacity: 0, scale: 0.9, y: 20 }}
-              whileInView={{ opacity: 1, scale: 1, y: 0 }}
-              viewport={{ once: false, amount: 0.2 }}
-              transition={{ duration: 0.42, delay: index * 0.08 }}
-            >
-              <Card
-                plan={plan}
-                isPaying={isPaying}
-                features={features}
-                onCheckout={handleCheckoutClick}
-              />
-            </motion.div>
-          ))}
-        </div>
-
-      </motion.section>
+      <PricingSection pricingPlans={pricingPlans} isPaying={isPaying} onCheckout={handleCheckoutClick} />
 
       <motion.section
         id="contact"
@@ -441,7 +236,7 @@ export default function Home() {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: false, amount: 0.12 }}
         transition={{ duration: 0.45 }}
-        className="mt-10 w-full max-w-6xl rounded-3xl border border-emerald-200/60 bg-gradient-to-br from-emerald-50 via-white to-lime-100 px-6 py-10 text-left shadow-xl"
+        className="mt-10 w-full max-w-6xl rounded-3xl border border-emerald-200/60 bg-linear-to-br from-emerald-50 via-white to-lime-100 px-6 py-10 text-left shadow-xl"
       >
         <h2 className="text-3xl font-extrabold tracking-tight text-gray-900 sm:text-5xl">Contact Us</h2>
         <p className="mt-3 text-lg font-semibold text-gray-800 sm:text-2xl">Ready for Smarter Routine?</p>
