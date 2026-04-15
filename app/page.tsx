@@ -29,6 +29,8 @@ const ABOUT_SENTENCES = [
   "Only reliable, waterless, high-quality clean that fits into modern community living.",
 ];
 
+const WHATSAPP_PHONE = "916002175516";
+
 export default function Home() {
   const router = useRouter();
   const { isLoading, setIsLoading } = useIsLoading();
@@ -162,7 +164,7 @@ export default function Home() {
 
   const openWhatsApp = React.useCallback(() => {
     const message = encodeURIComponent("Hey, I am interested in your services.");
-    window.open(`https://wa.me/6002175516?text=${message}`, "_blank", "noopener,noreferrer");
+    window.open(`https://wa.me/${WHATSAPP_PHONE}?text=${message}`, "_blank", "noopener,noreferrer");
   }, []);
 
   const scrollToPricing = React.useCallback(() => {
@@ -198,7 +200,7 @@ export default function Home() {
     }
 
     const message = encodeURIComponent(`Hey, I want the ${activePlan.name} service.`);
-    window.open(`https://wa.me/6002175516?text=${message}`, "_blank", "noopener,noreferrer");
+    window.open(`https://wa.me/${WHATSAPP_PHONE}?text=${message}`, "_blank", "noopener,noreferrer");
   }, [activePlan]);
 
   return (
@@ -249,7 +251,7 @@ export default function Home() {
             className="hover-fill-ltr cursor-pointer rounded-full border border-emerald-900 bg-emerald-800 px-6 py-3 text-lg font-semibold text-white hover:bg-emerald-900"
             onClick={openWhatsApp}
           >
-            WhatsApp Button
+            WhatsApp
           </MotionButton>
         </div>
 

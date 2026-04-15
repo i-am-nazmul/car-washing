@@ -11,8 +11,8 @@ type AboutSectionProps = {
 function AboutSectionComponent({ aboutRef, titleOpacity, sentenceOpacity, sentenceText }: AboutSectionProps) {
   return (
     <section ref={aboutRef} id="about" className="mt-12 w-full max-w-6xl">
-      <div className="relative h-[210vh]">
-        <div className="sticky top-18 flex h-[72vh] flex-col items-center justify-start px-6 py-10 text-center">
+      <div className="relative h-[105vh] sm:h-[210vh]">
+        <div className="sticky top-18 flex h-[66vh] flex-col items-center justify-start px-6 py-10 text-center sm:h-[72vh]">
           <motion.h2
             initial={{ opacity: 0.45 }}
             animate={{ opacity: titleOpacity }}
