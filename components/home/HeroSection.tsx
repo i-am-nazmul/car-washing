@@ -83,19 +83,17 @@ function HeroSectionComponent({
         className="mt-6 flex flex-col items-center"
       >
         <Image
-          src="/logo_2.png"
+          src="/logo.png"
           alt="The Shine Company logo"
           width={192}
           height={192}
-          className="rounded-full object-cover h-32 w-32 sm:h-48 sm:w-48"
+          className="mt-22 rounded-full object-cover h-32 w-32 sm:h-48 sm:w-48"
         />
-        <h1 className="mt-3 text-center text-2xl font-bold tracking-tight text-white drop-shadow-[0_0_8px_rgba(251,191,36,0.35)] sm:text-6xl">
+        <h1 className="mt-6 text-center text-2xl font-bold tracking-tight text-white drop-shadow-[0_0_8px_rgba(251,191,36,0.35)] sm:text-8xl">
           The Shine Company
         </h1>
-        <p className="mt-4 max-w-3xl text-center text-sm font-medium tracking-wide text-amber-200/90 sm:text-lg">
-          The New Standard of Vehicle Care.
-        </p>
-        <p className="max-w-3xl text-center text-base font-semibold text-white sm:text-2xl">
+
+        <p className="max-w-3xl mt-2 text-center text-base font-semibold text-white sm:text-4xl">
           Driven by Shine. Delivered With Care.
         </p>
       </motion.div>

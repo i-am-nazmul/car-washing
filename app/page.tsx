@@ -18,17 +18,6 @@ import AboutSection from "@/components/home/AboutSection";
 import ServicesSection from "@/components/home/ServicesSection";
 import PricingSection from "@/components/home/PricingSection";
 
-const ABOUT_SENTENCES = [
-  "New Standard of Vehicle Care.",
-  "Driven by Shine.",
-  "Delivered with Care.",
-  "No random washers.",
-  "No repeated follow ups.",
-  "No micro scratches.",
-  "No water stains.",
-  "Only reliable, waterless, high-quality clean that fits into modern community living.",
-];
-
 const WHATSAPP_PHONE = "916002175516";
 
 export default function Home() {
@@ -37,11 +26,8 @@ export default function Home() {
   const [isPaying] = React.useState<string | null>(null);
   const [activePlan, setActivePlan] = React.useState<PlanData | null>(null);
   const [isOverlayVisible, setIsOverlayVisible] = React.useState(false);
-  const aboutRef = React.useRef<HTMLElement | null>(null);
   const howRef = React.useRef<HTMLElement | null>(null);
-  const aboutProgressRef = React.useRef(-1);
   const howStepRef = React.useRef(-1);
-  const [aboutScrollProgress, setAboutScrollProgress] = React.useState(0);
   const [howVisibleStep, setHowVisibleStep] = React.useState(0);
   const pricingPlans = React.useMemo(
     () => [
@@ -66,18 +52,6 @@ export default function Home() {
     let rafId: number | null = null;
 
     const runScrollEffects = () => {
-      if (aboutRef.current) {
-        const rect = aboutRef.current.getBoundingClientRect();
-        const viewportCenter = window.innerHeight * 0.5;
-        const totalScrollable = Math.max(1, rect.height - viewportCenter);
-        const scrolled = Math.min(Math.max(viewportCenter - rect.top, 0), totalScrollable);
-        const progress = scrolled / totalScrollable;
-        if (Math.abs(progress - aboutProgressRef.current) > 0.01) {
-          aboutProgressRef.current = progress;
-          setAboutScrollProgress(progress);
-        }
-      }
-
       if (howRef.current) {
         const rect = howRef.current.getBoundingClientRect();
         const enterThreshold = window.innerHeight * 0.78;
@@ -134,25 +108,6 @@ export default function Home() {
     };
   }, []);
 
-  const aboutExactIndex = aboutScrollProgress * (ABOUT_SENTENCES.length - 1);
-  const aboutBaseIndex = Math.floor(aboutExactIndex);
-  const aboutPhase = aboutExactIndex - aboutBaseIndex;
-  const aboutCurrentSentence = ABOUT_SENTENCES[Math.min(aboutBaseIndex, ABOUT_SENTENCES.length - 1)];
-  const aboutNextSentence = ABOUT_SENTENCES[Math.min(aboutBaseIndex + 1, ABOUT_SENTENCES.length - 1)];
-  const aboutTitleOpacity = aboutPhase < 0.5 ? 0.55 + (aboutPhase / 0.5) * 0.45 : 1 - ((aboutPhase - 0.5) / 0.5) * 0.45;
-
-  let aboutSentenceText = aboutCurrentSentence;
-  let aboutSentenceOpacity = 1;
-
-  if (aboutPhase >= 0.45 && aboutPhase < 0.65) {
-    aboutSentenceOpacity = 1 - (aboutPhase - 0.45) / 0.2;
-  } else if (aboutPhase >= 0.65 && aboutPhase < 0.8) {
-    aboutSentenceOpacity = 0;
-  } else if (aboutPhase >= 0.8 && aboutBaseIndex < ABOUT_SENTENCES.length - 1) {
-    aboutSentenceText = aboutNextSentence;
-    aboutSentenceOpacity = (aboutPhase - 0.8) / 0.2;
-  }
-
   const handleGetStarted = React.useCallback(function(){
     setIsLoading(true);
     router.push('/signup');
@@ -175,9 +130,27 @@ export default function Home() {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
   }, []);
 
+  const SECTION_NAV_OFFSET = 74;
+
   const scrollToAbout = React.useCallback(() => scrollToSection("about"), [scrollToSection]);
-  const scrollToHow = React.useCallback(() => scrollToSection("how-it-works"), [scrollToSection]);
-  const scrollToServices = React.useCallback(() => scrollToSection("services"), [scrollToSection]);
+  const scrollToHow = React.useCallback(() => {
+    const section = document.getElementById("how-it-works");
+    if (!section) {
+      return;
+    }
+
+    const targetTop = window.scrollY + section.getBoundingClientRect().top + SECTION_NAV_OFFSET;
+    window.scrollTo({ top: targetTop, behavior: "smooth" });
+  }, [SECTION_NAV_OFFSET]);
+  const scrollToServices = React.useCallback(() => {
+    const section = document.getElementById("services");
+    if (!section) {
+      return;
+    }
+
+    const targetTop = window.scrollY + section.getBoundingClientRect().top + SECTION_NAV_OFFSET;
+    window.scrollTo({ top: targetTop, behavior: "smooth" });
+  }, [SECTION_NAV_OFFSET]);
   const scrollToContact = React.useCallback(() => scrollToSection("contact"), [scrollToSection]);
 
   const handleCheckoutClick = React.useCallback((plan: PlanData) => {
@@ -208,25 +181,21 @@ export default function Home() {
     {isLoading && <Loader message={"Wait"} />}
     <div className="w-full h-full flex-1 flex flex-col items-center rounded-t-2xl text-center bg-black px-4 py-6 sm:px-8 sm:py-10">
 
+      <section className="flex min-h-[100svh] w-full max-w-6xl flex-col">
+        <HeroSection
+          onAbout={scrollToAbout}
+          onHowItWorks={scrollToHow}
+          onServices={scrollToServices}
+          onPricing={scrollToPricing}
+          onContact={scrollToContact}
+          onLogin={handleLogin}
+          onSignup={handleGetStarted}
+        />
+      </section>
 
-      <HeroSection
-        onAbout={scrollToAbout}
-        onHowItWorks={scrollToHow}
-        onServices={scrollToServices}
-        onPricing={scrollToPricing}
-        onContact={scrollToContact}
-        onLogin={handleLogin}
-        onSignup={handleGetStarted}
-      />
+      <AboutSection />
 
       <HowItWorksSection howRef={howRef} howVisibleStep={howVisibleStep} />
-
-      <AboutSection
-        aboutRef={aboutRef}
-        titleOpacity={aboutTitleOpacity}
-        sentenceOpacity={aboutSentenceOpacity}
-        sentenceText={aboutSentenceText}
-      />
 
       <ServicesSection />
 
