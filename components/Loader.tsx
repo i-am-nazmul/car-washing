@@ -1,21 +1,11 @@
 import React from 'react';
-import { BarLoader } from 'react-spinners';
 
-type Message ={
-      message:string 
-} 
-
-const Loader = ({message}:Message) => {
+const Loader = () => {
   return (
-    <div className='fixed inset-0 flex items-center justify-center bg-black/50 z-50'>
-
-      <div className="bg-white flex flex-col items-center justify-center rounded-lg shadow-lg p-6 max-w-sm text-center">
-
-        <h1 className='text-4xl font-bold tracking-tighter text-gray-600 text-center m-4'>{message}</h1>
-          <BarLoader/>
+    <div className='fixed inset-0 z-50 flex items-center justify-center bg-black/50'>
+      <div className="flex items-center justify-center rounded-full border border-violet-300 bg-black/50 p-5 shadow-[0_0_18px_rgba(139,92,246,0.35)]">
+        <div className="h-10 w-10 animate-spin rounded-full border-4 border-violet-300 border-t-transparent" />
       </div>
-
-
     </div>
   )
 }

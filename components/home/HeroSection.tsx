@@ -35,7 +35,7 @@ function HeroSectionComponent({
           className="hover-fill-ltr cursor-pointer rounded-full bg-transparent px-4 py-2 text-sm font-semibold tracking-tight text-amber-200 hover:bg-white hover:text-gray-800 sm:text-base"
           onClick={onAbout}
         >
-          About
+          About Us
         </MotionButton>
         <MotionButton
           className="hover-fill-ltr cursor-pointer rounded-full bg-transparent px-4 py-2 text-sm font-semibold tracking-tight text-amber-200 hover:bg-white hover:text-gray-800 sm:text-base"
@@ -47,7 +47,7 @@ function HeroSectionComponent({
           className="hover-fill-ltr cursor-pointer rounded-full bg-transparent px-4 py-2 text-sm font-semibold tracking-tight text-amber-200 hover:bg-white hover:text-gray-800 sm:text-base"
           onClick={onServices}
         >
-          Services
+          Our Services
         </MotionButton>
         <MotionButton
           className="hover-fill-ltr cursor-pointer rounded-full bg-transparent px-4 py-2 text-sm font-semibold tracking-tight text-amber-200 hover:bg-white hover:text-gray-800 sm:text-base"
@@ -59,7 +59,7 @@ function HeroSectionComponent({
           className="hover-fill-ltr cursor-pointer rounded-full bg-transparent px-4 py-2 text-sm font-semibold tracking-tight text-amber-200 hover:bg-white hover:text-gray-800 sm:text-base"
           onClick={onContact}
         >
-          Contact
+          Contact Us
         </MotionButton>
         <MotionButton
           className="hover-fill-ltr cursor-pointer rounded-full bg-transparent px-4 py-2 text-sm font-semibold tracking-tight text-amber-200 hover:bg-white hover:text-gray-800 sm:text-base"

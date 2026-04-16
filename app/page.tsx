@@ -178,7 +178,7 @@ export default function Home() {
 
   return (
   <div className="min-h-screen w-full bg-[radial-gradient(circle_at_top,#fde68a,#fff7d6_32%,#fefbf0_68%)] p-2 flex flex-col">
-    {isLoading && <Loader message={"Wait"} />}
+    {isLoading && <Loader />}
     <div className="w-full h-full flex-1 flex flex-col items-center rounded-t-2xl text-center bg-black px-4 py-6 sm:px-8 sm:py-10">
 
       <section className="flex min-h-[100svh] w-full max-w-6xl flex-col">
@@ -201,32 +201,34 @@ export default function Home() {
 
       <PricingSection pricingPlans={pricingPlans} isPaying={isPaying} onCheckout={handleCheckoutClick} />
 
-      <motion.section
-        id="contact"
-        initial={{ opacity: 0, y: 24 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: false, amount: 0.12 }}
-        transition={{ duration: 0.45 }}
-        className="mt-10 w-full max-w-6xl rounded-3xl border border-emerald-200/60 bg-linear-to-br from-emerald-50 via-white to-lime-100 px-6 py-10 text-left shadow-xl"
-      >
-        <h2 className="text-3xl font-extrabold tracking-tight text-gray-900 sm:text-5xl">Contact Us</h2>
-        <p className="mt-3 text-lg font-semibold text-gray-800 sm:text-2xl">Ready for Smarter Routine?</p>
-        <p className="mt-3 text-base text-gray-700 sm:text-lg">Now launching exclusively for Alpine Viva residents.</p>
-        <p className="mt-1 text-base text-gray-700 sm:text-lg">Secure your dedicated cleaning schedule before they&apos;re gone.</p>
-        <p className="mt-1 text-base text-gray-700 sm:text-lg">Click on WhatsApp Button for instant booking and confirmation.</p>
+      <div id="contact" className="mt-10 w-full max-w-6xl text-center">
+        <h2 className="text-4xl font-extrabold tracking-tight text-yellow-300 sm:text-4xl">Contact Us</h2>
+        <p className="mt-3 text-lg font-semibold text-white sm:text-2xl">Ready for Smarter Routine?</p>
 
-        <div className="mt-6">
-          <MotionButton
-            className="hover-fill-ltr cursor-pointer rounded-full border border-emerald-900 bg-emerald-800 px-6 py-3 text-lg font-semibold text-white hover:bg-emerald-900"
-            onClick={openWhatsApp}
-          >
-            WhatsApp
-          </MotionButton>
-        </div>
+        <motion.section
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: false, amount: 0.12 }}
+          transition={{ duration: 0.45 }}
+          className="mx-auto mt-5 w-full max-w-4xl rounded-3xl border border-violet-300 bg-transparent px-6 py-10 text-center shadow-[0_0_18px_rgba(139,92,246,0.35)]"
+        >
+          <p className="text-base text-white sm:text-2xl">Now launching exclusively for Alpine Viva residents.</p>
+          <p className="mt-1 text-base text-white sm:text-2xl">Secure your dedicated cleaning schedule before they&apos;re gone.</p>
+          <p className="mt-1 text-base text-white sm:text-2xl">Click on WhatsApp Button for instant booking and confirmation.</p>
 
-        <p className="mt-6 text-base font-semibold text-gray-800 sm:text-xl">Professional. Verified. On time. Every time.</p>
-        <p className="text-base font-medium text-gray-700 sm:text-lg">Driven by Shine. Delivered with Care.</p>
-      </motion.section>
+          <div className="mt-6">
+            <MotionButton
+              className="hover-fill-ltr cursor-pointer rounded-full border border-emerald-900 bg-emerald-800 px-6 py-3 text-lg font-semibold text-white hover:bg-emerald-900"
+              onClick={openWhatsApp}
+            >
+              WhatsApp
+            </MotionButton>
+          </div>
+
+          <p className="mt-6 text-base font-semibold text-white sm:text-2xl">Professional. Verified. On time. Every time.</p>
+          <p className="text-base font-medium text-white sm:text-2xl">Driven by Shine. Delivered with Care.</p>
+        </motion.section>
+      </div>
 
 
     </div>

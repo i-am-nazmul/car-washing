@@ -12,7 +12,6 @@ import { signOut } from "next-auth/react";
 export default function ProfilePage(){
       const [user,setUser] = React.useState('');
       const [email,setEmail] = React.useState('');
-      const [loaderMessage, setLoaderMessage] = React.useState("Fetching your details");
       const {isLoading,setIsLoading}=useIsLoading();
       const router = useRouter();
 
@@ -21,7 +20,6 @@ export default function ProfilePage(){
       }
 
       const logout = async function () {
-            setLoaderMessage("Logging you out");
             setIsLoading(true);
             try {
                   await axios.post('/api/logout');
@@ -38,7 +36,6 @@ export default function ProfilePage(){
       }
 
       const getUserData = useCallback(async function (){
-            setLoaderMessage("Fetching your details");
             setIsLoading(true);
             try {
                   const userData = await axios.get('/api/profile');
@@ -76,7 +73,7 @@ export default function ProfilePage(){
 
       return (
 <div className="min-h-screen w-full p-1">
-      {isLoading && <Loader message={loaderMessage} />}
+      {isLoading && <Loader />}
 
       {!isLoading && (
       <>
