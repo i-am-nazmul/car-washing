@@ -11,7 +11,7 @@ function ServicesSectionComponent() {
       transition={{ duration: 0.45 }}
       className="w-full max-w-6xl px-6 text-left"
     >
-      <h2 className="text-center text-3xl font-extrabold tracking-tight text-yellow-300 sm:text-6xl">Services</h2>
+      <h2 className="text-center text-3xl font-extrabold tracking-tight text-yellow-300 sm:text-6xl">SERVICES</h2>
       <p className="mt-2 text-center text-base font-bold text-white sm:text-3xl">Precision Care. Zero Compromise.</p>
 
       <div className="mt-10 grid grid-cols-1 gap-6 sm:mt-16 sm:grid-cols-3">

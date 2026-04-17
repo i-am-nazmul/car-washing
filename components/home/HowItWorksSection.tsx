@@ -12,7 +12,7 @@ function HowItWorksSectionComponent({ howRef, howVisibleStep }: HowItWorksSectio
       <div className="relative h-[105vh] overflow-hidden sm:h-[130vh]">
         <div className="sticky top-18 h-[70vh] px-6 py-10 sm:h-[78vh]">
 
-          <h2 className="text-center text-3xl font-extrabold tracking-tight text-yellow-300  sm:text-6xl">How It Works</h2>
+          <h2 className="text-center text-3xl font-extrabold tracking-tight text-yellow-300  sm:text-6xl">HOW IT WORKS</h2>
           <p className="mt-2 text-center text-base  text-white font-bold sm:text-3xl">Three steps to a permanently clean vehicle.</p>
 
           <div className="relative mx-auto mt-10 grid max-w-6xl grid-cols-1 gap-6 sm:mt-16 sm:grid-cols-3">

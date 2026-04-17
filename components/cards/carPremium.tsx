@@ -14,9 +14,9 @@ export const SHINE_CARE_FEATURES: string[] = [
   "Eco-friendly waterless wash",
   "5 days/week cleaning",
   "Enhanced interior maintenance - 1x/week",
-  "Dashboard polish (2x/month)",
-  "Tyre polish (1x/week)",
-  "Wax treatment (2x/month)",
+  "Dashboard polish - 2x/month",
+  "Tyre polish - 1x/week",
+  "Wax treatment - 2x/month",
   "Wiper fluid top-up",
   "Air pressure check and maintenance - monthly once",
 ];

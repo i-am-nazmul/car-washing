@@ -55,18 +55,18 @@ function PricingSectionComponent({ pricingPlans, isPaying, onCheckout }: Pricing
       transition={{ duration: 0.5 }}
       className="mt-24 w-full max-w-350 px-4 py-6 text-left shadow-xl sm:px-6 sm:py-8"
     >
-      <h2 className="text-center text-2xl font-extrabold tracking-tight text-amber-300 sm:text-6xl">Pricing</h2>
+      <h2 className="text-center text-2xl font-extrabold tracking-tight text-amber-300 sm:text-6xl">PRICING</h2>
       <p className="mt-2 text-center text-base font-semibold tracking-tight text-white sm:text-3xl">Premium Care. Transparent Plans.</p>
       <div className="mt-6 grid grid-cols-1 gap-10 sm:grid-cols-3 sm:gap-4">
         {[
-          { label: "Sedan", image: "/sedan.png" },
-          { label: "SUV", image: "/suv.png" },
-          { label: "Bike", image: "/bike.png" },
+          { value: "Sedan", label: "Sedan/Hatchback", image: "/sedan.png" },
+          { value: "SUV", label: "SUV/XUV", image: "/suv.png" },
+          { value: "Bike", label: "Bike", image: "/bike.png" },
         ].map((item) => (
           <motion.button
-            key={item.label}
+            key={item.value}
             type="button"
-            onClick={() => setSelectedCategory(item.label as VehicleCategory)}
+            onClick={() => setSelectedCategory(item.value as VehicleCategory)}
             initial={{ opacity: 0, y: 38, scale: 0.94 }}
             whileInView={{ opacity: 1, y: 0, scale: 1 }}
             viewport={{ once: false, amount: 0.82, margin: "0px 0px -12% 0px" }}
@@ -76,17 +76,17 @@ function PricingSectionComponent({ pricingPlans, isPaying, onCheckout }: Pricing
           >
             <div
               className={`mx-auto flex h-52 w-52 items-center justify-center rounded-full transition-colors duration-200 ${
-                selectedCategory === item.label ? "bg-white" : "bg-transparent group-hover:bg-white"
+                selectedCategory === item.value ? "bg-white" : "bg-transparent group-hover:bg-white"
               }`}
             >
               <Image src={item.image} alt={item.label} width={200} height={200} className="h-48 w-48 object-contain" />
             </div>
-            <p className={`mt-3 text-xl font-semibold tracking-tight ${selectedCategory === item.label ? "text-white" : "text-amber-200"}`}>{item.label}</p>
+            <p className={`mt-3 text-xl font-semibold tracking-tight ${selectedCategory === item.value ? "text-white" : "text-amber-200"}`}>{item.label}</p>
           </motion.button>
         ))}
       </div>
 
-      <div className="mt-16 grid w-full grid-cols-1 justify-items-center gap-6 md:grid-cols-2">
+      <div className={`mt-16 grid w-full grid-cols-1 justify-items-center gap-6 ${selectedCategory === "Bike" ? "md:grid-cols-1" : "md:grid-cols-2"}`}>
         {visiblePlans.map(({ plan, features, Card }, index) => (
           <motion.div
             key={plan.name}

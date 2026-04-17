@@ -3,7 +3,7 @@ import React from "react";
 function AboutSectionComponent() {
   return (
     <section id="about" className="mt-12 w-full max-w-6xl px-4 sm:px-6">
-      <h2 className="text-center text-4xl font-extrabold tracking-tight text-yellow-300 sm:text-6xl">About Us</h2>
+      <h2 className="text-center text-4xl font-extrabold tracking-tight text-yellow-300 sm:text-6xl">ABOUT US</h2>
       <div className="mt-3 flex w-full items-center justify-center">
         <p className="w-full text-center text-xl font-bold text-white sm:text-3xl">The New Standard of Vehicle Care.</p>
       </div>

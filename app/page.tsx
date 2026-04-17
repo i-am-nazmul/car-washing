@@ -129,10 +129,6 @@ export default function Home() {
     };
   }, []);
 
-  const handleGetStarted = React.useCallback(function(){
-    setIsLoading(true);
-    router.push('/signup');
-  }, [router, setIsLoading]);
   const handleLogin = React.useCallback(function(){
     setIsLoading(true);
     router.push('/login');
@@ -254,7 +250,6 @@ export default function Home() {
           onPricing={scrollToPricing}
           onContact={scrollToContact}
           onLogin={handleLogin}
-          onSignup={handleGetStarted}
         />
       </section>
 
@@ -267,7 +262,7 @@ export default function Home() {
       <PricingSection pricingPlans={pricingPlans} isPaying={isPaying} onCheckout={handleCheckoutClick} />
 
       <div id="contact" className="mt-10 w-full max-w-6xl text-center">
-        <h2 className="text-4xl font-extrabold tracking-tight text-yellow-300 sm:text-4xl">Contact Us</h2>
+        <h2 className="text-4xl font-extrabold tracking-tight text-yellow-300 sm:text-6xl">CONTACT US</h2>
         <p className="mt-3 text-lg font-semibold text-white sm:text-2xl">Ready for Smarter Routine?</p>
 
         <motion.section
@@ -382,7 +377,7 @@ export default function Home() {
                 className="rounded-full border border-gray-900 bg-white/95 px-6 py-2 text-lg font-semibold text-gray-900 hover:bg-white cursor-pointer"
                 onClick={contactOnWhatsApp}
               >
-                Contact Us
+                CONTACT US
               </MotionButton>
             </div>
           </div>
