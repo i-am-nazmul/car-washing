@@ -86,7 +86,7 @@ function PricingSectionComponent({ pricingPlans, isPaying, onCheckout }: Pricing
         ))}
       </div>
 
-      <div className="mt-16 flex flex-wrap justify-center gap-6">
+      <div className="mt-16 grid w-full grid-cols-1 justify-items-center gap-6 md:grid-cols-2">
         {visiblePlans.map(({ plan, features, Card }, index) => (
           <motion.div
             key={plan.name}
@@ -94,6 +94,7 @@ function PricingSectionComponent({ pricingPlans, isPaying, onCheckout }: Pricing
             whileInView={{ opacity: 1, scale: 1, y: 0 }}
             viewport={{ once: false, amount: 0.2 }}
             transition={{ duration: 0.42, delay: index * 0.08 }}
+            className="h-full w-full max-w-2xl"
           >
             <Card plan={plan} isPaying={isPaying} features={features} onCheckout={onCheckout} />
           </motion.div>

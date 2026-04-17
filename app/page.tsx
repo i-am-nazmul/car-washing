@@ -18,11 +18,18 @@ import AboutSection from "@/components/home/AboutSection";
 import ServicesSection from "@/components/home/ServicesSection";
 import PricingSection from "@/components/home/PricingSection";
 
-const WHATSAPP_PHONE = "916002175516";
+const WHATSAPP_PHONE = "917749885133";
+const SUPPORT_EMAIL = "support@shinecompany.in";
 
 export default function Home() {
   const router = useRouter();
   const { isLoading, setIsLoading } = useIsLoading();
+  const backgroundVideos = React.useMemo(() => ["/washing.mp4", "/washing2.mp4"], []);
+  const [activeBackgroundVideoIndex, setActiveBackgroundVideoIndex] = React.useState(0);
+  const backgroundVideoRef = React.useRef<HTMLVideoElement | null>(null);
+  const [contactName, setContactName] = React.useState("");
+  const [contactEmail, setContactEmail] = React.useState("");
+  const [contactMessage, setContactMessage] = React.useState("");
   const [isPaying] = React.useState<string | null>(null);
   const [activePlan, setActivePlan] = React.useState<PlanData | null>(null);
   const [isOverlayVisible, setIsOverlayVisible] = React.useState(false);
@@ -47,6 +54,20 @@ export default function Home() {
   React.useEffect(() => {
     setIsLoading(false);
   }, [setIsLoading]);
+
+  React.useEffect(() => {
+    const videoElement = backgroundVideoRef.current;
+    if (!videoElement) {
+      return;
+    }
+
+    const playPromise = videoElement.play();
+    if (playPromise) {
+      playPromise.catch(() => {
+        // Autoplay might be blocked in some browsers until user interaction.
+      });
+    }
+  }, [activeBackgroundVideoIndex]);
 
   React.useEffect(() => {
     let rafId: number | null = null;
@@ -176,12 +197,56 @@ export default function Home() {
     window.open(`https://wa.me/${WHATSAPP_PHONE}?text=${message}`, "_blank", "noopener,noreferrer");
   }, [activePlan]);
 
-  return (
-  <div className="min-h-screen w-full bg-[radial-gradient(circle_at_top,#fde68a,#fff7d6_32%,#fefbf0_68%)] p-2 flex flex-col">
-    {isLoading && <Loader />}
-    <div className="w-full h-full flex-1 flex flex-col items-center rounded-t-2xl text-center bg-black px-4 py-6 sm:px-8 sm:py-10">
+  const handleContactSubmit = React.useCallback(
+    (event: React.FormEvent<HTMLFormElement>) => {
+      event.preventDefault();
 
-      <section className="flex min-h-[100svh] w-full max-w-6xl flex-col">
+      if (!contactName.trim() || !contactEmail.trim() || !contactMessage.trim()) {
+        return;
+      }
+
+      const whatsappText = encodeURIComponent(
+        [
+          "Hello The Shine Company,",
+          "",
+          "I am interested in your services.",
+          `Name: ${contactName.trim()}`,
+          `Email: ${contactEmail.trim()}`,
+          `Message: ${contactMessage.trim()}`,
+        ].join("\n")
+      );
+
+      window.open(`https://wa.me/${WHATSAPP_PHONE}?text=${whatsappText}`, "_blank", "noopener,noreferrer");
+      setContactName("");
+      setContactEmail("");
+      setContactMessage("");
+    },
+    [contactName, contactEmail, contactMessage]
+  );
+
+  return (
+  <div className="relative min-h-screen w-full overflow-x-hidden">
+    <video
+      ref={backgroundVideoRef}
+      key={backgroundVideos[activeBackgroundVideoIndex]}
+      autoPlay
+      muted
+      playsInline
+      preload="metadata"
+      className="fixed inset-0 -z-20 h-full w-full object-cover"
+      onEnded={() => {
+        setActiveBackgroundVideoIndex((prev) => (prev + 1) % backgroundVideos.length);
+      }}
+    >
+      <source src={backgroundVideos[activeBackgroundVideoIndex]} type="video/mp4" />
+    </video>
+    <div className="fixed inset-0 -z-10 bg-[#000017]/70" />
+
+    <div className="flex min-h-screen flex-col p-2">
+    {isLoading && <Loader />}
+    <div className="w-full h-full flex-1 flex flex-col items-center rounded-t-2xl text-center bg-transparent px-4 py-6 sm:px-8 sm:py-10 ">
+
+      <section className="flex min-h-svh w-full max-w-6xl flex-col">
         <HeroSection
           onAbout={scrollToAbout}
           onHowItWorks={scrollToHow}
@@ -212,18 +277,47 @@ export default function Home() {
           transition={{ duration: 0.45 }}
           className="mx-auto mt-5 w-full max-w-4xl rounded-3xl border border-violet-300 bg-transparent px-6 py-10 text-center shadow-[0_0_18px_rgba(139,92,246,0.35)]"
         >
-          <p className="text-base text-white sm:text-2xl">Now launching exclusively for Alpine Viva residents.</p>
-          <p className="mt-1 text-base text-white sm:text-2xl">Secure your dedicated cleaning schedule before they&apos;re gone.</p>
-          <p className="mt-1 text-base text-white sm:text-2xl">Click on WhatsApp Button for instant booking and confirmation.</p>
+          <p className="text-base text-white sm:text-2xl">Now launching exclusively for Gated Societies.</p>
+          <p className="mt-1 text-base text-white sm:text-2xl">Submit your query.</p>
 
-          <div className="mt-6">
-            <MotionButton
-              className="hover-fill-ltr cursor-pointer rounded-full border border-emerald-900 bg-emerald-800 px-6 py-3 text-lg font-semibold text-white hover:bg-emerald-900"
-              onClick={openWhatsApp}
-            >
-              WhatsApp
-            </MotionButton>
+          <div className="mt-4 flex flex-col items-center gap-1 text-sm text-violet-100 sm:text-lg">
+            <p>Phone: <span className="font-bold text-white">+91 77498 85133</span></p>
+            <p>Email: <span className="font-bold text-white">{SUPPORT_EMAIL}</span></p>
           </div>
+
+          <form onSubmit={handleContactSubmit} className="mx-auto mt-6 grid w-full max-w-2xl grid-cols-1 gap-4 text-left">
+            <input
+              type="text"
+              value={contactName}
+              onChange={(event) => setContactName(event.target.value)}
+              placeholder="Your Name"
+              required
+              className="w-full rounded-xl border border-violet-300 bg-black/35 px-4 py-3 text-base text-white placeholder:text-violet-200/80 outline-none focus:border-violet-200"
+            />
+            <input
+              type="email"
+              value={contactEmail}
+              onChange={(event) => setContactEmail(event.target.value)}
+              placeholder="you@example.com"
+              required
+              className="w-full rounded-xl border border-violet-300 bg-black/35 px-4 py-3 text-base text-white placeholder:text-violet-200/80 outline-none focus:border-violet-200"
+            />
+            <textarea
+              value={contactMessage}
+              onChange={(event) => setContactMessage(event.target.value)}
+              placeholder="Write your message"
+              required
+              rows={4}
+              className="w-full resize-y rounded-xl border border-violet-300 bg-black/35 px-4 py-3 text-base text-white placeholder:text-violet-200/80 outline-none focus:border-violet-200"
+            />
+
+            <button
+              type="submit"
+              className="hover-fill-ltr cursor-pointer rounded-full border border-emerald-900 bg-emerald-800 px-6 py-3 text-lg font-semibold text-white hover:bg-emerald-900"
+            >
+              Submit
+            </button>
+          </form>
 
           <p className="mt-6 text-base font-semibold text-white sm:text-2xl">Professional. Verified. On time. Every time.</p>
           <p className="text-base font-medium text-white sm:text-2xl">Driven by Shine. Delivered with Care.</p>
@@ -296,7 +390,7 @@ export default function Home() {
       </div>
     )}
     <SiteFooter />
-
+    </div>
   </div>
 );
 

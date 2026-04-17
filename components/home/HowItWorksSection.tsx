@@ -9,7 +9,7 @@ type HowItWorksSectionProps = {
 function HowItWorksSectionComponent({ howRef, howVisibleStep }: HowItWorksSectionProps) {
   return (
     <section ref={howRef} id="how-it-works" className="mt-10 w-full max-w-6xl">
-      <div className="relative h-[105vh] overflow-hidden sm:h-[190vh]">
+      <div className="relative h-[105vh] overflow-hidden sm:h-[130vh]">
         <div className="sticky top-18 h-[70vh] px-6 py-10 sm:h-[78vh]">
 
           <h2 className="text-center text-3xl font-extrabold tracking-tight text-yellow-300  sm:text-6xl">How It Works</h2>

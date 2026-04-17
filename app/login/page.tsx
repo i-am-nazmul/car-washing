@@ -14,6 +14,9 @@ import { signIn } from "next-auth/react";
 
 export default function LoginPage(){
       const router = useRouter();
+      const backgroundVideos = React.useMemo(() => ["/washing.mp4", "/washing2.mp4"], []);
+      const [activeBackgroundVideoIndex, setActiveBackgroundVideoIndex] = React.useState(0);
+      const backgroundVideoRef = React.useRef<HTMLVideoElement | null>(null);
       const [email,setEmail]=React.useState('');
       const [password,setPassword]=React.useState('');
       const {isLoading,setIsLoading}=useIsLoading();
@@ -21,6 +24,20 @@ export default function LoginPage(){
       React.useEffect(() => {
             setIsLoading(false);
       }, [setIsLoading]);
+
+      React.useEffect(() => {
+            const videoElement = backgroundVideoRef.current;
+            if (!videoElement) {
+                  return;
+            }
+
+            const playPromise = videoElement.play();
+            if (playPromise) {
+                  playPromise.catch(() => {
+                        // Autoplay might be blocked until user interaction.
+                  });
+            }
+      }, [activeBackgroundVideoIndex]);
 
       const getSafeNextPath = () => {
             if (typeof window === "undefined") {
@@ -82,10 +99,27 @@ export default function LoginPage(){
 
 
       return(
-            <div className="min-h-screen w-full bg-[radial-gradient(circle_at_top,#fde68a,#fff7d6_32%,#fefbf0_68%)] p-2 flex flex-col">
+            <div className="relative min-h-screen w-full overflow-x-hidden">
+                  <video
+                        ref={backgroundVideoRef}
+                        key={backgroundVideos[activeBackgroundVideoIndex]}
+                        autoPlay
+                        muted
+                        playsInline
+                        preload="metadata"
+                        className="fixed inset-0 -z-20 h-full w-full object-cover"
+                        onEnded={() => {
+                              setActiveBackgroundVideoIndex((prev) => (prev + 1) % backgroundVideos.length);
+                        }}
+                  >
+                        <source src={backgroundVideos[activeBackgroundVideoIndex]} type="video/mp4" />
+                  </video>
+                  <div className="fixed inset-0 -z-10 bg-[#000017]/70" />
+
+                  <div className="flex min-h-screen flex-col p-2">
                   {isLoading && <Loader />}
 
-                  <div className="w-full h-full flex-1 flex flex-col rounded-t-2xl bg-black px-4 py-6 sm:px-8 sm:py-10">
+                  <div className="w-full h-full flex-1 flex flex-col rounded-t-2xl bg-transparent px-4 py-6 sm:px-8 sm:py-10">
 
 
                         {/* Navbar */}
@@ -188,6 +222,7 @@ export default function LoginPage(){
                   </div>
 
                   <SiteFooter />
+                  </div>
             </div>
       )
 
