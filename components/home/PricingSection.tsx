@@ -19,6 +19,11 @@ type PricingSectionProps = {
 
 function PricingSectionComponent({ pricingPlans, isPaying, onCheckout }: PricingSectionProps) {
   const [selectedCategory, setSelectedCategory] = React.useState<VehicleCategory>("Sedan");
+  const [mobileCardIndex, setMobileCardIndex] = React.useState(0);
+  const touchStartXRef = React.useRef<number | null>(null);
+  const sectionRef = React.useRef<HTMLElement | null>(null);
+  const hasAutoSwipedRef = React.useRef(false);
+  const [hasEnteredPricing, setHasEnteredPricing] = React.useState(false);
 
   const visiblePlans = React.useMemo(() => {
     if (selectedCategory === "Bike") {
@@ -46,8 +51,106 @@ function PricingSectionComponent({ pricingPlans, isPaying, onCheckout }: Pricing
     });
   }, [pricingPlans, selectedCategory]);
 
+  const sharedCarOneTimePrice = selectedCategory === "SUV" ? "₹649" : "₹549";
+
+  React.useEffect(() => {
+    if (visiblePlans.length <= 1) {
+      setMobileCardIndex(0);
+      return;
+    }
+
+    setMobileCardIndex((current) => Math.min(current, visiblePlans.length - 1));
+  }, [visiblePlans]);
+
+  React.useEffect(() => {
+    const section = sectionRef.current;
+    if (!section || hasEnteredPricing) {
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) {
+          setHasEnteredPricing(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.35 }
+    );
+
+    observer.observe(section);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [hasEnteredPricing]);
+
+  React.useEffect(() => {
+    if (hasAutoSwipedRef.current || !hasEnteredPricing) {
+      return;
+    }
+
+    if (typeof window === "undefined" || window.innerWidth >= 768) {
+      return;
+    }
+
+    if (selectedCategory !== "Sedan" || visiblePlans.length < 2 || mobileCardIndex !== 0) {
+      return;
+    }
+
+    const timerId = window.setTimeout(() => {
+      hasAutoSwipedRef.current = true;
+      setMobileCardIndex(1);
+    }, 3000);
+
+    return () => {
+      window.clearTimeout(timerId);
+    };
+  }, [hasEnteredPricing, selectedCategory, visiblePlans.length, mobileCardIndex]);
+
+  const handleCategorySelect = React.useCallback((category: VehicleCategory) => {
+    setSelectedCategory(category);
+
+    if (category === "SUV") {
+      setMobileCardIndex(1);
+      return;
+    }
+
+    setMobileCardIndex(0);
+  }, []);
+
+  const handleTouchStart = React.useCallback((event: React.TouchEvent<HTMLDivElement>) => {
+    touchStartXRef.current = event.touches[0]?.clientX ?? null;
+  }, []);
+
+  const handleTouchEnd = React.useCallback(
+    (event: React.TouchEvent<HTMLDivElement>) => {
+      if (touchStartXRef.current === null || visiblePlans.length <= 1) {
+        return;
+      }
+
+      const endX = event.changedTouches[0]?.clientX ?? touchStartXRef.current;
+      const deltaX = endX - touchStartXRef.current;
+      touchStartXRef.current = null;
+
+      const swipeThreshold = 50;
+      if (Math.abs(deltaX) < swipeThreshold) {
+        return;
+      }
+
+      if (deltaX < 0) {
+        setMobileCardIndex((current) => Math.min(current + 1, visiblePlans.length - 1));
+        return;
+      }
+
+      setMobileCardIndex((current) => Math.max(current - 1, 0));
+    },
+    [visiblePlans.length]
+  );
+
   return (
     <motion.section
+      ref={sectionRef}
       id="pricing"
       initial={{ opacity: 0, y: 28 }}
       whileInView={{ opacity: 1, y: 0 }}
@@ -66,7 +169,7 @@ function PricingSectionComponent({ pricingPlans, isPaying, onCheckout }: Pricing
           <motion.button
             key={item.value}
             type="button"
-            onClick={() => setSelectedCategory(item.value as VehicleCategory)}
+            onClick={() => handleCategorySelect(item.value as VehicleCategory)}
             initial={{ opacity: 0, y: 38, scale: 0.94 }}
             whileInView={{ opacity: 1, y: 0, scale: 1 }}
             viewport={{ once: false, amount: 0.82, margin: "0px 0px -12% 0px" }}
@@ -86,7 +189,43 @@ function PricingSectionComponent({ pricingPlans, isPaying, onCheckout }: Pricing
         ))}
       </div>
 
-      <div className={`mt-16 grid w-full grid-cols-1 justify-items-center gap-6 ${selectedCategory === "Bike" ? "md:grid-cols-1" : "md:grid-cols-2"}`}>
+      <div className="mt-16 w-full md:hidden" onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
+        <div className="overflow-hidden">
+          <div
+            className="flex transition-transform duration-300 ease-out"
+            style={{ transform: `translateX(-${mobileCardIndex * 100}%)` }}
+          >
+            {visiblePlans.map(({ plan, features, Card }) => (
+              <div key={`mobile-${plan.name}`} className="relative w-full shrink-0 px-1 pb-14">
+                <Card plan={plan} isPaying={isPaying} features={features} onCheckout={onCheckout} />
+
+                {selectedCategory !== "Bike" && (
+                  <p className="absolute -bottom-2 left-1/2 z-30 -translate-x-1/2 whitespace-nowrap rounded-full border border-violet-300 bg-[#020826]/90 px-8 py-3 text-5xl font-extrabold tracking-tight text-white shadow-[0_0_18px_rgba(139,92,246,0.35)]">
+                    {sharedCarOneTimePrice}
+                    <span className="ml-1 text-2xl font-medium text-white/85">/One Time</span>
+                  </p>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {visiblePlans.length > 1 && (
+          <div className="mt-4 flex items-center justify-center gap-2">
+            {visiblePlans.map((entry, index) => (
+              <button
+                key={`mobile-indicator-${entry.plan.name}`}
+                type="button"
+                onClick={() => setMobileCardIndex(index)}
+                aria-label={`Show ${entry.plan.name} plan`}
+                className={`h-2.5 rounded-full transition-all ${mobileCardIndex === index ? "w-7 bg-white" : "w-2.5 bg-white/45"}`}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+
+      <div className={`relative mt-16 hidden w-full grid-cols-1 justify-items-center gap-6 md:grid ${selectedCategory === "Bike" ? "md:grid-cols-1" : "md:grid-cols-2"}`}>
         {visiblePlans.map(({ plan, features, Card }, index) => (
           <motion.div
             key={plan.name}
@@ -99,6 +238,13 @@ function PricingSectionComponent({ pricingPlans, isPaying, onCheckout }: Pricing
             <Card plan={plan} isPaying={isPaying} features={features} onCheckout={onCheckout} />
           </motion.div>
         ))}
+
+        {selectedCategory !== "Bike" && visiblePlans.length === 2 && (
+          <p className="absolute -bottom-11 left-1/2 z-30 -translate-x-1/2 whitespace-nowrap rounded-full border border-violet-300 bg-[#020826]/90 px-8 py-3 text-5xl font-extrabold tracking-tight text-white shadow-[0_0_18px_rgba(139,92,246,0.35)]">
+            {sharedCarOneTimePrice}
+            <span className="ml-1 text-2xl font-medium text-white/85">/One Time</span>
+          </p>
+        )}
       </div>
     </motion.section>
   );

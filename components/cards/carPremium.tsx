@@ -18,13 +18,17 @@ export const SHINE_CARE_FEATURES: string[] = [
   "Tyre polish - 1x/week",
   "Wax treatment - 2x/month",
   "Wiper fluid top-up",
-  "Air pressure check and maintenance - monthly once",
+  "Air pressure check and maintenance - Monthly once",
 ];
 
 export default function CarPremiumCard({ plan, features }: PlanCardProps) {
   return (
-    <div className="card-trace card-pop relative h-full overflow-hidden rounded-4xl border border-violet-300 bg-transparent shadow-[0_0_18px_rgba(139,92,246,0.35)]">
-      <div className="relative z-10 flex h-full min-h-72 flex-col px-6 py-7 sm:px-8">
+    <div className="card-trace card-pop relative h-full overflow-visible rounded-4xl border border-violet-300 bg-transparent shadow-[0_0_18px_rgba(139,92,246,0.35)]">
+      <span className="absolute right-4 top-4 z-30 rounded-full border border-violet-200 bg-yellow-300 px-3 py-1 text-sm font-extrabold tracking-wide text-black">
+        Recommended
+      </span>
+
+      <div className="relative z-10 flex h-full min-h-72 flex-col px-6 py-7 pb-20 sm:px-8">
         {plan.badge && (
           <span className="w-fit rounded-full border border-white/60 bg-transparent px-3 py-1 text-sm font-semibold tracking-tight text-white">
             {plan.badge}
@@ -34,7 +38,7 @@ export default function CarPremiumCard({ plan, features }: PlanCardProps) {
         {plan.description && <p className="mt-2 text-lg font-bold text-white">{plan.description}</p>}
         <p className="mt-3 whitespace-nowrap text-5xl font-extrabold tracking-tight text-white">
           {plan.displayPrice}
-          <span className="ml-1 text-2xl font-medium text-white/85">/month</span>
+          <span className="ml-1 text-2xl font-medium text-white/85">/Month</span>
         </p>
 
         <ul className="mt-7 space-y-3">
@@ -45,6 +49,7 @@ export default function CarPremiumCard({ plan, features }: PlanCardProps) {
             </li>
           ))}
         </ul>
+
       </div>
     </div>
   );

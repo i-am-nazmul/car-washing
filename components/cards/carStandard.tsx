@@ -13,16 +13,17 @@ export const CLEAN_CARE_PLAN: PlanData = {
 export const CLEAN_CARE_FEATURES: string[] = [
   "Eco-friendly waterless wash",
   "5 days/week cleaning",
-  "Interior touch-up cleaning - 2x/month",
-  "Dashboard polish - 1x/month",
-  "Tyre cleaning (dry wipe)",
-  "Air pressure check and maintenance - monthly once",
+  "Enhanced interior maintenance - 2x/month",
+  "Dashboard polish - 2x/month",
+  "Tyre polish - 2x/month",
+  "Wax treatment - 1x/month",
+  "Air pressure check and maintenance - Monthly once",
 ];
 
 export default function CarStandardCard({ plan, features }: PlanCardProps) {
   return (
-    <div className="card-trace card-pop relative h-full overflow-hidden rounded-4xl border border-violet-300 bg-transparent shadow-[0_0_18px_rgba(139,92,246,0.35)]">
-      <div className="relative z-10 flex h-full min-h-72 flex-col px-6 py-7 sm:px-8">
+    <div className="card-trace card-pop relative h-full overflow-visible rounded-4xl border border-violet-300 bg-transparent shadow-[0_0_18px_rgba(139,92,246,0.35)]">
+      <div className="relative z-10 flex h-full min-h-72 flex-col px-6 py-7 pb-20 sm:px-8">
         {plan.badge && (
           <span className="w-fit rounded-full border border-white/60 bg-transparent px-3 py-1 text-sm font-semibold tracking-tight text-white">
             {plan.badge}
@@ -32,7 +33,7 @@ export default function CarStandardCard({ plan, features }: PlanCardProps) {
         {plan.description && <p className="mt-2 text-lg font-bold text-white">{plan.description}</p>}
         <p className="mt-3 whitespace-nowrap text-5xl font-extrabold tracking-tight text-white">
           {plan.displayPrice}
-          <span className="ml-1 text-2xl font-medium text-white/85">/month</span>
+          <span className="ml-1 text-2xl font-medium text-white/85">/Month</span>
         </p>
 
         <ul className="mt-7 space-y-3">
@@ -43,6 +44,7 @@ export default function CarStandardCard({ plan, features }: PlanCardProps) {
             </li>
           ))}
         </ul>
+
       </div>
     </div>
   );

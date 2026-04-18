@@ -19,8 +19,8 @@ function HowItWorksSectionComponent({ howRef, howVisibleStep }: HowItWorksSectio
 
   return (
     <section ref={howRef} id="how-it-works" className="mt-10 w-full max-w-6xl">
-      <div className="relative h-auto overflow-visible sm:h-[130vh] sm:overflow-hidden">
-        <div className="px-4 py-8 sm:sticky sm:top-18 sm:h-[78vh] sm:px-6 sm:py-10">
+      <div className="relative h-auto overflow-visible lg:h-[100vh] lg:overflow-hidden">
+        <div className="px-4 py-8 lg:sticky lg:top-18 lg:h-[78vh] lg:px-6 lg:py-10">
 
           <h2 className="text-center text-3xl font-extrabold tracking-tight text-yellow-300 sm:text-6xl">HOW IT WORKS</h2>
           <p className="mt-2 text-center text-sm font-bold text-white sm:text-3xl">Three steps to a permanently clean vehicle.</p>

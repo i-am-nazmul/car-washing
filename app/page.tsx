@@ -18,7 +18,8 @@ import AboutSection from "@/components/home/AboutSection";
 import ServicesSection from "@/components/home/ServicesSection";
 import PricingSection from "@/components/home/PricingSection";
 
-const WHATSAPP_PHONE = "917749885133";
+const WHATSAPP_PHONE = "6366247239";
+const WHATSAPP_WA_PHONE = `91${WHATSAPP_PHONE}`;
 const SUPPORT_EMAIL = "support@shinecompany.in";
 
 export default function Home() {
@@ -136,7 +137,7 @@ export default function Home() {
 
   const openWhatsApp = React.useCallback(() => {
     const message = encodeURIComponent("Hey, I am interested in your services.");
-    window.open(`https://wa.me/${WHATSAPP_PHONE}?text=${message}`, "_blank", "noopener,noreferrer");
+    window.open(`https://wa.me/${WHATSAPP_WA_PHONE}?text=${message}`, "_blank", "noopener,noreferrer");
   }, []);
 
   const scrollToPricing = React.useCallback(() => {
@@ -193,7 +194,7 @@ export default function Home() {
     }
 
     const message = encodeURIComponent(`Hey, I want the ${activePlan.name} service.`);
-    window.open(`https://wa.me/${WHATSAPP_PHONE}?text=${message}`, "_blank", "noopener,noreferrer");
+    window.open(`https://wa.me/${WHATSAPP_WA_PHONE}?text=${message}`, "_blank", "noopener,noreferrer");
   }, [activePlan]);
 
   const handleContactSubmit = React.useCallback(
@@ -215,7 +216,7 @@ export default function Home() {
         ].join("\n")
       );
 
-      window.open(`https://wa.me/${WHATSAPP_PHONE}?text=${whatsappText}`, "_blank", "noopener,noreferrer");
+      window.open(`https://wa.me/${WHATSAPP_WA_PHONE}?text=${whatsappText}`, "_blank", "noopener,noreferrer");
       setContactName("");
       setContactEmail("");
       setContactMessage("");
@@ -224,7 +225,7 @@ export default function Home() {
   );
 
   return (
-  <div className="relative min-h-screen w-full overflow-x-hidden">
+  <div className="relative min-h-dvh w-full overflow-x-hidden">
     <video
       ref={backgroundVideoRef}
       key={backgroundVideos[activeBackgroundVideoIndex]}
@@ -241,9 +242,9 @@ export default function Home() {
     </video>
     <div className="fixed inset-0 -z-10 bg-[#000017]/70" />
 
-    <div className="flex min-h-screen flex-col p-2">
+    <div className="flex min-h-dvh flex-col p-0 sm:p-2">
     {isLoading && <Loader />}
-    <div className="w-full h-full flex-1 flex flex-col items-center rounded-t-2xl text-center bg-transparent px-4 py-6 sm:px-8 sm:py-10 ">
+    <div className="h-full w-full flex-1 flex flex-col items-center rounded-none bg-transparent px-4 py-6 text-center sm:rounded-t-2xl sm:px-8 sm:py-10">
 
       <section className="flex min-h-svh w-full max-w-6xl flex-col">
         <HeroSection
@@ -264,7 +265,11 @@ export default function Home() {
 
       <PricingSection pricingPlans={pricingPlans} isPaying={isPaying} onCheckout={handleCheckoutClick} />
 
-      <div id="contact" className="mt-10 w-full max-w-6xl text-center">
+      <p className="mt-8 px-4 text-base text-white sm:text-2xl">
+        ** If you have multiple vehicles and would like to avail special discounts, please feel free to reach out to us.
+      </p>
+
+      <div id="contact" className="mt-25 w-full max-w-6xl text-center">
         <h2 className="text-4xl font-extrabold tracking-tight text-yellow-300 sm:text-6xl">CONTACT US</h2>
         <p className="mt-3 text-lg font-semibold text-white sm:text-2xl">Ready for Smarter Routine?</p>
 
@@ -279,7 +284,7 @@ export default function Home() {
           <p className="mt-1 text-base text-white sm:text-2xl">Submit your query.</p>
 
           <div className="mt-4 flex flex-col items-center gap-1 text-sm text-violet-100 sm:text-lg">
-            <p>Phone: <span className="font-bold text-white">+91 77498 85133</span></p>
+            <p>Phone: <span className="font-bold text-white">+91 63662 47239</span></p>
             <p>Email: <span className="font-bold text-white">{SUPPORT_EMAIL}</span></p>
           </div>
 
