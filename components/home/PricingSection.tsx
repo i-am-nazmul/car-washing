@@ -57,7 +57,7 @@ function PricingSectionComponent({ pricingPlans, isPaying, onCheckout }: Pricing
     >
       <h2 className="text-center text-2xl font-extrabold tracking-tight text-amber-300 sm:text-6xl">PRICING</h2>
       <p className="mt-2 text-center text-base font-semibold tracking-tight text-white sm:text-3xl">Premium Care. Transparent Plans.</p>
-      <div className="mt-6 grid grid-cols-1 gap-10 sm:grid-cols-3 sm:gap-4">
+      <div className="mt-6 grid grid-cols-3 gap-2 sm:gap-4">
         {[
           { value: "Sedan", label: "Sedan/Hatchback", image: "/sedan.png" },
           { value: "SUV", label: "SUV/XUV", image: "/suv.png" },
@@ -72,16 +72,16 @@ function PricingSectionComponent({ pricingPlans, isPaying, onCheckout }: Pricing
             viewport={{ once: false, amount: 0.82, margin: "0px 0px -12% 0px" }}
             transition={{ duration: 0.42, ease: "easeOut" }}
             whileHover={{ y: -4, scale: 1.02 }}
-            className="group flex min-h-[24vh] cursor-pointer flex-col items-center justify-center text-center sm:min-h-0"
+            className="group flex cursor-pointer flex-col items-center justify-center text-center"
           >
             <div
-              className={`mx-auto flex h-52 w-52 items-center justify-center rounded-full transition-colors duration-200 ${
+              className={`mx-auto flex h-24 w-24 items-center justify-center rounded-full transition-colors duration-200 sm:h-52 sm:w-52 ${
                 selectedCategory === item.value ? "bg-white" : "bg-transparent group-hover:bg-white"
               }`}
             >
-              <Image src={item.image} alt={item.label} width={200} height={200} className="h-48 w-48 object-contain" />
+              <Image src={item.image} alt={item.label} width={200} height={200} className="h-20 w-20 object-contain sm:h-48 sm:w-48" />
             </div>
-            <p className={`mt-3 text-xl font-semibold tracking-tight ${selectedCategory === item.value ? "text-white" : "text-amber-200"}`}>{item.label}</p>
+            <p className={`mt-2 text-xs font-semibold tracking-tight sm:mt-3 sm:text-xl ${selectedCategory === item.value ? "text-white" : "text-amber-200"}`}>{item.label}</p>
           </motion.button>
         ))}
       </div>

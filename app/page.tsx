@@ -147,7 +147,7 @@ export default function Home() {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
   }, []);
 
-  const SECTION_NAV_OFFSET = 74;
+  const SECTION_NAV_OFFSET = 60;
 
   const scrollToAbout = React.useCallback(() => scrollToSection("about"), [scrollToSection]);
   const scrollToHow = React.useCallback(() => {
@@ -156,7 +156,10 @@ export default function Home() {
       return;
     }
 
-    const targetTop = window.scrollY + section.getBoundingClientRect().top + SECTION_NAV_OFFSET;
+    const isMobile = window.innerWidth < 640;
+    const isLaptop = window.innerWidth >= 1024;
+    const offset = isMobile ? 16 : isLaptop ? -40 : SECTION_NAV_OFFSET;
+    const targetTop = window.scrollY + section.getBoundingClientRect().top - offset;
     window.scrollTo({ top: targetTop, behavior: "smooth" });
   }, [SECTION_NAV_OFFSET]);
   const scrollToServices = React.useCallback(() => {
@@ -165,7 +168,7 @@ export default function Home() {
       return;
     }
 
-    const targetTop = window.scrollY + section.getBoundingClientRect().top + SECTION_NAV_OFFSET;
+    const targetTop = window.scrollY + section.getBoundingClientRect().top - SECTION_NAV_OFFSET;
     window.scrollTo({ top: targetTop, behavior: "smooth" });
   }, [SECTION_NAV_OFFSET]);
   const scrollToContact = React.useCallback(() => scrollToSection("contact"), [scrollToSection]);
