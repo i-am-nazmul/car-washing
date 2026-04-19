@@ -110,12 +110,6 @@ function PricingSectionComponent({ pricingPlans, isPaying, onCheckout }: Pricing
 
   const handleCategorySelect = React.useCallback((category: VehicleCategory) => {
     setSelectedCategory(category);
-
-    if (category === "SUV") {
-      setMobileCardIndex(1);
-      return;
-    }
-
     setMobileCardIndex(0);
   }, []);
 
@@ -189,22 +183,24 @@ function PricingSectionComponent({ pricingPlans, isPaying, onCheckout }: Pricing
         ))}
       </div>
 
-      <div className="mt-16 w-full md:hidden" onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
-        <div className="overflow-hidden">
+      <div className="mt-24 w-full md:hidden" onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
+        <div className="overflow-x-hidden pt-2">
           <div
             className="flex transition-transform duration-300 ease-out"
             style={{ transform: `translateX(-${mobileCardIndex * 100}%)` }}
           >
             {visiblePlans.map(({ plan, features, Card }) => (
-              <div key={`mobile-${plan.name}`} className="relative w-full shrink-0 px-1 pb-14">
-                <Card plan={plan} isPaying={isPaying} features={features} onCheckout={onCheckout} />
+              <div key={`mobile-${plan.name}`} className="w-full shrink-0 px-1 pb-16 pt-1">
+                <div className="relative">
+                  <Card plan={plan} isPaying={isPaying} features={features} onCheckout={onCheckout} />
 
-                {selectedCategory !== "Bike" && (
-                  <p className="absolute -bottom-2 left-1/2 z-30 -translate-x-1/2 whitespace-nowrap rounded-full border border-violet-300 bg-[#020826]/90 px-8 py-3 text-5xl font-extrabold tracking-tight text-white shadow-[0_0_18px_rgba(139,92,246,0.35)]">
-                    {sharedCarOneTimePrice}
-                    <span className="ml-1 text-2xl font-medium text-white/85">/One Time</span>
-                  </p>
-                )}
+                  {selectedCategory !== "Bike" && (
+                    <p className="absolute left-1/2 top-full z-30 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap rounded-full border border-violet-300 bg-[#020826]/90 px-8 py-3 text-5xl font-extrabold tracking-tight text-white shadow-[0_0_18px_rgba(139,92,246,0.35)]">
+                      {sharedCarOneTimePrice}
+                      <span className="ml-1 text-2xl font-medium text-white/85">/One Time</span>
+                    </p>
+                  )}
+                </div>
               </div>
             ))}
           </div>

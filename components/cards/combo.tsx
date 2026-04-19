@@ -22,7 +22,7 @@ export const SMART_COMBO_FEATURES: string[] = [
 
 export default function ComboCard({ plan, features }: PlanCardProps) {
   return (
-    <div className="card-trace card-pop relative h-full overflow-hidden rounded-4xl border border-violet-300 bg-transparent shadow-[0_0_18px_rgba(139,92,246,0.35)]">
+    <div className="card-trace card-pop relative h-full overflow-hidden rounded-4xl border border-violet-200/90 ring-1 ring-violet-300/70 bg-transparent shadow-[0_0_18px_rgba(139,92,246,0.35)]">
       <div className="relative z-10 flex h-full min-h-72 flex-col px-6 py-7 sm:px-8">
         {plan.badge && (
           <span className="w-fit rounded-full border border-white/60 bg-transparent px-3 py-1 text-sm font-semibold tracking-tight text-white">

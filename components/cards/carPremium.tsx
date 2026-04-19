@@ -23,7 +23,7 @@ export const SHINE_CARE_FEATURES: string[] = [
 
 export default function CarPremiumCard({ plan, features }: PlanCardProps) {
   return (
-    <div className="card-trace card-pop relative h-full overflow-visible rounded-4xl border border-violet-300 bg-transparent shadow-[0_0_18px_rgba(139,92,246,0.35)]">
+    <div className="card-trace card-pop relative h-full overflow-visible rounded-4xl border border-violet-200/90 ring-1 ring-violet-300/70 bg-transparent shadow-[0_0_18px_rgba(139,92,246,0.35)]">
       <span className="absolute right-4 top-4 z-30 rounded-full border border-violet-200 bg-yellow-300 px-3 py-1 text-sm font-extrabold tracking-wide text-black">
         Recommended
       </span>

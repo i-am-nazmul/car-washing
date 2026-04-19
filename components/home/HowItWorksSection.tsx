@@ -18,7 +18,7 @@ function HowItWorksSectionComponent({ howRef, howVisibleStep }: HowItWorksSectio
   }, []);
 
   return (
-    <section ref={howRef} id="how-it-works" className="mt-10 w-full max-w-6xl">
+    <section ref={howRef} id="how-it-works" className="mt-10 mb-12 w-full max-w-6xl sm:mb-24 lg:mb-40">
       <div className="relative h-auto overflow-visible lg:h-[100vh] lg:overflow-hidden">
         <div className="px-4 py-8 lg:sticky lg:top-18 lg:h-[78vh] lg:px-6 lg:py-10">
 
