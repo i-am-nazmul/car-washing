@@ -3,8 +3,8 @@ import { PlanCardProps, PlanData } from "@/components/cards/types";
 export const SHINE_CARE_PLAN: PlanData = {
   name: "SHINE CARE",
   description: "Complete care for your car",
-  amountInPaise: 119900,
-  displayPrice: "₹1199",
+  amountInPaise: 99900,
+  displayPrice: "₹999",
   gradient: "from-cyan-100 via-sky-200 to-teal-200",
   bubbleOne: "bg-cyan-300/40",
   bubbleTwo: "bg-sky-200/60",

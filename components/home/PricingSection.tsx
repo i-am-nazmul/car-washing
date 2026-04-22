@@ -4,6 +4,89 @@ import * as motion from "motion/react-client";
 import { PlanData, PlanCardProps } from "@/components/cards/types";
 
 type VehicleCategory = "Sedan" | "SUV" | "Bike";
+type CarModelBucket = "Sedan" | "Hatchback" | "Compact SUV" | "SUV/XUV";
+
+type CarModelOption = {
+  model: string;
+  bucket: CarModelBucket;
+  pricingCategory: Exclude<VehicleCategory, "Bike">;
+};
+
+const CAR_COMPANY_MODELS: Record<string, CarModelOption[]> = {
+  "Maruti Suzuki": [
+    { model: "Swift", bucket: "Hatchback", pricingCategory: "Sedan" },
+    { model: "Baleno", bucket: "Hatchback", pricingCategory: "Sedan" },
+    { model: "Dzire", bucket: "Sedan", pricingCategory: "Sedan" },
+    { model: "Ciaz", bucket: "Sedan", pricingCategory: "Sedan" },
+    { model: "Brezza", bucket: "Compact SUV", pricingCategory: "Sedan" },
+    { model: "Fronx", bucket: "Compact SUV", pricingCategory: "Sedan" },
+    { model: "Grand Vitara", bucket: "SUV/XUV", pricingCategory: "SUV" },
+  ],
+  Hyundai: [
+    { model: "Grand i10 Nios", bucket: "Hatchback", pricingCategory: "Sedan" },
+    { model: "i20", bucket: "Hatchback", pricingCategory: "Sedan" },
+    { model: "Verna", bucket: "Sedan", pricingCategory: "Sedan" },
+    { model: "Aura", bucket: "Sedan", pricingCategory: "Sedan" },
+    { model: "Exter", bucket: "Compact SUV", pricingCategory: "Sedan" },
+    { model: "Venue", bucket: "Compact SUV", pricingCategory: "Sedan" },
+    { model: "Creta", bucket: "SUV/XUV", pricingCategory: "SUV" },
+    { model: "Alcazar", bucket: "SUV/XUV", pricingCategory: "SUV" },
+  ],
+  Tata: [
+    { model: "Tiago", bucket: "Hatchback", pricingCategory: "Sedan" },
+    { model: "Altroz", bucket: "Hatchback", pricingCategory: "Sedan" },
+    { model: "Tigor", bucket: "Sedan", pricingCategory: "Sedan" },
+    { model: "Punch", bucket: "Compact SUV", pricingCategory: "Sedan" },
+    { model: "Nexon", bucket: "Compact SUV", pricingCategory: "Sedan" },
+    { model: "Harrier", bucket: "SUV/XUV", pricingCategory: "SUV" },
+    { model: "Safari", bucket: "SUV/XUV", pricingCategory: "SUV" },
+  ],
+  Mahindra: [
+    { model: "XUV 3XO", bucket: "Compact SUV", pricingCategory: "Sedan" },
+    { model: "Bolero Neo", bucket: "Compact SUV", pricingCategory: "Sedan" },
+    { model: "Scorpio N", bucket: "SUV/XUV", pricingCategory: "SUV" },
+    { model: "XUV700", bucket: "SUV/XUV", pricingCategory: "SUV" },
+    { model: "Thar", bucket: "SUV/XUV", pricingCategory: "SUV" },
+  ],
+  Kia: [
+    { model: "Sonet", bucket: "Compact SUV", pricingCategory: "Sedan" },
+    { model: "Carens", bucket: "Compact SUV", pricingCategory: "Sedan" },
+    { model: "Seltos", bucket: "SUV/XUV", pricingCategory: "SUV" },
+  ],
+  Honda: [
+    { model: "Amaze", bucket: "Sedan", pricingCategory: "Sedan" },
+    { model: "City", bucket: "Sedan", pricingCategory: "Sedan" },
+    { model: "Elevate", bucket: "SUV/XUV", pricingCategory: "SUV" },
+  ],
+  Toyota: [
+    { model: "Glanza", bucket: "Hatchback", pricingCategory: "Sedan" },
+    { model: "Urban Cruiser Taisor", bucket: "Compact SUV", pricingCategory: "Sedan" },
+    { model: "Innova Hycross", bucket: "SUV/XUV", pricingCategory: "SUV" },
+    { model: "Fortuner", bucket: "SUV/XUV", pricingCategory: "SUV" },
+  ],
+  Skoda: [
+    { model: "Slavia", bucket: "Sedan", pricingCategory: "Sedan" },
+    { model: "Kushaq", bucket: "SUV/XUV", pricingCategory: "SUV" },
+  ],
+  Volkswagen: [
+    { model: "Virtus", bucket: "Sedan", pricingCategory: "Sedan" },
+    { model: "Taigun", bucket: "SUV/XUV", pricingCategory: "SUV" },
+  ],
+  MG: [
+    { model: "Comet EV", bucket: "Hatchback", pricingCategory: "Sedan" },
+    { model: "Astor", bucket: "SUV/XUV", pricingCategory: "SUV" },
+    { model: "Hector", bucket: "SUV/XUV", pricingCategory: "SUV" },
+  ],
+  Renault: [
+    { model: "Kwid", bucket: "Hatchback", pricingCategory: "Sedan" },
+    { model: "Kiger", bucket: "Compact SUV", pricingCategory: "Sedan" },
+  ],
+  Nissan: [
+    { model: "Magnite", bucket: "Compact SUV", pricingCategory: "Sedan" },
+  ],
+};
+
+const CAR_COMPANIES = Object.keys(CAR_COMPANY_MODELS);
 
 type PricingPlanEntry = {
   plan: PlanData;
@@ -19,11 +102,22 @@ type PricingSectionProps = {
 
 function PricingSectionComponent({ pricingPlans, isPaying, onCheckout }: PricingSectionProps) {
   const [selectedCategory, setSelectedCategory] = React.useState<VehicleCategory>("Sedan");
+  const [selectedCompany, setSelectedCompany] = React.useState("");
+  const [selectedModel, setSelectedModel] = React.useState("");
+  const [isCategoryLocked, setIsCategoryLocked] = React.useState(false);
   const [mobileCardIndex, setMobileCardIndex] = React.useState(0);
   const touchStartXRef = React.useRef<number | null>(null);
   const sectionRef = React.useRef<HTMLElement | null>(null);
   const hasAutoSwipedRef = React.useRef(false);
   const [hasEnteredPricing, setHasEnteredPricing] = React.useState(false);
+
+  const availableModels = React.useMemo(() => {
+    if (!selectedCompany) {
+      return [];
+    }
+
+    return CAR_COMPANY_MODELS[selectedCompany] ?? [];
+  }, [selectedCompany]);
 
   const visiblePlans = React.useMemo(() => {
     if (selectedCategory === "Bike") {
@@ -109,9 +203,48 @@ function PricingSectionComponent({ pricingPlans, isPaying, onCheckout }: Pricing
   }, [hasEnteredPricing, selectedCategory, visiblePlans.length, mobileCardIndex]);
 
   const handleCategorySelect = React.useCallback((category: VehicleCategory) => {
+    if (isCategoryLocked && category !== selectedCategory) {
+      return;
+    }
+
     setSelectedCategory(category);
     setMobileCardIndex(0);
+  }, [isCategoryLocked, selectedCategory]);
+
+  const handleCompanySelect = React.useCallback((company: string) => {
+    setSelectedCompany(company);
+    setSelectedModel("");
+    setIsCategoryLocked(false);
   }, []);
+
+  const handleModelSelect = React.useCallback((modelName: string) => {
+    setSelectedModel(modelName);
+
+    if (!modelName || !selectedCompany) {
+      setIsCategoryLocked(false);
+      return;
+    }
+
+    const chosenModel = availableModels.find((entry) => entry.model === modelName);
+    if (!chosenModel) {
+      setIsCategoryLocked(false);
+      return;
+    }
+
+    const recommendedLabel = chosenModel.pricingCategory === "SUV" ? "SUV/XUV" : "Sedan/Hatchback/Compact SUV";
+    const recommendationMessage =
+      `Your selected vehicle (${selectedCompany} ${chosenModel.model}) falls under ${chosenModel.bucket}. ` +
+      `You should go for ${recommendedLabel} pricing models.\n\nClick OK to continue.`;
+
+    if (typeof window !== "undefined" && window.confirm(recommendationMessage)) {
+      setSelectedCategory(chosenModel.pricingCategory);
+      setMobileCardIndex(0);
+      setIsCategoryLocked(true);
+      return;
+    }
+
+    setIsCategoryLocked(false);
+  }, [availableModels, selectedCompany]);
 
   const handleTouchStart = React.useCallback((event: React.TouchEvent<HTMLDivElement>) => {
     touchStartXRef.current = event.touches[0]?.clientX ?? null;
@@ -154,33 +287,88 @@ function PricingSectionComponent({ pricingPlans, isPaying, onCheckout }: Pricing
     >
       <h2 className="text-center text-2xl font-extrabold tracking-tight text-amber-300 sm:text-6xl">PRICING</h2>
       <p className="mt-2 text-center text-base font-semibold tracking-tight text-white sm:text-3xl">Premium Care. Transparent Plans.</p>
+      <div className="mx-auto mt-6 grid w-full max-w-4xl grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
+        <label className="flex flex-col gap-2 text-sm font-semibold text-amber-100 sm:text-base">
+          Select Company
+          <select
+            value={selectedCompany}
+            onChange={(event) => handleCompanySelect(event.target.value)}
+            className="w-full rounded-xl border border-violet-300/80 bg-[#020826]/85 px-4 py-3 text-white outline-none transition focus:border-amber-300"
+          >
+            <option value="" className="bg-[#020826] text-white">Choose a company</option>
+            {CAR_COMPANIES.map((company) => (
+              <option key={company} value={company} className="bg-[#020826] text-white">
+                {company}
+              </option>
+            ))}
+          </select>
+        </label>
+
+        <label className="flex flex-col gap-2 text-sm font-semibold text-amber-100 sm:text-base">
+          Select Model
+          <select
+            value={selectedModel}
+            onChange={(event) => handleModelSelect(event.target.value)}
+            disabled={!selectedCompany}
+            className="w-full rounded-xl border border-violet-300/80 bg-[#020826]/85 px-4 py-3 text-white outline-none transition focus:border-amber-300 disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            <option value="" className="bg-[#020826] text-white">Choose a model</option>
+            {availableModels.map((modelOption) => (
+              <option key={modelOption.model} value={modelOption.model} className="bg-[#020826] text-white">
+                {modelOption.model} ({modelOption.bucket})
+              </option>
+            ))}
+          </select>
+        </label>
+      </div>
+
+      {isCategoryLocked && selectedCompany && selectedModel && (
+        <p className="mt-3 text-center text-sm font-semibold text-amber-200 sm:text-base">
+          Category locked based on your selected model. Change company/model to update recommendation.
+        </p>
+      )}
+
       <div className="mt-6 grid grid-cols-3 gap-2 sm:gap-4">
         {[
-          { value: "Sedan", label: "Sedan/Hatchback", image: "/sedan.png" },
+          { value: "Sedan", label: "Sedan/Hatchback/Compact SUV", image: "/sedan.png" },
           { value: "SUV", label: "SUV/XUV", image: "/suv.png" },
           { value: "Bike", label: "Bike", image: "/bike.png" },
-        ].map((item) => (
-          <motion.button
-            key={item.value}
-            type="button"
-            onClick={() => handleCategorySelect(item.value as VehicleCategory)}
-            initial={{ opacity: 0, y: 38, scale: 0.94 }}
-            whileInView={{ opacity: 1, y: 0, scale: 1 }}
-            viewport={{ once: false, amount: 0.82, margin: "0px 0px -12% 0px" }}
-            transition={{ duration: 0.42, ease: "easeOut" }}
-            whileHover={{ y: -4, scale: 1.02 }}
-            className="group flex cursor-pointer flex-col items-center justify-center text-center"
-          >
-            <div
-              className={`mx-auto flex h-24 w-24 items-center justify-center rounded-full transition-colors duration-200 sm:h-52 sm:w-52 ${
-                selectedCategory === item.value ? "bg-white" : "bg-transparent group-hover:bg-white"
+        ].map((item) => {
+          const buttonCategory = item.value as VehicleCategory;
+          const isDisabled = isCategoryLocked && buttonCategory !== selectedCategory;
+
+          return (
+            <motion.button
+              key={item.value}
+              type="button"
+              onClick={() => handleCategorySelect(buttonCategory)}
+              disabled={isDisabled}
+              initial={{ opacity: 0, y: 38, scale: 0.94 }}
+              whileInView={{ opacity: 1, y: 0, scale: 1 }}
+              viewport={{ once: false, amount: 0.82, margin: "0px 0px -12% 0px" }}
+              transition={{ duration: 0.42, ease: "easeOut" }}
+              whileHover={isDisabled ? undefined : { y: -4, scale: 1.02 }}
+              className={`group flex flex-col items-center justify-center text-center ${
+                isDisabled ? "cursor-not-allowed opacity-45" : "cursor-pointer"
               }`}
             >
-              <Image src={item.image} alt={item.label} width={200} height={200} className="h-20 w-20 object-contain sm:h-48 sm:w-48" />
-            </div>
-            <p className={`mt-2 text-xs font-semibold tracking-tight sm:mt-3 sm:text-xl ${selectedCategory === item.value ? "text-white" : "text-amber-200"}`}>{item.label}</p>
-          </motion.button>
-        ))}
+              <div
+                className={`mx-auto flex h-24 w-24 items-center justify-center rounded-full transition-colors duration-200 sm:h-52 sm:w-52 ${
+                  selectedCategory === item.value ? "bg-white" : isDisabled ? "bg-transparent" : "bg-transparent group-hover:bg-white"
+                }`}
+              >
+                <Image src={item.image} alt={item.label} width={200} height={200} className="h-20 w-20 object-contain sm:h-48 sm:w-48" />
+              </div>
+              <p
+                className={`mt-2 text-xs font-semibold tracking-tight sm:mt-3 sm:text-xl ${
+                  selectedCategory === item.value ? "text-white" : isDisabled ? "text-white/55" : "text-amber-200"
+                }`}
+              >
+                {item.label}
+              </p>
+            </motion.button>
+          );
+        })}
       </div>
 
       <div className="mt-24 w-full md:hidden" onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>

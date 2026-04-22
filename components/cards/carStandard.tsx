@@ -3,8 +3,8 @@ import { PlanCardProps, PlanData } from "@/components/cards/types";
 export const CLEAN_CARE_PLAN: PlanData = {
   name: "CLEAN CARE",
   description: "Perfect for regular maintenance",
-  amountInPaise: 89900,
-  displayPrice: "₹899",
+  amountInPaise: 79900,
+  displayPrice: "₹799",
   gradient: "from-violet-100 via-indigo-100 to-violet-200",
   bubbleOne: "bg-indigo-300/40",
   bubbleTwo: "bg-violet-200/60",
@@ -16,8 +16,7 @@ export const CLEAN_CARE_FEATURES: string[] = [
   "Enhanced interior maintenance - 2x/month",
   "Dashboard polish - 2x/month",
   "Tyre polish - 2x/month",
-  "Wax treatment - 1x/month",
-  "Air pressure check and maintenance - Monthly once",
+
 ];
 
 export default function CarStandardCard({ plan, features }: PlanCardProps) {
