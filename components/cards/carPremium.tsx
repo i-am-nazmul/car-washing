@@ -13,7 +13,7 @@ export const SHINE_CARE_PLAN: PlanData = {
 export const SHINE_CARE_FEATURES: string[] = [
   "Eco-friendly waterless wash",
   "5 days/week cleaning",
-  "Enhanced interior maintenance - 1x/week",
+  "Interior cleaning - 1x/week",
   "Dashboard polish - 2x/month",
   "Tyre polish - 1x/week",
   "Wax treatment - 2x/month",

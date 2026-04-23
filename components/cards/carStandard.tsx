@@ -13,7 +13,7 @@ export const CLEAN_CARE_PLAN: PlanData = {
 export const CLEAN_CARE_FEATURES: string[] = [
   "Eco-friendly waterless wash",
   "5 days/week cleaning",
-  "Enhanced interior maintenance - 2x/month",
+  "Interior cleaning - 2x/month",
   "Dashboard polish - 2x/month",
   "Tyre polish - 2x/month",
 

@@ -242,7 +242,7 @@ export default function Home() {
     </video>
     <div className="fixed inset-0 -z-10 bg-[#000017]/70" />
 
-    <div className="flex min-h-dvh flex-col p-0 sm:p-2">
+    <div className="flex min-h-dvh flex-col p-2">
     {isLoading && <Loader />}
     <div className="h-full w-full flex-1 flex flex-col items-center rounded-none bg-transparent px-4 py-6 text-center sm:rounded-t-2xl sm:px-8 sm:py-10">
 
@@ -266,7 +266,7 @@ export default function Home() {
       <PricingSection pricingPlans={pricingPlans} isPaying={isPaying} onCheckout={handleCheckoutClick} />
 
       <p className="mt-8 px-4 text-base text-white sm:text-2xl">
-        ** If you have multiple vehicles and would like to avail special discounts, please feel free to reach out to us.
+        ** If you’re looking for SMART COMBO Plan and would like to avail special discounts, please feel free to reach out to us.
       </p>
 
       <div id="contact" className="mt-25 w-full max-w-6xl text-center">

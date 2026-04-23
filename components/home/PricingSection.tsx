@@ -231,19 +231,9 @@ function PricingSectionComponent({ pricingPlans, isPaying, onCheckout }: Pricing
       return;
     }
 
-    const recommendedLabel = chosenModel.pricingCategory === "SUV" ? "SUV/XUV" : "Sedan/Hatchback/Compact SUV";
-    const recommendationMessage =
-      `Your selected vehicle (${selectedCompany} ${chosenModel.model}) falls under ${chosenModel.bucket}. ` +
-      `You should go for ${recommendedLabel} pricing models.\n\nClick OK to continue.`;
-
-    if (typeof window !== "undefined" && window.confirm(recommendationMessage)) {
-      setSelectedCategory(chosenModel.pricingCategory);
-      setMobileCardIndex(0);
-      setIsCategoryLocked(true);
-      return;
-    }
-
-    setIsCategoryLocked(false);
+    setSelectedCategory(chosenModel.pricingCategory);
+    setMobileCardIndex(0);
+    setIsCategoryLocked(true);
   }, [availableModels, selectedCompany]);
 
   const handleTouchStart = React.useCallback((event: React.TouchEvent<HTMLDivElement>) => {
@@ -283,17 +273,17 @@ function PricingSectionComponent({ pricingPlans, isPaying, onCheckout }: Pricing
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.2 }}
       transition={{ duration: 0.5 }}
-      className="mt-24 w-full max-w-350 px-4 py-6 text-left shadow-xl sm:px-6 sm:py-8"
+      className="mt-24 w-full max-w-6xl px-4 py-6 text-left shadow-xl sm:px-6 sm:py-8"
     >
       <h2 className="text-center text-2xl font-extrabold tracking-tight text-amber-300 sm:text-6xl">PRICING</h2>
       <p className="mt-2 text-center text-base font-semibold tracking-tight text-white sm:text-3xl">Premium Care. Transparent Plans.</p>
-      <div className="mx-auto mt-6 grid w-full max-w-4xl grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
-        <label className="flex flex-col gap-2 text-sm font-semibold text-amber-100 sm:text-base">
+      <div className="mx-auto mt-6 grid w-full max-w-4xl grid-cols-1 gap-2 sm:gap-3 md:grid-cols-2 md:gap-4">
+        <label className="flex flex-col gap-2 text-xs font-semibold text-amber-100 sm:text-sm md:text-base">
           Select Company
           <select
             value={selectedCompany}
             onChange={(event) => handleCompanySelect(event.target.value)}
-            className="w-full rounded-xl border border-violet-300/80 bg-[#020826]/85 px-4 py-3 text-white outline-none transition focus:border-amber-300"
+            className="w-full rounded-xl border border-violet-300/80 bg-[#020826]/70 px-3 py-2 text-sm text-white outline-none transition focus:border-amber-300 focus:bg-[#020826]/85 sm:px-4 sm:py-3"
           >
             <option value="" className="bg-[#020826] text-white">Choose a company</option>
             {CAR_COMPANIES.map((company) => (
@@ -304,13 +294,13 @@ function PricingSectionComponent({ pricingPlans, isPaying, onCheckout }: Pricing
           </select>
         </label>
 
-        <label className="flex flex-col gap-2 text-sm font-semibold text-amber-100 sm:text-base">
+        <label className="flex flex-col gap-2 text-xs font-semibold text-amber-100 sm:text-sm md:text-base">
           Select Model
           <select
             value={selectedModel}
             onChange={(event) => handleModelSelect(event.target.value)}
             disabled={!selectedCompany}
-            className="w-full rounded-xl border border-violet-300/80 bg-[#020826]/85 px-4 py-3 text-white outline-none transition focus:border-amber-300 disabled:cursor-not-allowed disabled:opacity-60"
+            className="w-full rounded-xl border border-violet-300/80 bg-[#020826]/70 px-3 py-2 text-sm text-white outline-none transition focus:border-amber-300 focus:bg-[#020826]/85 disabled:cursor-not-allowed disabled:opacity-60 sm:px-4 sm:py-3"
           >
             <option value="" className="bg-[#020826] text-white">Choose a model</option>
             {availableModels.map((modelOption) => (
@@ -324,18 +314,18 @@ function PricingSectionComponent({ pricingPlans, isPaying, onCheckout }: Pricing
 
       {isCategoryLocked && selectedCompany && selectedModel && (
         <p className="mt-3 text-center text-sm font-semibold text-amber-200 sm:text-base">
-          Category locked based on your selected model. Change company/model to update recommendation.
+          Category selected based on your selected model. Change company/model to update recommendation.
         </p>
       )}
 
       <div className="mt-6 grid grid-cols-3 gap-2 sm:gap-4">
         {[
           { value: "Sedan", label: "Sedan/Hatchback/Compact SUV", image: "/sedan.png" },
-          { value: "SUV", label: "SUV/XUV", image: "/suv.png" },
+          { value: "SUV", label: "Premium SUV", image: "/suv.png" },
           { value: "Bike", label: "Bike", image: "/bike.png" },
         ].map((item) => {
           const buttonCategory = item.value as VehicleCategory;
-          const isDisabled = isCategoryLocked && buttonCategory !== selectedCategory;
+          const isDisabled = isCategoryLocked && buttonCategory !== selectedCategory && buttonCategory !== "Bike";
 
           return (
             <motion.button
