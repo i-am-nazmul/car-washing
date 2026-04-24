@@ -16,7 +16,7 @@ export default function ProfilePage(){
       const router = useRouter();
 
       const moveToDashboard = function (){
-            router.push('/dashboard');
+            router.push('/user/dashboard');
       }
 
       const logout = async function () {
@@ -25,7 +25,7 @@ export default function ProfilePage(){
                   await axios.post('/api/logout');
                   await signOut({ redirect: false });
                   setIsLoading(false);
-                  router.push('/login');
+                  router.push('/user/login');
             } catch {
                   setIsLoading(false);
             }
@@ -49,7 +49,7 @@ export default function ProfilePage(){
                         const status = error.response?.status;
                         if (status === 401 || status === 403) {
                               setIsLoading(false);
-                              router.push('/login');
+                              router.push('/user/login');
                               return;
                         }
                   }

@@ -6,11 +6,11 @@ type ProtectedLayoutProps = {
   children: ReactNode;
 };
 
-export default async function DashboardLayout({ children }: ProtectedLayoutProps) {
+export default async function ProfileLayout({ children }: ProtectedLayoutProps) {
   const isAuthenticated = await hasServerAuth();
 
   if (!isAuthenticated) {
-    redirect("/login");
+    redirect("/user/login");
   }
 
   return <>{children}</>;

@@ -42,10 +42,10 @@ export default function SignupPage(){
 
       const getSafeNextPath = () => {
             if (typeof window === "undefined") {
-                  return "/dashboard";
+                  return "/user/dashboard";
             }
             const value = new URLSearchParams(window.location.search).get("next");
-            return value && value.startsWith("/") ? value : "/dashboard";
+            return value && value.startsWith("/") ? value : "/user/dashboard";
       };
 
       const Signup = async () => {
@@ -72,7 +72,7 @@ export default function SignupPage(){
                   if (loginResult?.error) {
                         toast.error("Signup succeeded, but login failed. Please login manually.");
                         setIsLoading(false);
-                        router.push("/login");
+                        router.push("/user/login");
                         return;
                   }
                   toast.success("Signup successful!");
@@ -92,7 +92,7 @@ export default function SignupPage(){
                   
       };
       const Login = () =>{
-            router.push('/login');
+            router.push('/user/login');
             
       }
 

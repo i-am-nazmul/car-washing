@@ -132,7 +132,7 @@ export default function Home() {
 
   const handleLogin = React.useCallback(function(){
     setIsLoading(true);
-    router.push('/login');
+    router.push('/user/login');
   }, [router, setIsLoading]);
 
   const openWhatsApp = React.useCallback(() => {

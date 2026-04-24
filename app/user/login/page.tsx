@@ -41,10 +41,10 @@ export default function LoginPage(){
 
       const getSafeNextPath = () => {
             if (typeof window === "undefined") {
-                  return "/dashboard";
+                  return "/user/dashboard";
             }
             const value = new URLSearchParams(window.location.search).get("next");
-            return value && value.startsWith("/") ? value : "/dashboard";
+            return value && value.startsWith("/") ? value : "/user/dashboard";
       };
 
       const Login = async () => {
@@ -80,7 +80,7 @@ export default function LoginPage(){
       };
 
       const SignUp = () =>{
-            router.push("/signup");
+            router.push("/user/signup");
       }
 
       const moveHome = () => {

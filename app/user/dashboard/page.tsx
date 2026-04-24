@@ -13,7 +13,7 @@ export default function DashboardPage() {
   const router = useRouter();
 
   const moveToProfilePage = React.useCallback(() => {
-    router.push("/profile");
+    router.push("/user/profile");
   }, [router]);
 
   useEffect(() => {
