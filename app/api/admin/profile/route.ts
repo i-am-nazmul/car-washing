@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    await dbConnect();
+    await connect();
 
     // Get authenticated user from session
     const session = await getServerSession();
