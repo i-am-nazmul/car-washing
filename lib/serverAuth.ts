@@ -1,6 +1,7 @@
 import { getServerSession } from "next-auth/next";
 import jwt from "jsonwebtoken";
 import { cookies } from "next/headers";
+import { getToken } from "next-auth/jwt";
 import { authOptions } from "@/lib/auth";
 
 export async function hasServerAuth() {
@@ -10,21 +11,33 @@ export async function hasServerAuth() {
   }
 
   const cookieStore = await cookies();
-  const allCookies = cookieStore.getAll();
 
-  const nextAuthSessionCookieNames = [
-    "next-auth.session-token",
-    "__Secure-next-auth.session-token",
-  ];
+  const authSecret = process.env.NEXTAUTH_SECRET || process.env.TOKEN_SECRET;
+  const cookieHeader = cookieStore
+    .getAll()
+    .map((cookie) => `${cookie.name}=${cookie.value}`)
+    .join("; ");
 
-  const hasNextAuthSessionCookie = allCookies.some((cookie) =>
-    nextAuthSessionCookieNames.some(
-      (name) => cookie.name === name || cookie.name.startsWith(`${name}.`)
-    )
-  );
+  if (cookieHeader && authSecret) {
+    const tokenRequest = {
+      headers: { cookie: cookieHeader },
+    } as Parameters<typeof getToken>[0]["req"];
 
-  if (hasNextAuthSessionCookie) {
-    return true;
+    const sessionToken = await getToken({
+      req: tokenRequest,
+      secret: authSecret,
+      secureCookie: process.env.NODE_ENV === "production",
+    });
+
+    const fallbackSessionToken = sessionToken ?? await getToken({
+      req: tokenRequest,
+      secret: authSecret,
+      secureCookie: process.env.NODE_ENV !== "production",
+    });
+
+    if (fallbackSessionToken?.email) {
+      return true;
+    }
   }
 
   const token = cookieStore.get("token")?.value;

@@ -7,12 +7,13 @@ import Loader from "@/components/Loader";
 import MotionButton from "@/components/MotionButton";
 import SiteFooter from "@/components/SiteFooter";
 import toast from "react-hot-toast";
-import { signIn } from "next-auth/react";
+import { signIn, signOut } from "next-auth/react";
+import axios from "axios";
  
 
 
 
-export default function LoginPage(){
+export default function AdminLoginPage(){
       const router = useRouter();
       const backgroundVideos = React.useMemo(() => ["/washing.mp4", "/washing2.mp4"], []);
       const [activeBackgroundVideoIndex, setActiveBackgroundVideoIndex] = React.useState(0);
@@ -39,39 +40,34 @@ export default function LoginPage(){
             }
       }, [activeBackgroundVideoIndex]);
 
-      const getSafeNextPath = () => {
-            if (typeof window === "undefined") {
-                  return "/user/dashboard";
-            }
-            const value = new URLSearchParams(window.location.search).get("next");
-            return value && value.startsWith("/") ? value : "/user/dashboard";
-      };
-
-      const Login = async () => {
+      const AdminLogin = async () => {
             if(!email || !password){
                   toast.error("Please enter valid credentials!");
-
                   return;
-
             }
             try {
                   setIsLoading(true);
-            const safeNextPath = getSafeNextPath();
             const result = await signIn("credentials", {
                   redirect: false,
                   email,
                   password,
-                  callbackUrl: safeNextPath,
+                  callbackUrl: "/admin/dashboard",
             });
             if (!result?.error) {
-                  toast.success("Login successful!");
-                  router.push(safeNextPath);
-                  router.refresh();
+                  const profile = await axios.get('/api/profile', { timeout: 8000 });
+                  if (profile.data?.role !== "admin") {
+                        await signOut({ redirect: false });
+                        toast.error("Only admins can login from this page.");
+                        setIsLoading(false);
+                        return;
+                  }
+
+                  toast.success("Admin login successful!");
+                  window.location.assign("/admin/dashboard");
                   return;
-                  
             }
       
-            toast.error("Invalid credentials!");
+            toast.error("Invalid admin credentials or insufficient permissions!");
             setIsLoading(false);
             } catch {
                   toast.error("Something went wrong. Please try again.");
@@ -79,23 +75,18 @@ export default function LoginPage(){
             }
       };
 
-      const SignUp = () =>{
-            router.push("/user/signup");
+      const LoginWithGoogle = () => {
+            setIsLoading(true);
+            void signIn("google", { callbackUrl: "/admin/dashboard" });
       }
 
       const moveHome = () => {
             router.push("/");
       };
 
-      const moveHomeSection = (sectionId: string) => {
-            router.push(`/#${sectionId}`);
+      const moveBack = () => {
+            router.back();
       };
-
-      const LoginWithGoogle = () => {
-            setIsLoading(true);
-            const safeNextPath = getSafeNextPath();
-            void signIn("google", { callbackUrl: safeNextPath });
-      }
 
 
       return(
@@ -121,13 +112,12 @@ export default function LoginPage(){
 
                   <div className="w-full h-full flex-1 flex flex-col rounded-t-2xl bg-transparent px-4 py-6 sm:px-8 sm:py-10">
 
-
                         {/* Navbar */}
                         <motion.nav
                               initial={{ opacity: 0, y: -24 }}
                               animate={{ opacity: 1, y: 0 }}
                               transition={{ duration: 0.45 }}
-                              className="w-full flex flex-wrap items-center justify-center gap-2 sm:gap-3"
+                              className="w-full flex flex-wrap items-center justify-between gap-2 sm:gap-3"
                         >
                               <MotionButton
                                     className="hover-fill-ltr cursor-pointer rounded-full bg-transparent px-4 py-2 text-sm font-semibold tracking-tight text-amber-200 hover:bg-white hover:text-gray-800 sm:text-base"
@@ -137,93 +127,54 @@ export default function LoginPage(){
                               </MotionButton>
                               <MotionButton
                                     className="hover-fill-ltr cursor-pointer rounded-full bg-transparent px-4 py-2 text-sm font-semibold tracking-tight text-amber-200 hover:bg-white hover:text-gray-800 sm:text-base"
-                                    onClick={() => moveHomeSection("about")}
+                                    onClick={moveBack}
                               >
-                                    About
-                              </MotionButton>
-                              <MotionButton
-                                    className="hover-fill-ltr cursor-pointer rounded-full bg-transparent px-4 py-2 text-sm font-semibold tracking-tight text-amber-200 hover:bg-white hover:text-gray-800 sm:text-base"
-                                    onClick={() => moveHomeSection("how-it-works")}
-                              >
-                                    How It Works
-                              </MotionButton>
-                              <MotionButton
-                                    className="hover-fill-ltr cursor-pointer rounded-full bg-transparent px-4 py-2 text-sm font-semibold tracking-tight text-amber-200 hover:bg-white hover:text-gray-800 sm:text-base"
-                                    onClick={() => moveHomeSection("services")}
-                              >
-                                    Services
-                              </MotionButton>
-                              <MotionButton
-                                    className="hover-fill-ltr cursor-pointer rounded-full bg-transparent px-4 py-2 text-sm font-semibold tracking-tight text-amber-200 hover:bg-white hover:text-gray-800 sm:text-base"
-                                    onClick={() => moveHomeSection("pricing")}
-                              >
-                                    Pricing
-                              </MotionButton>
-                              <MotionButton
-                                    className="hover-fill-ltr cursor-pointer rounded-full bg-transparent px-4 py-2 text-sm font-semibold tracking-tight text-amber-200 hover:bg-white hover:text-gray-800 sm:text-base"
-                                    onClick={() => moveHomeSection("contact")}
-                              >
-                                    Contact
-                              </MotionButton>
-                              <MotionButton
-                                    className="hover-fill-ltr cursor-pointer rounded-full bg-transparent px-4 py-2 text-sm font-semibold tracking-tight text-amber-200 hover:bg-white hover:text-gray-800 sm:text-base"
-                                    onClick={SignUp}
-                              >
-                                    Signup
+                                    Back
                               </MotionButton>
                         </motion.nav>
 
-                        <h2 className="mt-28 text-center text-4xl font-bold tracking-tighter text-yellow-300 sm:text-8xl">Login</h2>
+                        <h2 className="mt-28 text-center text-4xl font-bold tracking-tighter text-yellow-300 sm:text-8xl">Admin Login</h2>
 
                         <motion.div
                               initial={{ opacity: 0, y: 24 }}
                               animate={{ opacity: 1, y: 0 }}
                               transition={{ delay: 0.1, duration: 0.45 }}
-                              className="mx-auto mt-6 w-full max-w-xl rounded-3xl border border-violet-300 bg-transparent p-5 shadow-[0_0_18px_rgba(139,92,246,0.35)] sm:p-6"
+                              className="mx-auto mt-6 w-full max-w-xl rounded-3xl border border-red-400 bg-transparent p-5 shadow-[0_0_18px_rgba(220,38,38,0.35)] sm:p-6"
                         >
                               <form
                                     className="mt-8 flex flex-col items-center gap-3"
                                     onSubmit={(event) => {
                                           event.preventDefault();
-                                          void Login();
+                                          void AdminLogin();
                                     }}
                               >
                                     <input
                                           type="email"
-                                          placeholder="Enter the email"
-                                          className="w-full max-w-xl tracking-tighter outline-none text-xl px-4 py-2 bg-transparent rounded-sm text-white placeholder:text-white/70 border border-violet-300 shadow-[0_0_18px_rgba(139,92,246,0.35)]"
+                                          placeholder="Enter admin email"
+                                          className="w-full max-w-xl tracking-tighter outline-none text-xl px-4 py-2 bg-transparent rounded-sm text-white placeholder:text-white/70 border border-red-400 shadow-[0_0_18px_rgba(220,38,38,0.35)]"
                                           value={email}
                                           onChange={(e)=>{setEmail(e.target.value)}}
                                     />
 
                                     <input
                                           type="password"
-                                          placeholder="Enter the password"
-                                          className="w-full max-w-xl outline-none tracking-tighter text-xl px-4 py-2 bg-transparent rounded-sm text-white placeholder:text-white/70 border border-violet-300 shadow-[0_0_18px_rgba(139,92,246,0.35)]"
+                                          placeholder="Enter admin password"
+                                          className="w-full max-w-xl outline-none tracking-tighter text-xl px-4 py-2 bg-transparent rounded-sm text-white placeholder:text-white/70 border border-red-400 shadow-[0_0_18px_rgba(220,38,38,0.35)]"
                                           value={password}
                                           onChange={(e)=>{setPassword(e.target.value)}}
                                     />
 
                                     <MotionButton
                                           type="submit"
-                                          className="hover-fill-ltr bg-transparent px-6 py-2 text-white font-semibold tracking-tighter text-xl cursor-pointer hover:bg-transparent rounded-lg border border-violet-300 shadow-[0_0_18px_rgba(139,92,246,0.35)] sm:font-normal sm:text-2xl"
+                                          className="hover-fill-ltr bg-transparent px-6 py-2 text-white font-semibold tracking-tighter text-xl cursor-pointer hover:bg-transparent rounded-lg border border-red-400 shadow-[0_0_18px_rgba(220,38,38,0.35)] sm:font-normal sm:text-2xl"
                                     >
-                                          Login
+                                          Admin Login
                                     </MotionButton>
                               </form>
 
                               <div className="mt-4 flex flex-col items-center gap-3">
-                                    <MotionButton className="hover-fill-ltr bg-transparent text-white px-3 py-2 cursor-pointer font-medium hover:bg-transparent rounded-lg border border-violet-300 shadow-[0_0_18px_rgba(139,92,246,0.35)] sm:text-xl" onClick={SignUp}>Signup Instead</MotionButton>
-
-                                    <MotionButton className="hover-fill-ltr bg-transparent px-6 py-2 text-white font-semibold mt-6 tracking-tighter text-xl cursor-pointer hover:bg-transparent rounded-lg border border-violet-300 shadow-[0_0_18px_rgba(139,92,246,0.35)] sm:text-lg"
+                                    <MotionButton className="hover-fill-ltr bg-transparent px-6 py-2 text-white font-semibold mt-6 tracking-tighter text-xl cursor-pointer hover:bg-transparent rounded-lg border border-red-400 shadow-[0_0_18px_rgba(220,38,38,0.35)] sm:text-lg"
                                     onClick={LoginWithGoogle}>Login with Google</MotionButton>
-
-                                    <a 
-                                          href="/admin/login" 
-                                          className="mt-6 text-amber-300 text-sm hover:text-amber-200 underline cursor-pointer"
-                                    >
-                                          Login as Admin
-                                    </a>
                               </div>
                         </motion.div>
                   </div>

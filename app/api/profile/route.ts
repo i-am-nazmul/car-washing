@@ -26,13 +26,15 @@ export async function GET(request: NextRequest) {
       });
     }
     if (sessionToken?.email) {
-      const nextAuthUser = await Users.findOne({ email: String(sessionToken.email).toLowerCase() }).select("username email");
+      const nextAuthUser = await Users.findOne({ email: String(sessionToken.email).toLowerCase() }).select("username email role avatar");
 
       if (!nextAuthUser) {
         return NextResponse.json(
           {
             username: sessionToken.name || String(sessionToken.email).split("@")[0],
             email: String(sessionToken.email),
+            role: "user",
+            avatar: null,
           },
           { status: 200 }
         );
@@ -42,6 +44,8 @@ export async function GET(request: NextRequest) {
         {
           username: nextAuthUser.username,
           email: nextAuthUser.email,
+          role: nextAuthUser.role,
+          avatar: nextAuthUser.avatar,
         },
         { status: 200 }
       );
@@ -66,7 +70,7 @@ export async function GET(request: NextRequest) {
     const decodedToken = jwt.verify(token, tokenSecret) as DecodedToken;
 
     
-    const user = await Users.findById(decodedToken.id).select("username email");
+    const user = await Users.findById(decodedToken.id).select("username email role avatar");
 
     if (!user) {
       console.error("No such user exists");
@@ -77,6 +81,8 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       username: user.username,
       email: user.email,
+      role: user.role,
+      avatar: user.avatar,
     },{status:200});
 
   } catch (error: unknown) {

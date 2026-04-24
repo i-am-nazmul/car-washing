@@ -49,6 +49,7 @@ export const authOptions: NextAuthOptions = {
           name: user.username,
           email: user.email,
           image: user.avatar || undefined,
+          role: user.role,
         };
       },
     }),
@@ -111,6 +112,23 @@ export const authOptions: NextAuthOptions = {
       if (user?.id) {
         token.sub = user.id;
       }
+
+      if (user?.email) {
+        token.email = user.email;
+      }
+
+      if (user && "role" in user && typeof user.role === "string") {
+        token.role = user.role;
+      }
+
+      if (token.email && typeof token.role !== "string") {
+        await connect();
+        const existingUser = await Users.findOne({
+          email: String(token.email).toLowerCase(),
+        }).select("role");
+        token.role = existingUser?.role === "admin" ? "admin" : "user";
+      }
+
       return token;
     },
   },
