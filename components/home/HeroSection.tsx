@@ -6,6 +6,7 @@ import MotionButton from "@/components/MotionButton";
 type HeroSectionProps = {
   onAbout: () => void;
   onHowItWorks: () => void;
+  onShineProcess: () => void;
   onServices: () => void;
   onPricing: () => void;
   onContact: () => void;
@@ -15,6 +16,7 @@ type HeroSectionProps = {
 function HeroSectionComponent({
   onAbout,
   onHowItWorks,
+  onShineProcess,
   onServices,
   onPricing,
   onContact,
@@ -26,12 +28,13 @@ function HeroSectionComponent({
     () => [
       { label: "ABOUT US", action: onAbout },
       { label: "HOW IT WORKS", action: onHowItWorks },
+      { label: "SHINE PROCESS", action: onShineProcess },
       { label: "OUR SERVICES", action: onServices },
       { label: "PRICING", action: onPricing },
       { label: "CONTACT US", action: onContact },
       { label: "LOGIN", action: onLogin },
     ],
-    [onAbout, onHowItWorks, onServices, onPricing, onContact, onLogin]
+    [onAbout, onHowItWorks, onShineProcess, onServices, onPricing, onContact, onLogin]
   );
 
   React.useEffect(() => {

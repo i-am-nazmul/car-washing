@@ -14,6 +14,7 @@ import { PlanData } from "@/components/cards/types";
 import WhatsAppIcon from "@/components/WhatsAppIcon";
 import HeroSection from "@/components/home/HeroSection";
 import HowItWorksSection from "@/components/home/HowItWorksSection";
+import ShineProcessSection from "@/components/home/ShineProcessSection";
 import AboutSection from "@/components/home/AboutSection";
 import ServicesSection from "@/components/home/ServicesSection";
 import PricingSection from "@/components/home/PricingSection";
@@ -158,11 +159,20 @@ export default function Home() {
     }
 
     const isMobile = window.innerWidth < 640;
-    const isLaptop = window.innerWidth >= 1024;
-    const offset = isMobile ? 16 : isLaptop ? -40 : SECTION_NAV_OFFSET;
+    const offset = isMobile ? 24 : 80;
     const targetTop = window.scrollY + section.getBoundingClientRect().top - offset;
     window.scrollTo({ top: targetTop, behavior: "smooth" });
+  }, []);
+  const scrollToShineProcess = React.useCallback(() => {
+    const section = document.getElementById("shine-process");
+    if (!section) {
+      return;
+    }
+
+    const targetTop = window.scrollY + section.getBoundingClientRect().top - SECTION_NAV_OFFSET;
+    window.scrollTo({ top: targetTop, behavior: "smooth" });
   }, [SECTION_NAV_OFFSET]);
+
   const scrollToServices = React.useCallback(() => {
     const section = document.getElementById("services");
     if (!section) {
@@ -250,6 +260,7 @@ export default function Home() {
         <HeroSection
           onAbout={scrollToAbout}
           onHowItWorks={scrollToHow}
+          onShineProcess={scrollToShineProcess}
           onServices={scrollToServices}
           onPricing={scrollToPricing}
           onContact={scrollToContact}
@@ -261,7 +272,11 @@ export default function Home() {
 
       <HowItWorksSection howRef={howRef} howVisibleStep={howVisibleStep} />
 
-      <ServicesSection />
+      <ShineProcessSection />
+
+      <div className="mt-10 sm:mt-18 lg:mt-32">
+        <ServicesSection />
+      </div>
 
       <PricingSection pricingPlans={pricingPlans} isPaying={isPaying} onCheckout={handleCheckoutClick} />
 
