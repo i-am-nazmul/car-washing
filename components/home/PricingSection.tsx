@@ -275,11 +275,11 @@ function PricingSectionComponent({ pricingPlans, isPaying, onCheckout }: Pricing
       transition={{ duration: 0.5 }}
       className="mt-24 w-full max-w-6xl px-4 py-6 text-left shadow-xl sm:px-6 sm:py-8"
     >
-      <h2 className="text-center text-2xl font-extrabold tracking-tight text-amber-300 sm:text-6xl">PRICING</h2>
-      <p className="mt-2 text-center text-base font-semibold tracking-tight text-white sm:text-3xl">Premium Care. Transparent Plans.</p>
+      <h2 className="text-center text-lg font-extrabold tracking-tight text-amber-300 sm:text-5xl">PRICING</h2>
+      <p className="mt-2 text-center text-xs font-semibold tracking-tight text-white sm:text-2xl">Premium Care. Transparent Plans.</p>
       <div className="mx-auto mt-6 grid w-full max-w-4xl grid-cols-1 gap-2 sm:gap-3 md:grid-cols-2 md:gap-4">
         <label className="flex flex-col gap-2 text-xs font-semibold text-amber-100 sm:text-sm md:text-base">
-          Select Company
+          Select Vehicle Brand
           <select
             value={selectedCompany}
             onChange={(event) => handleCompanySelect(event.target.value)}
@@ -295,7 +295,7 @@ function PricingSectionComponent({ pricingPlans, isPaying, onCheckout }: Pricing
         </label>
 
         <label className="flex flex-col gap-2 text-xs font-semibold text-amber-100 sm:text-sm md:text-base">
-          Select Model
+          Select Vehicle Model
           <select
             value={selectedModel}
             onChange={(event) => handleModelSelect(event.target.value)}

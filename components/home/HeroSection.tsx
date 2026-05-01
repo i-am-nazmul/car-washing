@@ -29,7 +29,7 @@ function HeroSectionComponent({
       { label: "OUR SERVICES", action: onServices },
       { label: "PRICING", action: onPricing },
       { label: "CONTACT US", action: onContact },
-      { label: "LOGIN / SIGNUP", action: onLogin },
+      { label: "LOGIN", action: onLogin },
     ],
     [onAbout, onHowItWorks, onServices, onPricing, onContact, onLogin]
   );
@@ -162,13 +162,13 @@ function HeroSectionComponent({
           alt="The Shine Company logo"
           width={320}
           height={320}
-          className="mt-4 h-[clamp(7.5rem,14vw,13rem)] w-[clamp(7.5rem,14vw,13rem)] object-contain"
+          className="mt-4 h-[clamp(6rem,11.2vw,10.4rem)] w-[clamp(6rem,11.2vw,10.4rem)] object-contain"
         />
-        <h1 className="mt-5 text-center text-[clamp(2rem,8vw,6.5rem)] font-bold leading-[0.95] tracking-tight text-white drop-shadow-[0_0_8px_rgba(251,191,36,0.35)]">
+        <h1 className="mt-5 text-center text-[clamp(1.6rem,6.4vw,5.2rem)] font-bold leading-[0.95] tracking-tight text-white drop-shadow-[0_0_8px_rgba(251,191,36,0.35)]">
           THE SHINE COMPANY
         </h1>
 
-        <p className="mt-3 max-w-4xl text-center text-[clamp(1.1rem,3vw,3rem)] font-semibold leading-tight text-white">
+        <p className="mt-3 max-w-4xl text-center text-[clamp(0.88rem,2.4vw,2.4rem)] font-semibold leading-tight text-white">
           Driven by Shine. Delivered With Care.
         </p>
       </motion.div>

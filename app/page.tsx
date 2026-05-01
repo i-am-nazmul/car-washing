@@ -265,9 +265,11 @@ export default function Home() {
 
       <PricingSection pricingPlans={pricingPlans} isPaying={isPaying} onCheckout={handleCheckoutClick} />
 
-      <p className="mt-8 px-4 text-base text-white sm:text-2xl">
-        ** If you’re looking for SMART COMBO Plan and would like to avail special discounts, please feel free to reach out to us.
-      </p>
+      <div className="mx-auto mt-8 w-full max-w-4xl rounded-3xl border border-violet-300 bg-transparent px-6 py-4 text-center shadow-[0_0_18px_rgba(139,92,246,0.35)]">
+        <p className="m-0 text-base sm:text-2xl text-white font-bold">
+          If you are looking for SMART COMBO Plan and would like to avail special discounts, please feel free to reach out to us.
+        </p>
+      </div>
 
       <div id="contact" className="mt-25 w-full max-w-6xl text-center">
         <h2 className="text-4xl font-extrabold tracking-tight text-yellow-300 sm:text-6xl">CONTACT US</h2>

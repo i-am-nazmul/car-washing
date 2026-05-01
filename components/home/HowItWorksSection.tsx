@@ -18,14 +18,14 @@ function HowItWorksSectionComponent({ howRef, howVisibleStep }: HowItWorksSectio
   }, []);
 
   return (
-    <section ref={howRef} id="how-it-works" className="mt-10 mb-12 w-full max-w-6xl sm:mb-24 lg:mb-40">
+    <section ref={howRef} id="how-it-works" className="mt-8 mb-10 w-full max-w-6xl sm:mb-19 lg:mb-32">
       <div className="relative h-auto overflow-visible">
-        <div className="px-4 py-8 lg:px-6 lg:py-10">
+        <div className="px-4 py-6 lg:px-6 lg:py-8">
 
-          <h2 className="text-center text-3xl font-extrabold tracking-tight text-yellow-300 sm:text-6xl">HOW IT WORKS</h2>
-          <p className="mt-2 text-center text-sm font-bold text-white sm:text-3xl">Three steps to a permanently clean vehicle.</p>
+          <h2 className="text-center text-2xl font-extrabold tracking-tight text-yellow-300 sm:text-5xl">HOW IT WORKS</h2>
+          <p className="mt-2 text-center text-xs font-bold text-white sm:text-2xl">Three steps to a permanently clean vehicle.</p>
 
-          <div className="relative mx-auto mt-8 grid max-w-6xl grid-cols-1 gap-4 sm:mt-16 sm:grid-cols-3 sm:gap-6">
+          <div className="relative mx-auto mt-6 grid max-w-6xl grid-cols-1 gap-3 sm:mt-13 sm:grid-cols-3 sm:gap-5">
             <motion.div
               initial={false}
               animate={
@@ -36,10 +36,10 @@ function HowItWorksSectionComponent({ howRef, howVisibleStep }: HowItWorksSectio
               transition={{ duration: 0.42, ease: "easeOut", delay: 0 }}
               className="relative transform-gpu will-change-transform "
             >
-              <div className="flex h-full min-h-72 flex-col items-center justify-start rounded-2xl border border-violet-300 p-6 text-center text-white shadow-[0_0_18px_rgba(139,92,246,0.35)] sm:min-h-80 sm:p-10">
-                <p className="mt-2 text-4xl font-bold uppercase tracking-wide text-violet-100 sm:mt-10 sm:text-4xl">Step 1</p>
-                <h3 className="mt-8 text-4xl font-bold sm:mt-20 sm:text-4xl">Choose Your Plan</h3>
-                <p className="mt-8 text-xl text-violet-100 sm:mt-20 sm:text-2xl">Select the subscription that fits your car, bike, or both.</p>
+              <div className="flex h-full min-h-57 flex-col items-center justify-start rounded-2xl border border-violet-300 p-5 text-center text-white shadow-[0_0_18px_rgba(139,92,246,0.35)] sm:min-h-64 sm:p-8">
+                <p className="mt-2 text-3xl font-bold uppercase tracking-wide text-violet-100 sm:mt-8 sm:text-3xl">Step 1</p>
+                <h3 className="mt-6 text-3xl font-bold sm:mt-16 sm:text-3xl">Choose Your Plan</h3>
+                <p className="mt-6 text-base text-violet-100 sm:mt-16 sm:text-lg">Select the subscription that fits your car, bike, or both.</p>
               </div>
             </motion.div>
 
@@ -53,10 +53,10 @@ function HowItWorksSectionComponent({ howRef, howVisibleStep }: HowItWorksSectio
               transition={{ duration: 0.42, ease: "easeOut", delay: 0 }}
               className="relative transform-gpu will-change-transform"
             >
-              <div className="flex h-full min-h-72 flex-col items-center justify-start rounded-2xl border border-violet-300 p-6 text-center text-white shadow-[0_0_18px_rgba(139,92,246,0.35)] sm:min-h-80 sm:p-10">
-                <p className="mt-2 text-4xl font-bold uppercase tracking-wide text-violet-100 sm:mt-10 sm:text-4xl">Step 2</p>
-                <h3 className="mt-8 text-4xl font-bold sm:mt-20 sm:text-4xl">We Take Over</h3>
-                <p className="mt-8 text-xl text-violet-100 sm:mt-20 sm:text-2xl">Our team arrives at your parking area 5 days a week for professional, eco-friendly cleaning.</p>
+              <div className="flex h-full min-h-57 flex-col items-center justify-start rounded-2xl border border-violet-300 p-5 text-center text-white shadow-[0_0_18px_rgba(139,92,246,0.35)] sm:min-h-64 sm:p-8">
+                <p className="mt-2 text-3xl font-bold uppercase tracking-wide text-violet-100 sm:mt-8 sm:text-3xl">Step 2</p>
+                <h3 className="mt-6 text-3xl font-bold sm:mt-16 sm:text-3xl">We Take Over</h3>
+                <p className="mt-6 text-base text-violet-100 sm:mt-16 sm:text-lg">Our team arrives at your parking area 5 days a week for professional, eco-friendly cleaning.</p>
               </div>
             </motion.div>
 
@@ -71,10 +71,10 @@ function HowItWorksSectionComponent({ howRef, howVisibleStep }: HowItWorksSectio
               transition={{ duration: 0.42, ease: "easeOut", delay: 0 }}
               className="relative transform-gpu will-change-transform "
             >
-              <div className="flex h-full min-h-72 flex-col items-center justify-start rounded-2xl border border-violet-300 p-6 text-center text-white shadow-[0_0_18px_rgba(139,92,246,0.35)] sm:min-h-80 sm:p-10">
-                <p className="mt-2 text-4xl font-bold uppercase tracking-wide text-violet-100 sm:mt-10 sm:text-4xl">Step 3</p>
-                <h3 className="mt-8 text-4xl font-bold sm:mt-20 sm:text-4xl">Enjoy the Shine</h3>
-                <p className="mt-8 text-xl text-violet-100 sm:mt-20 sm:text-2xl">Park. Drive. Repeat. No scheduling. No waiting. Enjoy a clean vehicle without spending your time on it.</p>
+              <div className="flex h-full min-h-57 flex-col items-center justify-start rounded-2xl border border-violet-300 p-5 text-center text-white shadow-[0_0_18px_rgba(139,92,246,0.35)] sm:min-h-64 sm:p-8">
+                <p className="mt-2 text-3xl font-bold uppercase tracking-wide text-violet-100 sm:mt-8 sm:text-3xl">Step 3</p>
+                <h3 className="mt-6 text-3xl font-bold sm:mt-16 sm:text-3xl">Enjoy the Shine</h3>
+                <p className="mt-6 text-base text-violet-100 sm:mt-16 sm:text-lg">Park. Drive. Repeat. No scheduling. No waiting. Enjoy a clean vehicle without spending your time on it.</p>
               </div>
             </motion.div>
           </div>

@@ -145,98 +145,130 @@ export default function SignupPage(){
                                     className="hover-fill-ltr cursor-pointer rounded-full bg-transparent px-4 py-2 text-sm font-semibold tracking-tight text-amber-200 hover:bg-white hover:text-gray-800 sm:text-base"
                                     onClick={moveHome}
                               >
-                                    Home
+                                    HOME
                               </MotionButton>
                               <MotionButton
                                     className="hover-fill-ltr cursor-pointer rounded-full bg-transparent px-4 py-2 text-sm font-semibold tracking-tight text-amber-200 hover:bg-white hover:text-gray-800 sm:text-base"
                                     onClick={() => moveHomeSection("about")}
                               >
-                                    About
+                                    ABOUT US
                               </MotionButton>
                               <MotionButton
                                     className="hover-fill-ltr cursor-pointer rounded-full bg-transparent px-4 py-2 text-sm font-semibold tracking-tight text-amber-200 hover:bg-white hover:text-gray-800 sm:text-base"
                                     onClick={() => moveHomeSection("how-it-works")}
                               >
-                                    How It Works
+                                    HOW IT WORKS
                               </MotionButton>
                               <MotionButton
                                     className="hover-fill-ltr cursor-pointer rounded-full bg-transparent px-4 py-2 text-sm font-semibold tracking-tight text-amber-200 hover:bg-white hover:text-gray-800 sm:text-base"
                                     onClick={() => moveHomeSection("services")}
                               >
-                                    Services
+                                    OUR SERVICES
                               </MotionButton>
                               <MotionButton
                                     className="hover-fill-ltr cursor-pointer rounded-full bg-transparent px-4 py-2 text-sm font-semibold tracking-tight text-amber-200 hover:bg-white hover:text-gray-800 sm:text-base"
                                     onClick={() => moveHomeSection("pricing")}
                               >
-                                    Pricing
+                                    PRICING
                               </MotionButton>
                               <MotionButton
                                     className="hover-fill-ltr cursor-pointer rounded-full bg-transparent px-4 py-2 text-sm font-semibold tracking-tight text-amber-200 hover:bg-white hover:text-gray-800 sm:text-base"
                                     onClick={() => moveHomeSection("contact")}
                               >
-                                    Contact
+                                    CONTACT US
                               </MotionButton>
                               <MotionButton
                                     className="hover-fill-ltr cursor-pointer rounded-full bg-transparent px-4 py-2 text-sm font-semibold tracking-tight text-amber-200 hover:bg-white hover:text-gray-800 sm:text-base"
                                     onClick={Login}
                               >
-                                    Login
+                                    LOGIN
                               </MotionButton>
                         </motion.nav>
-
-                        <h2 className="mt-28 text-center text-4xl font-bold tracking-tighter text-yellow-300 sm:text-8xl">SignUp</h2>
 
                         <motion.div
                               initial={{ opacity: 0, y: 24 }}
                               animate={{ opacity: 1, y: 0 }}
                               transition={{ delay: 0.1, duration: 0.45 }}
-                              className="mx-auto mt-6 w-full max-w-xl rounded-3xl border border-violet-300 bg-transparent p-5 shadow-[0_0_18px_rgba(139,92,246,0.35)] sm:p-6"
+                              className="mx-auto mt-25 w-full max-w-xl rounded-3xl border border-violet-300 bg-transparent p-5 shadow-[0_0_18px_rgba(139,92,246,0.35)] sm:p-6"
                         >
+                              {/* Google Signup Button - Top */}
+                              <MotionButton 
+                                    className="w-full bg-white text-gray-800 px-6 py-3 text-lg font-semibold rounded-lg cursor-pointer hover:bg-gray-100 transition flex items-center justify-center gap-2"
+                                    onClick={SignupWithGoogle}
+                              >
+                                    <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                                          <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                                          <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                                          <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+                                          <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                                    </svg>
+                                    Continue with Google
+                              </MotionButton>
+
+                              <div className="my-4 flex items-center gap-3">
+                                    <div className="flex-1 h-px bg-violet-300/40"></div>
+                                    <span className="text-white text-sm">OR</span>
+                                    <div className="flex-1 h-px bg-violet-300/40"></div>
+                              </div>
+
                               <form
-                                    className="mt-8 flex flex-col items-center gap-3"
+                                    className="mt-6 flex flex-col items-center gap-4"
                                     onSubmit={(event) => {
                                           event.preventDefault();
                                           void Signup();
                                     }}
                               >
-                                    <input
-                                          type="text"
-                                          placeholder="Enter your name"
-                                          className="w-full max-w-xl outline-none text-xl px-4 py-2 bg-transparent rounded-sm text-white placeholder:text-white/70 border border-violet-300 shadow-[0_0_18px_rgba(139,92,246,0.35)] tracking-tighter"
-                                          value={username}
-                                          onChange={(e)=>{setUsername(e.target.value)}}
-                                    />
+                                    <div className="w-full flex flex-col gap-1">
+                                          <label className="text-white text-sm font-semibold">Full name</label>
+                                          <input
+                                                type="text"
+                                                placeholder="Enter your name"
+                                                className="w-full tracking-tighter outline-none text-lg px-4 py-3 bg-transparent rounded-lg text-white placeholder:text-white/50 border border-violet-300 shadow-[0_0_18px_rgba(139,92,246,0.35)] focus:border-amber-300 transition"
+                                                value={username}
+                                                onChange={(e)=>{setUsername(e.target.value)}}
+                                          />
+                                    </div>
 
-                                    <input
-                                          type="email"
-                                          placeholder="Enter your email"
-                                          className="w-full max-w-xl outline-none text-xl px-4 py-2 bg-transparent rounded-sm text-white placeholder:text-white/70 border tracking-tighter border-violet-300 shadow-[0_0_18px_rgba(139,92,246,0.35)]"
-                                          value={email}
-                                          onChange={(e)=>{setEmail(e.target.value)}}
-                                    />
+                                    <div className="w-full flex flex-col gap-1">
+                                          <label className="text-white text-sm font-semibold">Email address</label>
+                                          <input
+                                                type="email"
+                                                placeholder="Enter your email"
+                                                className="w-full tracking-tighter outline-none text-lg px-4 py-3 bg-transparent rounded-lg text-white placeholder:text-white/50 border border-violet-300 shadow-[0_0_18px_rgba(139,92,246,0.35)] focus:border-amber-300 transition"
+                                                value={email}
+                                                onChange={(e)=>{setEmail(e.target.value)}}
+                                          />
+                                    </div>
 
-                                    <input
-                                          type="password"
-                                          placeholder="Enter your password"
-                                          className="w-full max-w-xl outline-none tracking-tighter text-xl px-4 py-2 bg-transparent rounded-sm text-white placeholder:text-white/70 border border-violet-300 shadow-[0_0_18px_rgba(139,92,246,0.35)]"
-                                          value={password}
-                                          onChange={(e)=>{setPassword(e.target.value)}}
-                                    />
+                                    <div className="w-full flex flex-col gap-1">
+                                          <label className="text-white text-sm font-semibold">Password</label>
+                                          <input
+                                                type="password"
+                                                placeholder="Enter your password"
+                                                className="w-full outline-none tracking-tighter text-lg px-4 py-3 bg-transparent rounded-lg text-white placeholder:text-white/50 border border-violet-300 shadow-[0_0_18px_rgba(139,92,246,0.35)] focus:border-amber-300 transition"
+                                                value={password}
+                                                onChange={(e)=>{setPassword(e.target.value)}}
+                                          />
+                                    </div>
 
                                     <MotionButton
                                           type="submit"
-                                          className="hover-fill-ltr bg-transparent px-6 py-2 text-white font-semibold tracking-tighter text-xl cursor-pointer hover:bg-transparent rounded-lg border border-violet-300 shadow-[0_0_18px_rgba(139,92,246,0.35)] sm:font-normal sm:text-2xl"
+                                          className="w-full bg-gradient-to-r from-violet-500 to-amber-500 text-white px-6 py-3 text-lg font-semibold rounded-lg cursor-pointer hover:from-violet-600 hover:to-amber-600 transition mt-2"
                                     >
-                                          Signup
+                                          Continue
                                     </MotionButton>
                               </form>
 
-                              <div className="mt-4 flex flex-col items-center gap-3">
-                                    <MotionButton className="hover-fill-ltr bg-transparent text-white px-3 py-2 cursor-pointer font-medium hover:bg-transparent rounded-lg border border-violet-300 shadow-[0_0_18px_rgba(139,92,246,0.35)] sm:text-xl" onClick={Login}>Already have an account ? Login Instead</MotionButton>
-
-                                    <MotionButton className="hover-fill-ltr bg-transparent px-4 py-2 text-white font-semibold mt-6 tracking-tighter text-xl cursor-pointer hover:bg-transparent rounded-lg border border-violet-300 shadow-[0_0_18px_rgba(139,92,246,0.35)] sm:text-lg"
-                                    onClick={SignupWithGoogle}>Signup with Google</MotionButton>
+                              <div className="mt-6 text-center">
+                                    <p className="text-white text-sm">
+                                          Already have an account?{" "}
+                                          <MotionButton 
+                                                onClick={Login}
+                                                className="text-green-400 font-semibold cursor-pointer hover:text-green-300 transition inline"
+                                          >
+                                                Login
+                                          </MotionButton>
+                                    </p>
                               </div>
                         </motion.div>
                   </div>
