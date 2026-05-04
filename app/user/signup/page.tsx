@@ -157,7 +157,7 @@ export default function SignupPage(){
                                     className="hover-fill-ltr cursor-pointer rounded-full bg-transparent px-4 py-2 text-sm font-semibold tracking-tight text-amber-200 hover:bg-white hover:text-gray-800 sm:text-base"
                                     onClick={() => moveHomeSection("how-it-works")}
                               >
-                                    HOW IT WORKS
+                                    HOW TO START
                               </MotionButton>
                               <MotionButton
                                     className="hover-fill-ltr cursor-pointer rounded-full bg-transparent px-4 py-2 text-sm font-semibold tracking-tight text-amber-200 hover:bg-white hover:text-gray-800 sm:text-base"
@@ -259,7 +259,7 @@ export default function SignupPage(){
 
                                     <MotionButton
                                           type="submit"
-                                          className="w-full bg-gradient-to-r from-violet-500 to-amber-500 text-white px-6 py-3 text-lg font-semibold rounded-lg cursor-pointer hover:from-violet-600 hover:to-amber-600 transition mt-2"
+                                          className="w-full bg-linear-to-r from-violet-500 to-amber-500 text-white px-6 py-3 text-lg font-semibold rounded-lg cursor-pointer hover:from-violet-600 hover:to-amber-600 transition mt-2"
                                     >
                                           Continue
                                     </MotionButton>

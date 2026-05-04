@@ -27,7 +27,7 @@ function HeroSectionComponent({
   const navItems = React.useMemo(
     () => [
       { label: "ABOUT US", action: onAbout },
-      { label: "HOW IT WORKS", action: onHowItWorks },
+      { label: "HOW TO START", action: onHowItWorks },
       { label: "SHINE PROCESS", action: onShineProcess },
       { label: "OUR SERVICES", action: onServices },
       { label: "PRICING", action: onPricing },

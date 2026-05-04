@@ -126,7 +126,7 @@ export default function AdminLoginPage(){
                                     HOME
                               </MotionButton>
                               <MotionButton
-                                    className="hover-fill-ltr cursor-pointer rounded-full bg-transparent px-4 py-2 text-sm font-semibold tracking-tight text-amber-200 hover:bg-white hover:text-gray-800 sm:text-base"
+                                          className="w-full bg-linear-to-r from-violet-500 to-amber-500 text-white px-6 py-3 text-lg font-semibold rounded-lg cursor-pointer hover:from-violet-600 hover:to-amber-600 transition mt-2"
                                     onClick={moveBack}
                               >
                                     BACK

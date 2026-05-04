@@ -13,5 +13,6 @@ export type PlanCardProps = {
   plan: PlanData;
   isPaying: string | null;
   features: string[];
-  onCheckout: (plan: PlanData) => void;
+  vehicleCategory: string;
+  onCheckout: (plan: PlanData, vehicleCategory: string) => void;
 };

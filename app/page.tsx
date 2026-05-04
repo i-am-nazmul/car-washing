@@ -18,6 +18,7 @@ import ShineProcessSection from "@/components/home/ShineProcessSection";
 import AboutSection from "@/components/home/AboutSection";
 import ServicesSection from "@/components/home/ServicesSection";
 import PricingSection from "@/components/home/PricingSection";
+import { HOME_CTA_GRADIENT, HOME_SECTION_BODY, HOME_SECTION_SUBTITLE, HOME_SECTION_TITLE } from "@/components/home/typography";
 
 const WHATSAPP_PHONE = "6366247239";
 const WHATSAPP_WA_PHONE = `91${WHATSAPP_PHONE}`;
@@ -184,11 +185,10 @@ export default function Home() {
   }, [SECTION_NAV_OFFSET]);
   const scrollToContact = React.useCallback(() => scrollToSection("contact"), [scrollToSection]);
 
-  const handleCheckoutClick = React.useCallback((plan: PlanData) => {
-    setActivePlan(plan);
-    window.requestAnimationFrame(() => {
-      setIsOverlayVisible(true);
-    });
+  const handleCheckoutClick = React.useCallback((plan: PlanData, vehicleCategory: string) => {
+    const categoryText = vehicleCategory === "Bike" ? "bike" : `${vehicleCategory} car`;
+    const message = encodeURIComponent(`Hello, I am interested in the ${plan.name} plan for ${categoryText}.`);
+    window.open(`https://wa.me/${WHATSAPP_WA_PHONE}?text=${message}`, "_blank", "noopener,noreferrer");
   }, []);
 
   const closeOverlay = React.useCallback(() => {
@@ -287,8 +287,8 @@ export default function Home() {
       </div>
 
       <div id="contact" className="mt-25 w-full max-w-6xl text-center">
-        <h2 className="text-4xl font-extrabold tracking-tight text-yellow-300 sm:text-6xl">CONTACT US</h2>
-        <p className="mt-3 text-lg font-semibold text-white sm:text-2xl">Ready for Smarter Routine?</p>
+        <h2 className={HOME_SECTION_TITLE}>CONTACT US</h2>
+        <p className={HOME_SECTION_SUBTITLE}>Ready for Smarter Routine?</p>
 
         <motion.section
           initial={{ opacity: 0, y: 24 }}
@@ -297,8 +297,8 @@ export default function Home() {
           transition={{ duration: 0.45 }}
           className="mx-auto mt-5 w-full max-w-4xl rounded-3xl border border-violet-300 bg-transparent px-6 py-10 text-center shadow-[0_0_18px_rgba(139,92,246,0.35)]"
         >
-          <p className="text-base text-white sm:text-2xl">Now launching exclusively for Gated Societies.</p>
-          <p className="mt-1 text-base text-white sm:text-2xl">Submit your query.</p>
+          <p className={HOME_SECTION_BODY}>Now launching exclusively for Gated Societies.</p>
+          <p className={`mt-1 ${HOME_SECTION_BODY}`}>Submit your query.</p>
 
           <div className="mt-4 flex flex-col items-center gap-1 text-sm text-violet-100 sm:text-lg">
             <p>Phone: <span className="font-bold text-white">+91 63662 47239</span></p>
@@ -333,14 +333,14 @@ export default function Home() {
 
             <button
               type="submit"
-              className="hover-fill-ltr cursor-pointer rounded-full border border-emerald-900 bg-emerald-800 px-6 py-3 text-lg font-semibold text-white hover:bg-emerald-900"
+              className={`hover-fill-ltr cursor-pointer rounded-full px-6 py-3 text-lg font-semibold transition ${HOME_CTA_GRADIENT}`}
             >
               Submit
             </button>
           </form>
 
-          <p className="mt-6 text-base font-semibold text-white sm:text-2xl">Professional. Verified. On time. Every time.</p>
-          <p className="text-base font-medium text-white sm:text-2xl">Driven by Shine. Delivered with Care.</p>
+          <p className={`mt-6 ${HOME_SECTION_BODY.replace("font-medium", "font-semibold")}`}>Professional. Verified. On time. Every time.</p>
+          <p className={HOME_SECTION_BODY}>Driven by Shine. Delivered with Care.</p>
         </motion.section>
       </div>
 

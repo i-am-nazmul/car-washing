@@ -2,6 +2,7 @@ import Image from "next/image";
 import React from "react";
 import * as motion from "motion/react-client";
 import { PlanData, PlanCardProps } from "@/components/cards/types";
+import { HOME_SECTION_BODY, HOME_SECTION_SUBTITLE, HOME_SECTION_TITLE } from "@/components/home/typography";
 
 type VehicleCategory = "Sedan" | "SUV" | "Bike";
 type CarModelBucket = "Sedan" | "Hatchback" | "Compact SUV" | "SUV/XUV";
@@ -97,7 +98,7 @@ type PricingPlanEntry = {
 type PricingSectionProps = {
   pricingPlans: PricingPlanEntry[];
   isPaying: string | null;
-  onCheckout: (plan: PlanData) => void;
+  onCheckout: (plan: PlanData, vehicleCategory: string) => void;
 };
 
 function PricingSectionComponent({ pricingPlans, isPaying, onCheckout }: PricingSectionProps) {
@@ -275,10 +276,10 @@ function PricingSectionComponent({ pricingPlans, isPaying, onCheckout }: Pricing
       transition={{ duration: 0.5 }}
       className="mt-24 w-full max-w-6xl px-4 py-6 text-left shadow-xl sm:px-6 sm:py-8"
     >
-      <h2 className="text-center text-lg font-extrabold tracking-tight text-amber-300 sm:text-5xl">PRICING</h2>
-      <p className="mt-2 text-center text-xs font-semibold tracking-tight text-white sm:text-2xl">Premium Care. Transparent Plans.</p>
+      <h2 className={HOME_SECTION_TITLE.replace("text-yellow-300", "text-amber-300")}>PRICING</h2>
+      <p className={HOME_SECTION_SUBTITLE.replace("font-bold", "font-semibold")}>Premium Care. Transparent Plans.</p>
       <div className="mx-auto mt-6 grid w-full max-w-4xl grid-cols-1 gap-2 sm:gap-3 md:grid-cols-2 md:gap-4">
-        <label className="flex flex-col gap-2 text-xs font-semibold text-amber-100 sm:text-sm md:text-base">
+        <label className={`flex flex-col gap-2 ${HOME_SECTION_BODY.replace("font-medium", "font-semibold")} text-amber-100`}>
           Select Vehicle Brand
           <select
             value={selectedCompany}
@@ -294,7 +295,7 @@ function PricingSectionComponent({ pricingPlans, isPaying, onCheckout }: Pricing
           </select>
         </label>
 
-        <label className="flex flex-col gap-2 text-xs font-semibold text-amber-100 sm:text-sm md:text-base">
+        <label className={`flex flex-col gap-2 ${HOME_SECTION_BODY.replace("font-medium", "font-semibold")} text-amber-100`}>
           Select Vehicle Model
           <select
             value={selectedModel}
@@ -350,7 +351,7 @@ function PricingSectionComponent({ pricingPlans, isPaying, onCheckout }: Pricing
                 <Image src={item.image} alt={item.label} width={200} height={200} className="h-20 w-20 object-contain sm:h-48 sm:w-48" />
               </div>
               <p
-                className={`mt-2 text-xs font-semibold tracking-tight sm:mt-3 sm:text-xl ${
+                className={`mt-2 text-sm font-semibold tracking-tight sm:mt-3 sm:text-xl ${
                   selectedCategory === item.value ? "text-white" : isDisabled ? "text-white/55" : "text-amber-200"
                 }`}
               >
@@ -370,12 +371,12 @@ function PricingSectionComponent({ pricingPlans, isPaying, onCheckout }: Pricing
             {visiblePlans.map(({ plan, features, Card }) => (
               <div key={`mobile-${plan.name}`} className="w-full shrink-0 px-1 pb-16 pt-1">
                 <div className="relative">
-                  <Card plan={plan} isPaying={isPaying} features={features} onCheckout={onCheckout} />
+                  <Card plan={plan} isPaying={isPaying} features={features} vehicleCategory={selectedCategory} onCheckout={onCheckout} />
 
                   {selectedCategory !== "Bike" && (
-                    <p className="absolute left-1/2 top-full z-30 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap rounded-full border border-violet-300 bg-[#020826]/90 px-8 py-3 text-5xl font-extrabold tracking-tight text-white shadow-[0_0_18px_rgba(139,92,246,0.35)]">
+                    <p className="absolute left-1/2 top-full z-30 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap rounded-full border border-violet-300 bg-[#020826]/90 px-8 py-3 text-4xl font-extrabold tracking-tight text-white shadow-[0_0_18px_rgba(139,92,246,0.35)] sm:text-5xl">
                       {sharedCarOneTimePrice}
-                      <span className="ml-1 text-2xl font-medium text-white/85">/One Time</span>
+                      <span className="ml-1 text-lg font-medium text-white/85 sm:text-2xl">/One Time</span>
                     </p>
                   )}
                 </div>
@@ -409,14 +410,14 @@ function PricingSectionComponent({ pricingPlans, isPaying, onCheckout }: Pricing
             transition={{ duration: 0.42, delay: index * 0.08 }}
             className="h-full w-full max-w-2xl"
           >
-            <Card plan={plan} isPaying={isPaying} features={features} onCheckout={onCheckout} />
+            <Card plan={plan} isPaying={isPaying} features={features} vehicleCategory={selectedCategory} onCheckout={onCheckout} />
           </motion.div>
         ))}
 
         {selectedCategory !== "Bike" && visiblePlans.length === 2 && (
-          <p className="absolute -bottom-11 left-1/2 z-30 -translate-x-1/2 whitespace-nowrap rounded-full border border-violet-300 bg-[#020826]/90 px-8 py-3 text-5xl font-extrabold tracking-tight text-white shadow-[0_0_18px_rgba(139,92,246,0.35)]">
+          <p className="absolute -bottom-11 left-1/2 z-30 -translate-x-1/2 whitespace-nowrap rounded-full border border-violet-300 bg-[#020826]/90 px-8 py-3 text-4xl font-extrabold tracking-tight text-white shadow-[0_0_18px_rgba(139,92,246,0.35)] sm:text-5xl">
             {sharedCarOneTimePrice}
-            <span className="ml-1 text-2xl font-medium text-white/85">/One Time</span>
+            <span className="ml-1 text-lg font-medium text-white/85 sm:text-2xl">/One Time</span>
           </p>
         )}
       </div>
