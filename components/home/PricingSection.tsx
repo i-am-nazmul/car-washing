@@ -321,7 +321,7 @@ function PricingSectionComponent({ pricingPlans, isPaying, onCheckout }: Pricing
 
       <div className="mt-6 grid grid-cols-3 gap-2 sm:gap-4">
         {[
-          { value: "Sedan", label: "Sedan/Hatchback/Compact SUV", image: "/sedan.png" },
+          { value: "Sedan", label: "Sedan/Hatchback/\nCompact SUV", image: "/sedan.png" },
           { value: "SUV", label: "Premium SUV", image: "/suv.png" },
           { value: "Bike", label: "Bike", image: "/bike.png" },
         ].map((item) => {
@@ -351,7 +351,7 @@ function PricingSectionComponent({ pricingPlans, isPaying, onCheckout }: Pricing
                 <Image src={item.image} alt={item.label} width={200} height={200} className="h-20 w-20 object-contain sm:h-48 sm:w-48" />
               </div>
               <p
-                className={`mt-2 text-sm font-semibold tracking-tight sm:mt-3 sm:text-xl ${
+                className={`mt-2 whitespace-pre-line text-sm font-semibold tracking-tight sm:mt-3 sm:text-xl ${
                   selectedCategory === item.value ? "text-white" : isDisabled ? "text-white/55" : "text-amber-200"
                 }`}
               >

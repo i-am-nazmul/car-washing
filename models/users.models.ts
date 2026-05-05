@@ -23,9 +23,7 @@ const userSchema = new mongoose.Schema({
       },
       googleId: {
             type: String,
-            default: null,
-            unique: true,
-            sparse: true,
+            default: undefined,
       },
       avatar: {
             type: String,
@@ -47,6 +45,15 @@ const userSchema = new mongoose.Schema({
 }, {
       timestamps: true,
 });
+
+userSchema.index(
+      { googleId: 1 },
+      {
+            unique: true,
+            sparse: true,
+            partialFilterExpression: { googleId: { $type: "string" } },
+      }
+);
 
 const Users = mongoose.models.users || mongoose.model("users",userSchema);
 export default Users;

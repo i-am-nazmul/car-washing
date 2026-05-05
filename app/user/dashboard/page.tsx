@@ -16,6 +16,10 @@ export default function DashboardPage() {
     router.push("/user/profile");
   }, [router]);
 
+  const moveToHome = React.useCallback(() => {
+    router.push("/");
+  }, [router]);
+
   useEffect(() => {
     let intervalId: ReturnType<typeof setInterval> | undefined;
 
@@ -76,8 +80,15 @@ export default function DashboardPage() {
         </div>
 
         <div className="mx-auto mt-20 w-full max-w-3xl rounded-3xl border border-gray-200 px-6 py-12 text-center shadow-md sm:px-10">
-          <h2 className="text-3xl font-extrabold tracking-tight text-gray-800 sm:text-4xl">Thanks for registering</h2>
-          <p className="mt-4 text-lg font-medium text-gray-600 sm:text-2xl">We will get back to you soon.</p>
+          <h2 className="text-3xl font-extrabold tracking-tight text-gray-800 sm:text-4xl">You don't have any active plans</h2>
+          <p className="mt-4 text-lg font-medium text-gray-600 sm:text-2xl">Start by selecting a plan that suits your needs.</p>
+          <button
+            type="button"
+            onClick={moveToHome}
+            className="mt-8 rounded-full bg-gradient-to-r from-violet-500 to-amber-500 px-8 py-3 text-lg font-semibold text-white hover:from-violet-600 hover:to-amber-600 transition cursor-pointer"
+          >
+            Browse Plans
+          </button>
         </div>
       </div>
 
