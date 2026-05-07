@@ -1,95 +1,138 @@
 "use client";
 
-import React, { useEffect } from "react";
-import axios from "axios";
+import React from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
+import * as motion from "motion/react-client";
 import SiteFooter from "@/components/SiteFooter";
-import Loader from "@/components/Loader";
-import { useIsLoading } from "@/store/store";
+import MotionButton from "@/components/MotionButton";
 
 export default function DashboardPage() {
-  const [headline, setHeadline] = React.useState("Hello ");
-  const { isLoading, setIsLoading } = useIsLoading();
   const router = useRouter();
 
-  const moveToProfilePage = React.useCallback(() => {
-    router.push("/user/profile");
-  }, [router]);
+  const hasActiveMembership = true;
 
-  const moveToHome = React.useCallback(() => {
+  const moveHome = React.useCallback(() => {
     router.push("/");
   }, [router]);
 
-  useEffect(() => {
-    let intervalId: ReturnType<typeof setInterval> | undefined;
+  const moveHomeSection = React.useCallback(
+    (sectionId: string) => {
+      router.push(`/#${sectionId}`);
+    },
+    [router]
+  );
 
-    const loadHeadline = async () => {
-      setIsLoading(true);
-      try {
-        const profile = await axios.get("/api/profile");
-        const rawName = profile.data?.username?.trim() || "there";
-        const shortName = rawName.split(/\s+/)[0] || rawName;
-        const fullText = `${shortName}`;
-        let index = 0;
-
-        setHeadline("Hello ");
-        intervalId = setInterval(() => {
-          index += 1;
-          setHeadline(`Hello ${fullText.slice(0, index)}`);
-          if (index >= fullText.length && intervalId) {
-            clearInterval(intervalId);
-            setIsLoading(false);
-          }
-        }, 90);
-      } catch {
-        setHeadline("Hello there");
-        setIsLoading(false);
-      }
-    };
-
-    void loadHeadline();
-
-    return () => {
-      if (intervalId) {
-        clearInterval(intervalId);
-      }
-    };
-  }, [setIsLoading]);
+  const moveLogin = React.useCallback(() => {
+    router.push("/user/login");
+  }, [router]);
 
   return (
-    <div className="min-h-screen w-full p-1">
-      {isLoading && <Loader />}
-      <div className="flex h-full min-h-[calc(100vh-0.5rem)] w-full flex-col bg-white px-2 py-2 sm:px-4 sm:py-4">
-        <div className="flex items-center justify-between gap-3">
-          <h1 className="text-4xl font-bold tracking-tight text-gray-700 sm:text-5xl lg:text-7xl">{headline}</h1>
-
-          <div className="flex items-center justify-end">
-            <button
-              type="button"
-              aria-label="Open profile"
-              className="cursor-pointer rounded-full shadow-md hover:shadow-lg"
-              onClick={moveToProfilePage}
-            >
-              <svg width="70" height="70" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" className="h-20 w-20 sm:h-14 sm:w-14">
-                <circle cx="100" cy="100" r="90" fill="#8A90A0" />
-                <circle cx="100" cy="80" r="25" fill="#1F2A4A" />
-                <ellipse cx="100" cy="140" rx="50" ry="25" fill="#1F2A4A" />
-              </svg>
-            </button>
-          </div>
-        </div>
-
-        <div className="mx-auto mt-20 w-full max-w-3xl rounded-3xl border border-gray-200 px-6 py-12 text-center shadow-md sm:px-10">
-          <h2 className="text-3xl font-extrabold tracking-tight text-gray-800 sm:text-4xl">You don't have any active plans</h2>
-          <p className="mt-4 text-lg font-medium text-gray-600 sm:text-2xl">Start by selecting a plan that suits your needs.</p>
+    <div className="min-h-screen w-full bg-[#03061a] p-1 text-amber-100">
+      <div className="flex h-full min-h-[calc(100vh-0.5rem)] w-full flex-col bg-[#050b28] px-2 py-2 sm:px-4 sm:py-4">
+        <motion.nav
+          initial={{ opacity: 0, y: -24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.45 }}
+          className="mt-2 flex w-full items-center justify-between gap-3"
+        >
           <button
             type="button"
-            onClick={moveToHome}
-            className="mt-8 rounded-full bg-gradient-to-r from-violet-500 to-amber-500 px-8 py-3 text-lg font-semibold text-white hover:from-violet-600 hover:to-amber-600 transition cursor-pointer"
+            aria-label="Go to home"
+            onClick={moveHome}
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-white/5 transition hover:bg-white/15"
           >
-            Browse Plans
+            <Image
+              src="/logo4.png"
+              alt="The Shine Company"
+              width={36}
+              height={36}
+              className="h-7 w-7 object-contain"
+            />
           </button>
-        </div>
+
+          <div className="flex flex-1 flex-wrap items-center justify-center gap-2 sm:gap-3">
+            <MotionButton
+              className="hover-fill-ltr cursor-pointer rounded-full bg-transparent px-4 py-2 text-sm font-semibold tracking-tight text-amber-200 hover:bg-white hover:text-gray-800 sm:text-base"
+              onClick={moveHome}
+            >
+              HOME
+            </MotionButton>
+            <MotionButton
+              className="hover-fill-ltr cursor-pointer rounded-full bg-transparent px-4 py-2 text-sm font-semibold tracking-tight text-amber-200 hover:bg-white hover:text-gray-800 sm:text-base"
+              onClick={() => moveHomeSection("about")}
+            >
+              ABOUT US
+            </MotionButton>
+            <MotionButton
+              className="hover-fill-ltr cursor-pointer rounded-full bg-transparent px-4 py-2 text-sm font-semibold tracking-tight text-amber-200 hover:bg-white hover:text-gray-800 sm:text-base"
+              onClick={() => moveHomeSection("how-it-works")}
+            >
+              HOW TO START
+            </MotionButton>
+            <MotionButton
+              className="hover-fill-ltr cursor-pointer rounded-full bg-transparent px-4 py-2 text-sm font-semibold tracking-tight text-amber-200 hover:bg-white hover:text-gray-800 sm:text-base"
+              onClick={() => moveHomeSection("shine-process")}
+            >
+              SHINE PROCESS
+            </MotionButton>
+            <MotionButton
+              className="hover-fill-ltr cursor-pointer rounded-full bg-transparent px-4 py-2 text-sm font-semibold tracking-tight text-amber-200 hover:bg-white hover:text-gray-800 sm:text-base"
+              onClick={() => moveHomeSection("services")}
+            >
+              OUR SERVICES
+            </MotionButton>
+            <MotionButton
+              className="hover-fill-ltr cursor-pointer rounded-full bg-transparent px-4 py-2 text-sm font-semibold tracking-tight text-amber-200 hover:bg-white hover:text-gray-800 sm:text-base"
+              onClick={() => moveHomeSection("pricing")}
+            >
+              PRICING
+            </MotionButton>
+            <MotionButton
+              className="hover-fill-ltr cursor-pointer rounded-full bg-transparent px-4 py-2 text-sm font-semibold tracking-tight text-amber-200 hover:bg-white hover:text-gray-800 sm:text-base"
+              onClick={() => moveHomeSection("contact")}
+            >
+              CONTACT US
+            </MotionButton>
+            <MotionButton
+              className="hover-fill-ltr cursor-pointer rounded-full bg-transparent px-4 py-2 text-sm font-semibold tracking-tight text-amber-200 hover:bg-white hover:text-gray-800 sm:text-base"
+              onClick={moveLogin}
+            >
+              LOGIN
+            </MotionButton>
+          </div>
+
+          <div className="hidden h-10 w-10 sm:block" aria-hidden="true" />
+        </motion.nav>
+
+        {hasActiveMembership ? (
+          <div className="mx-auto mt-12 w-full max-w-4xl">
+            <div className="rounded-3xl border border-amber-200/25 bg-[#070f2f] px-6 py-8 shadow-[0_0_22px_rgba(253,230,138,0.1)] sm:px-10">
+              <h3 className="text-xl font-semibold text-amber-200 sm:text-2xl">Benefits Used</h3>
+              <div className="mt-6 grid gap-4 sm:grid-cols-3">
+                {[
+                  { label: "Exterior Refreshes", value: "20/20" },
+                  { label: "Dashboard Polish", value: "1/1" },
+                  { label: "Tyre Polishes", value: "2/2" },
+                ].map((benefit) => (
+                  <div key={benefit.label} className="rounded-2xl border border-amber-200/20 bg-[#060b26] px-5 py-6 text-center">
+                    <div className="text-3xl font-semibold text-amber-200 sm:text-4xl">{benefit.value}</div>
+                    <div className="mt-2 text-sm font-medium uppercase tracking-[0.14em] text-amber-100/80 sm:text-base">
+                      {benefit.label}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div className="mx-auto mt-12 w-full max-w-3xl rounded-3xl border border-amber-200/30 bg-[#070f2f] px-6 py-12 text-center shadow-[0_0_22px_rgba(253,230,138,0.12)] sm:px-10">
+            <h2 className="text-3xl font-semibold tracking-tight text-amber-200 sm:text-4xl">Your Membership is Pending Activation.</h2>
+            <p className="mt-4 text-lg font-medium text-amber-100/85 sm:text-2xl">
+              To maintain our signature quality, we limit slots per community. Complete your subscription to lock in your daily maintenance slot.
+            </p>
+          </div>
+        )}
       </div>
 
       <SiteFooter />
