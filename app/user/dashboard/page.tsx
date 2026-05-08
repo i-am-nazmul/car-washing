@@ -10,20 +10,23 @@ import SiteFooter from "@/components/SiteFooter";
 export default function DashboardPage() {
   const router = useRouter();
   const [username, setUsername] = React.useState("");
+  const [userPlan, setUserPlan] = React.useState<any[]>([]);
   const [isMessageModalOpen, setIsMessageModalOpen] = React.useState(false);
   const [messageText, setMessageText] = React.useState("");
   const [isSubmittingMessage, setIsSubmittingMessage] = React.useState(false);
 
-  const hasActiveMembership = true;
+  const hasActiveMembership = userPlan && userPlan.length > 0;
 
   React.useEffect(() => {
     const fetchUsername = async () => {
       try {
         const response = await axios.get("/api/profile");
         setUsername(response.data?.username || "User");
+        setUserPlan(response.data?.plan || []);
       } catch (error) {
         console.error("Failed to fetch username:", error);
         setUsername("User");
+        setUserPlan([]);
       }
     };
 
@@ -158,9 +161,9 @@ export default function DashboardPage() {
           </div>
         ) : (
           <div className="mx-auto w-full max-w-3xl rounded-3xl border border-amber-200/30 bg-[#070f2f] px-6 py-12 text-center shadow-[0_0_22px_rgba(253,230,138,0.12)] sm:px-10">
-            <h2 className="text-3xl font-semibold tracking-tight text-amber-200 sm:text-4xl">Your Membership is Pending Activation.</h2>
+            <h2 className="text-3xl font-semibold tracking-tight text-amber-200 sm:text-4xl">Thanks for registering with The Shine Company</h2>
             <p className="mt-4 text-lg font-medium text-amber-100/85 sm:text-2xl">
-              To maintain our signature quality, we limit slots per community. Complete your subscription to lock in your daily maintenance slot.
+              Please browse our services and choose a plan
             </p>
           </div>
         )}

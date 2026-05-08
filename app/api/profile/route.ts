@@ -26,7 +26,7 @@ export async function GET(request: NextRequest) {
       });
     }
     if (sessionToken?.email) {
-      const nextAuthUser = await Users.findOne({ email: String(sessionToken.email).toLowerCase() }).select("username email role avatar phoneNumber");
+      const nextAuthUser = await Users.findOne({ email: String(sessionToken.email).toLowerCase() }).select("username email role avatar phoneNumber plan");
 
       if (!nextAuthUser) {
         return NextResponse.json(
@@ -36,6 +36,7 @@ export async function GET(request: NextRequest) {
             role: "user",
             avatar: null,
             phoneNumber: null,
+            plan: [],
           },
           { status: 200 }
         );
@@ -48,6 +49,7 @@ export async function GET(request: NextRequest) {
           role: nextAuthUser.role,
           avatar: nextAuthUser.avatar,
           phoneNumber: nextAuthUser.phoneNumber || null,
+          plan: nextAuthUser.plan || [],
         },
         { status: 200 }
       );
@@ -72,7 +74,7 @@ export async function GET(request: NextRequest) {
     const decodedToken = jwt.verify(token, tokenSecret) as DecodedToken;
 
     
-    const user = await Users.findById(decodedToken.id).select("username email role avatar phoneNumber");
+    const user = await Users.findById(decodedToken.id).select("username email role avatar phoneNumber plan");
 
     if (!user) {
       console.error("No such user exists");
@@ -86,6 +88,7 @@ export async function GET(request: NextRequest) {
       role: user.role,
       avatar: user.avatar,
       phoneNumber: user.phoneNumber || null,
+      plan: user.plan || [],
     },{status:200});
 
   } catch (error: unknown) {

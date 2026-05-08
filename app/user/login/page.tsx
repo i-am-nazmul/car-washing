@@ -6,8 +6,10 @@ import { useIsLoading } from "@/store/store";
 import Loader from "@/components/Loader";
 import MotionButton from "@/components/MotionButton";
 import SiteFooter from "@/components/SiteFooter";
+import Message from "@/components/Message";
 import toast from "react-hot-toast";
 import { signIn } from "next-auth/react";
+import axios from "axios";
  
 
 
@@ -20,6 +22,7 @@ export default function LoginPage(){
       const [email,setEmail]=React.useState('');
       const [password,setPassword]=React.useState('');
       const {isLoading,setIsLoading}=useIsLoading();
+      const [showAuthMessage, setShowAuthMessage] = React.useState(false);
 
       React.useEffect(() => {
             setIsLoading(false);
@@ -64,6 +67,22 @@ export default function LoginPage(){
                   callbackUrl: safeNextPath,
             });
             if (!result?.error) {
+                  // Check if user is trying to access admin routes without admin role
+                  if (safeNextPath.includes("/admin")) {
+                        try {
+                              const profileResponse = await axios.get("/api/profile");
+                              const userRole = profileResponse.data?.role;
+                              
+                              if (userRole !== "admin") {
+                                    setShowAuthMessage(true);
+                                    setIsLoading(false);
+                                    return;
+                              }
+                        } catch (profileError) {
+                              console.error("Failed to fetch user profile:", profileError);
+                        }
+                  }
+
                   toast.success("Login successful!");
                   router.push(safeNextPath);
                   router.refresh();
@@ -264,6 +283,21 @@ export default function LoginPage(){
                               </a>
                         </motion.div>
                   </div>
+
+                  {/* Authorization Message */}
+                  <Message
+                        isOpen={showAuthMessage}
+                        title="Access Denied"
+                        message="You are not authorized to access the admin dashboard."
+                        buttons={[
+                              {
+                                    label: "OK",
+                                    onClick: () => setShowAuthMessage(false),
+                                    variant: "primary",
+                              },
+                        ]}
+                        onClose={() => setShowAuthMessage(false)}
+                  />
 
                   <SiteFooter />
                   </div>

@@ -48,6 +48,10 @@ const userSchema = new mongoose.Schema({
             type: String,
             enum: ["user", "admin"],
             default: "user",
+      },
+      plan: {
+            type: [mongoose.Schema.Types.ObjectId],
+            default: [],
       }
 }, {
       timestamps: true,

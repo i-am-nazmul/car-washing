@@ -35,7 +35,8 @@ export default async function AdminLayout({ children }: AdminLayoutProps) {
   const normalizedRole = String(user?.role || "").toLowerCase();
 
   if (!user || normalizedRole !== "admin") {
-    redirect("/user/dashboard");
+    // redirect non-admins back to admin login and show unauthorized message
+    redirect("/admin/login?unauthorized=1");
   }
 
   return <>{children}</>;

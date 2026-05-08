@@ -1,11 +1,12 @@
 "use client"
 import React from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import * as motion from "motion/react-client";
 import { useIsLoading } from "@/store/store";
 import Loader from "@/components/Loader";
 import MotionButton from "@/components/MotionButton";
 import SiteFooter from "@/components/SiteFooter";
+import Message from "@/components/Message";
 import toast from "react-hot-toast";
 import { signIn, signOut } from "next-auth/react";
 import axios from "axios";
@@ -20,6 +21,8 @@ export default function AdminLoginPage(){
       const backgroundVideoRef = React.useRef<HTMLVideoElement | null>(null);
       const [email,setEmail]=React.useState('');
       const [password,setPassword]=React.useState('');
+      const [showAuthMessage, setShowAuthMessage] = React.useState(false);
+      const searchParams = useSearchParams();
       const {isLoading,setIsLoading}=useIsLoading();
 
       React.useEffect(() => {
@@ -40,6 +43,12 @@ export default function AdminLoginPage(){
             }
       }, [activeBackgroundVideoIndex]);
 
+      React.useEffect(() => {
+            if (searchParams?.get("unauthorized") === "1") {
+                  setShowAuthMessage(true);
+            }
+      }, [searchParams]);
+
       const AdminLogin = async () => {
             if(!email || !password){
                   toast.error("Please enter valid credentials!");
@@ -56,8 +65,9 @@ export default function AdminLoginPage(){
             if (!result?.error) {
                   const profile = await axios.get('/api/profile', { timeout: 8000 });
                   if (profile.data?.role !== "admin") {
+                        // sign out the non-admin and show unauthorized message
                         await signOut({ redirect: false });
-                        toast.error("Only admins can login from this page.");
+                        setShowAuthMessage(true);
                         setIsLoading(false);
                         return;
                   }
@@ -126,7 +136,7 @@ export default function AdminLoginPage(){
                                     HOME
                               </MotionButton>
                               <MotionButton
-                                          className="w-full bg-linear-to-r from-violet-500 to-amber-500 text-white px-6 py-3 text-lg font-semibold rounded-lg cursor-pointer hover:from-violet-600 hover:to-amber-600 transition mt-2"
+                                    className="hover-fill-ltr cursor-pointer rounded-full bg-transparent px-4 py-2 text-sm font-semibold tracking-tight text-amber-200 hover:bg-white hover:text-gray-800 sm:text-base"
                                     onClick={moveBack}
                               >
                                     BACK
@@ -190,13 +200,28 @@ export default function AdminLoginPage(){
 
                                     <MotionButton
                                           type="submit"
-                                          className="w-full bg-gradient-to-r from-violet-500 to-amber-500 text-white px-6 py-3 text-lg font-semibold rounded-lg cursor-pointer hover:from-violet-600 hover:to-amber-600 transition mt-2"
+                                          className="w-full bg-linear-to-r from-violet-500 to-amber-500 text-white px-6 py-3 text-lg font-semibold rounded-lg cursor-pointer hover:from-violet-600 hover:to-amber-600 transition mt-2"
                                     >
                                           Continue
                                     </MotionButton>
                               </form>
                         </motion.div>
                   </div>
+
+                  {/* Authorization Message */}
+                  <Message
+                        isOpen={showAuthMessage}
+                        title="Access Denied"
+                        message="You are not authorized to access the admin dashboard."
+                        buttons={[
+                              {
+                                    label: "OK",
+                                    onClick: () => setShowAuthMessage(false),
+                                    variant: "primary",
+                              },
+                        ]}
+                        onClose={() => setShowAuthMessage(false)}
+                  />
 
                   <SiteFooter />
                   </div>
