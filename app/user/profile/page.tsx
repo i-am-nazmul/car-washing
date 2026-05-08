@@ -12,6 +12,9 @@ import { signOut } from "next-auth/react";
 export default function ProfilePage(){
       const [user,setUser] = React.useState('');
       const [email,setEmail] = React.useState('');
+      const [phoneNumber,setPhoneNumber] = React.useState('');
+      const [isEditingPhone,setIsEditingPhone] = React.useState(false);
+      const [newPhoneNumber,setNewPhoneNumber] = React.useState('');
       const {isLoading,setIsLoading}=useIsLoading();
       const router = useRouter();
 
@@ -31,6 +34,39 @@ export default function ProfilePage(){
             }
       }
 
+      const updatePhoneNumber = async function () {
+            if (!newPhoneNumber.trim()) {
+                  setIsEditingPhone(false);
+                  return;
+            }
+
+            const phoneDigitsOnly = newPhoneNumber.replace(/\D/g, '');
+            if (phoneDigitsOnly.length < 10 || phoneDigitsOnly.length > 15) {
+                  alert('Please enter a valid phone number (10-15 digits)');
+                  return;
+            }
+
+            setIsLoading(true);
+            try {
+                  const response = await axios.post('/api/profile/update-phone', {
+                        phoneNumber: phoneDigitsOnly,
+                  });
+
+                  if (response.status === 200) {
+                        setPhoneNumber(phoneDigitsOnly);
+                        setNewPhoneNumber(phoneDigitsOnly);
+                        setIsEditingPhone(false);
+                  }
+            } catch (error: unknown) {
+                  if (axios.isAxiosError(error)) {
+                        const message = (error.response?.data as { message?: string })?.message;
+                        alert(message || 'Failed to update phone number');
+                  }
+            } finally {
+                  setIsLoading(false);
+            }
+      }
+
       const moveToHome = function () {
             router.push('/');
       }
@@ -41,6 +77,8 @@ export default function ProfilePage(){
                   const userData = await axios.get('/api/profile');
                   setUser(userData.data?.username || "User");
                   setEmail(userData.data?.email || "");
+                  setPhoneNumber(userData.data?.phoneNumber || "");
+                  setNewPhoneNumber(userData.data?.phoneNumber || "");
                   setIsLoading(false);
             } catch (error: unknown) {
                   console.error("Profile API error:", error);
@@ -104,7 +142,47 @@ export default function ProfilePage(){
                         <ul className="font-mono tracking-tight px-4 mt-2 bg-amber-200 w-max rounded-xl">
                               <li className="w-full text-start px-4 py-2 rounded-xs font-semibold text-gray-700 text-2xl tracking-tighter">{user}</li>
                               <li className="w-full text-start px-4 py-2 rounded-xs font-semibold text-gray-700 text-2xl tracking-tighter">{email}</li>
+                              <li className="w-full text-start px-4 py-2 rounded-xs font-semibold text-gray-700 text-2xl tracking-tighter">
+                                    {phoneNumber ? phoneNumber : "No phone number"}
+                              </li>
                         </ul>
+
+                        {!isEditingPhone ? (
+                              <MotionButton
+                                    className="mt-3 mb-2 bg-blue-600 px-4 py-1 text-white font-mono tracking-tighter text-lg sm:cursor-pointer hover:bg-blue-700 rounded-lg sm:rounded-sm"
+                                    onClick={() => setIsEditingPhone(true)}
+                              >
+                                    Edit Phone
+                              </MotionButton>
+                        ) : (
+                              <div className="mt-3 mb-2 flex gap-2 flex-col w-full px-4">
+                                    <input
+                                          type="tel"
+                                          placeholder="Enter phone number"
+                                          value={newPhoneNumber}
+                                          onChange={(e) => setNewPhoneNumber(e.target.value.replace(/\D/g, ''))}
+                                          className="px-3 py-2 border border-gray-300 rounded-lg text-gray-700 font-mono"
+                                    />
+                                    <div className="flex gap-2">
+                                          <MotionButton
+                                                className="flex-1 bg-green-600 px-3 py-1 text-white font-mono tracking-tighter text-sm sm:cursor-pointer hover:bg-green-700 rounded-lg sm:rounded-sm"
+                                                onClick={updatePhoneNumber}
+                                          >
+                                                Save
+                                          </MotionButton>
+                                          <MotionButton
+                                                className="flex-1 bg-gray-600 px-3 py-1 text-white font-mono tracking-tighter text-sm sm:cursor-pointer hover:bg-gray-700 rounded-lg sm:rounded-sm"
+                                                onClick={() => {
+                                                      setIsEditingPhone(false);
+                                                      setNewPhoneNumber(phoneNumber);
+                                                }}
+                                          >
+                                                Cancel
+                                          </MotionButton>
+                                    </div>
+                              </div>
+                        )}
+
                         <div className="mt-4 mb-4 flex items-center gap-3">
                               <MotionButton
                                     className="bg-emerald-800 px-4 py-1 text-white font-mono tracking-tighter text-2xl sm:cursor-pointer hover:bg-emerald-900 rounded-lg sm:rounded-sm"

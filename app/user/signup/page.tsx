@@ -19,6 +19,7 @@ export default function SignupPage(){
       const [username,setUsername]=React.useState('');
       const [email,setEmail]=React.useState('');
       const [password,setPassword]=React.useState('');
+      const [phoneNumber,setPhoneNumber]=React.useState('');
       const {isLoading,setIsLoading}=useIsLoading();
       const router = useRouter();
 
@@ -49,7 +50,7 @@ export default function SignupPage(){
       };
 
       const Signup = async () => {
-            if(!username || !email || !password){
+            if(!username || !email || !password || !phoneNumber){
                   toast.error("Please enter all the fields!");
                   return ;
 
@@ -60,7 +61,8 @@ export default function SignupPage(){
             const request = await axios.post('/api/signup', {
                   username,
                   email,
-                  password
+                  password,
+                  phoneNumber
             });
             if(request.status === 201){
                   const loginResult = await signIn("credentials", {
@@ -254,6 +256,17 @@ export default function SignupPage(){
                                                 className="w-full outline-none tracking-tighter text-lg px-4 py-3 bg-transparent rounded-lg text-white placeholder:text-white/50 border border-violet-300 shadow-[0_0_18px_rgba(139,92,246,0.35)] focus:border-amber-300 transition"
                                                 value={password}
                                                 onChange={(e)=>{setPassword(e.target.value)}}
+                                          />
+                                    </div>
+
+                                    <div className="w-full flex flex-col gap-1">
+                                          <label className="text-white text-sm font-semibold">Phone Number</label>
+                                          <input
+                                                type="tel"
+                                                placeholder="Enter your phone number"
+                                                className="w-full outline-none `tracking-tighter text-lg px-4 py-3 bg-transparent rounded-lg text-white placeholder:text-white/50 border border-violet-300 shadow-[0_0_18px_rgba(139,92,246,0.35)] focus:border-amber-300 transition"
+                                                value={phoneNumber}
+                                                onChange={(e)=>{setPhoneNumber(e.target.value.replace(/\D/g, ''))}}
                                           />
                                     </div>
 

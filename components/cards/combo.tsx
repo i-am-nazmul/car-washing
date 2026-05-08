@@ -50,7 +50,7 @@ export default function ComboCard({ plan, features, vehicleCategory, onCheckout 
           <button
             type="button"
             onClick={() => onCheckout(plan, vehicleCategory)}
-            className={`mx-auto block w-fit rounded-full px-6 py-3 text-lg font-bold tracking-tight transition ${HOME_CTA_GRADIENT}`}
+            className={`mx-auto block w-fit rounded-full px-6 py-3 text-lg font-bold tracking-tight transition cursor-pointer ${HOME_CTA_GRADIENT}`}
           >
             Book now
           </button>
