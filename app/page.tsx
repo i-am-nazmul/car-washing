@@ -6,11 +6,13 @@ import MotionButton from "@/components/MotionButton";
 import SiteFooter from "@/components/SiteFooter";
 import { useIsLoading } from "@/store/store";
 import Loader from "@/components/Loader";
+import toast from "react-hot-toast";
 import BikeCard, { BIKE_CARE_FEATURES, BIKE_CARE_PLAN } from "@/components/cards/bike";
 import CarStandardCard, { CLEAN_CARE_FEATURES, CLEAN_CARE_PLAN } from "@/components/cards/carStandard";
 import CarPremiumCard, { SHINE_CARE_FEATURES, SHINE_CARE_PLAN } from "@/components/cards/carPremium";
 import ComboCard, { SMART_COMBO_FEATURES, SMART_COMBO_PLAN } from "@/components/cards/combo";
 import { PlanData } from "@/components/cards/types";
+import axios from "axios";
 import WhatsAppIcon from "@/components/WhatsAppIcon";
 import HeroSection from "@/components/home/HeroSection";
 import HowItWorksSection from "@/components/home/HowItWorksSection";
@@ -185,11 +187,37 @@ export default function Home() {
   }, [SECTION_NAV_OFFSET]);
   const scrollToContact = React.useCallback(() => scrollToSection("contact"), [scrollToSection]);
 
+  const assignPlanToUser = React.useCallback(async (plan: PlanData, vehicleCategory: string) => {
+    try {
+      const response = await axios.post("/api/plans/assign", {
+        planName: plan.name,
+        vehicleCategory,
+      });
+
+      if (response.status === 201) {
+        toast.success("Plan added to your account");
+        return true;
+      }
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        if (error.response?.status === 401) {
+          router.push("/user/login?next=/#pricing");
+          return false;
+        }
+        toast.error(error.response?.data?.message || "Failed to add plan");
+      } else {
+        toast.error("Failed to add plan");
+      }
+    }
+
+    return false;
+  }, [router]);
+
   const handleCheckoutClick = React.useCallback((plan: PlanData, vehicleCategory: string) => {
-    const categoryText = vehicleCategory === "Bike" ? "bike" : `${vehicleCategory} car`;
-    const message = encodeURIComponent(`Hello, I am interested in the ${plan.name} plan for ${categoryText}.`);
-    window.open(`https://wa.me/${WHATSAPP_WA_PHONE}?text=${message}`, "_blank", "noopener,noreferrer");
-  }, []);
+    setActivePlan(plan);
+    setIsOverlayVisible(true);
+    void assignPlanToUser(plan, vehicleCategory);
+  }, [assignPlanToUser]);
 
   const closeOverlay = React.useCallback(() => {
     setIsOverlayVisible(false);
@@ -198,14 +226,13 @@ export default function Home() {
     }, 220);
   }, []);
 
-  const contactOnWhatsApp = React.useCallback(() => {
-    if (!activePlan) {
-      return;
-    }
-
-    const message = encodeURIComponent(`Hey, I want the ${activePlan.name} service.`);
-    window.open(`https://wa.me/${WHATSAPP_WA_PHONE}?text=${message}`, "_blank", "noopener,noreferrer");
-  }, [activePlan]);
+  const goToDashboard = React.useCallback(() => {
+    setIsOverlayVisible(false);
+    window.setTimeout(() => {
+      setActivePlan(null);
+    }, 220);
+    router.push("/user/dashboard");
+  }, [router]);
 
   const handleContactSubmit = React.useCallback(
     (event: React.FormEvent<HTMLFormElement>) => {
@@ -337,15 +364,10 @@ export default function Home() {
             >
               Submit
             </button>
-          </form>
 
-          <p className={`mt-6 ${HOME_SECTION_BODY.replace("font-medium", "font-semibold")}`}>Professional. Verified. On time. Every time.</p>
-          <p className={HOME_SECTION_BODY}>Driven by Shine. Delivered with Care.</p>
+          </form>
         </motion.section>
       </div>
-
-
-    </div>
 
     <button
       type="button"
@@ -400,9 +422,9 @@ export default function Home() {
             <div className="mt-8 flex justify-end">
               <MotionButton
                 className="rounded-full border border-gray-900 bg-white/95 px-6 py-2 text-lg font-semibold text-gray-900 hover:bg-white cursor-pointer"
-                onClick={contactOnWhatsApp}
+                onClick={goToDashboard}
               >
-                CONTACT US
+                Go to Dashboard
               </MotionButton>
             </div>
           </div>
@@ -411,6 +433,7 @@ export default function Home() {
     )}
     <SiteFooter />
     </div>
+  </div>
   </div>
 );
 

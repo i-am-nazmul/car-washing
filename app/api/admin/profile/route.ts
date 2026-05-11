@@ -1,9 +1,9 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { hasServerAuth } from "@/lib/serverAuth";
 import Users from "@/models/users.models";
 import { connect } from "@/dbconfig/dbconfig";
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     const isAuthenticated = await hasServerAuth();
     

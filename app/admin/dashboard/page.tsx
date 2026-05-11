@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import SiteFooter from "@/components/SiteFooter";
 import Loader from "@/components/Loader";
 import MotionButton from "@/components/MotionButton";
+import PremiumUsersPanel from "@/components/admin/PremiumUsersPanel";
 import { useIsLoading } from "@/store/store";
 import { signOut } from "next-auth/react";
 
@@ -75,7 +76,7 @@ export default function AdminDashboardPage() {
   }, [getAdminData])
 
   return (
-    <div className="min-h-screen w-full p-1">
+    <div className="min-h-screen w-full p-1" style={{fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif"}}>
       {isLoading && <Loader />}
 
       {!isLoading && (
@@ -84,11 +85,11 @@ export default function AdminDashboardPage() {
 
             {/* this block contains the header */}
             <div className="flex justify-between ">
-              <h1 className="text-4xl font-bold tracking-tight text-red-700 sm:text-5xl lg:text-7xl">Admin Dashboard</h1>
+              <h1 className="text-4xl font-bold tracking-tight text-gray-700 sm:text-5xl lg:text-7xl">Admin Dashboard</h1>
 
               <div className=" flex gap-2 items-center">
                 <MotionButton 
-                  className="bg-red-800 text-white rounded-lg cursor-pointer px-2 py-1 text-2xl sm:text-6xl sm:py-2 sm:rounded-sm active:bg-red-700 hover:bg-red-900"
+                  className="bg-gray-700 text-white rounded-lg cursor-pointer px-2 py-1 text-2xl sm:text-6xl sm:py-2 sm:rounded-sm active:bg-gray-600 hover:bg-gray-800"
                   onClick={logout}
                 >
                   Logout
@@ -99,10 +100,10 @@ export default function AdminDashboardPage() {
             {/* this block contains the body  */}
             <div className="w-full flex flex-col items-center gap-4 mt-4 sm:flex-row">
               {loadError && (
-                <div className="w-full rounded-xl border border-red-300 bg-red-50 p-4 text-red-800">
+                <div className="w-full rounded-xl border border-gray-300 bg-gray-50 p-4 text-gray-800">
                   <p className="text-lg font-semibold tracking-tight">{loadError}</p>
                   <MotionButton
-                    className="mt-3 rounded-lg bg-red-800 px-4 py-1 text-white hover:bg-red-900"
+                    className="mt-3 rounded-lg bg-gray-700 px-4 py-1 text-white cursor-pointer hover:bg-gray-800"
                     onClick={() => void getAdminData()}
                   >
                     Retry
@@ -110,27 +111,32 @@ export default function AdminDashboardPage() {
                 </div>
               )}
 
-              <div className="bg-white w-full h-full border border-red-300 rounded-xl flex flex-col items-center sm:max-w-fit sm:p-2">
-                <ul className="font-mono tracking-tight px-4 mt-2 bg-red-200 w-max rounded-xl">
-                  <li className="w-full text-start px-4 py-2 rounded-xs font-semibold text-gray-700 text-2xl tracking-tighter">👤 {admin}</li>
-                  <li className="w-full text-start px-4 py-2 rounded-xs font-semibold text-gray-700 text-2xl tracking-tighter">📧 {email}</li>
-                  <li className="w-full text-start px-4 py-2 rounded-xs font-semibold text-red-700 text-2xl tracking-tighter">🔐 Admin Access</li>
+              <div className="bg-white w-full h-full border border-gray-300 rounded-xl flex flex-col items-center sm:max-w-fit sm:p-2">
+                <ul className="px-4 mt-2 bg-gray-100 w-max rounded-xl">
+                  <li className="w-full text-start px-4 py-2 rounded-xs font-semibold text-gray-700 text-2xl">👤 {admin}</li>
+                  <li className="w-full text-start px-4 py-2 rounded-xs font-semibold text-gray-700 text-2xl">📧 {email}</li>
+                  <li className="w-full text-start px-4 py-2 rounded-xs font-semibold text-gray-700 text-2xl">🔐 Admin Access</li>
                 </ul>
                 <div className="mt-4 mb-4 flex items-center gap-3">
                   <MotionButton
-                    className="bg-red-800 px-4 py-1 text-white font-mono tracking-tighter text-2xl sm:cursor-pointer hover:bg-red-900 rounded-lg sm:rounded-sm"
+                    className="bg-gray-700 px-4 py-1 text-white text-2xl cursor-pointer hover:bg-gray-800 rounded-lg sm:rounded-sm"
                     onClick={logout}
                   >
                     Logout
                   </MotionButton>
                   <MotionButton
-                    className="bg-slate-700 px-4 py-1 text-white font-mono tracking-tighter text-2xl sm:cursor-pointer hover:bg-slate-800 rounded-lg sm:rounded-sm"
+                    className="bg-gray-600 px-4 py-1 text-white text-2xl cursor-pointer hover:bg-gray-700 rounded-lg sm:rounded-sm"
                     onClick={moveToHome}
                   >
                     Home
                   </MotionButton>
                 </div>
               </div>
+            </div>
+
+            <div className="mt-10 w-full">
+              <h2 className="text-3xl font-bold text-gray-700 mb-4">Subscribed Users</h2>
+              <PremiumUsersPanel />
             </div>
 
           </div>

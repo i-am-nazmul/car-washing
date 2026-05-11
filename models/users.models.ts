@@ -50,7 +50,7 @@ const userSchema = new mongoose.Schema({
             default: "user",
       },
       plan: {
-            type: [mongoose.Schema.Types.ObjectId],
+            type: [mongoose.Schema.Types.Mixed],
             default: [],
       }
 }, {

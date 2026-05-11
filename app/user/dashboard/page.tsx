@@ -10,7 +10,21 @@ import SiteFooter from "@/components/SiteFooter";
 export default function DashboardPage() {
   const router = useRouter();
   const [username, setUsername] = React.useState("");
-  const [userPlan, setUserPlan] = React.useState<any[]>([]);
+
+  type UserPlanEntry = { planType?: string; planId?: string } | string;
+  type PlanDetail = {
+    planType: string;
+    planName: string;
+    planId: string;
+    wash: number;
+    interiorClean: number;
+    dashboard: number;
+    tyrePolish: number;
+    wax: number;
+  };
+
+  const [userPlan, setUserPlan] = React.useState<UserPlanEntry[]>([]);
+  const [planDetails, setPlanDetails] = React.useState<PlanDetail[]>([]);
   const [isMessageModalOpen, setIsMessageModalOpen] = React.useState(false);
   const [messageText, setMessageText] = React.useState("");
   const [isSubmittingMessage, setIsSubmittingMessage] = React.useState(false);
@@ -33,8 +47,28 @@ export default function DashboardPage() {
     void fetchUsername();
   }, []);
 
+  React.useEffect(() => {
+    const fetchPlanDetails = async () => {
+      if (hasActiveMembership) {
+        try {
+          const response = await axios.get("/api/plans");
+          setPlanDetails(response.data?.plans || []);
+        } catch (error) {
+          console.error("Failed to fetch plan details:", error);
+          setPlanDetails([]);
+        }
+      }
+    };
+
+    void fetchPlanDetails();
+  }, [hasActiveMembership]);
+
   const moveProfile = React.useCallback(() => {
     router.push("/user/profile");
+  }, [router]);
+
+  const browsePlans = React.useCallback(() => {
+    router.push("/#pricing");
   }, [router]);
 
   const handleSendMessage = async () => {
@@ -141,23 +175,55 @@ export default function DashboardPage() {
 
         {hasActiveMembership ? (
           <div className="mx-auto w-full max-w-4xl">
-            <div className="rounded-3xl border border-amber-200/25 bg-[#070f2f] px-6 py-8 shadow-[0_0_22px_rgba(253,230,138,0.1)] sm:px-10">
-              <h3 className="text-xl font-semibold text-amber-200 sm:text-2xl">Benefits Used</h3>
-              <div className="mt-6 grid gap-4 sm:grid-cols-3">
-                {[
-                  { label: "Exterior Refreshes", value: "20/20" },
-                  { label: "Dashboard Polish", value: "1/1" },
-                  { label: "Tyre Polishes", value: "2/2" },
-                ].map((benefit) => (
-                  <div key={benefit.label} className="rounded-2xl border border-amber-200/20 bg-[#060b26] px-5 py-6 text-center">
-                    <div className="text-3xl font-semibold text-amber-200 sm:text-4xl">{benefit.value}</div>
+            {planDetails.map((plan, index) => (
+              <div key={index} className="rounded-3xl border border-amber-200/25 bg-[#070f2f] px-6 py-8 shadow-[0_0_22px_rgba(253,230,138,0.1)] sm:px-10 mb-6">
+                <h3 className="text-xl font-semibold text-amber-200 sm:text-2xl">{plan.planName}</h3>
+                <div className="mt-6 grid gap-4 sm:grid-cols-4">
+                  <div className="rounded-2xl border border-amber-200/20 bg-[#060b26] px-5 py-6 text-center">
+                    <div className="text-3xl font-semibold text-amber-200 sm:text-4xl">{plan.wash || 0}/20</div>
                     <div className="mt-2 text-sm font-medium uppercase tracking-[0.14em] text-amber-100/80 sm:text-base">
-                      {benefit.label}
+                      Exterior Refreshes
                     </div>
                   </div>
-                ))}
+
+                  {plan.planType !== "bike" && (
+                    <div className="rounded-2xl border border-amber-200/20 bg-[#060b26] px-5 py-6 text-center">
+                      <div className="text-3xl font-semibold text-amber-200 sm:text-4xl">{plan.interiorClean || 0}/{plan.planType.includes("shine") ? 4 : 2}</div>
+                      <div className="mt-2 text-sm font-medium uppercase tracking-[0.14em] text-amber-100/80 sm:text-base">
+                        Interior Clean
+                      </div>
+                    </div>
+                  )}
+
+                  {plan.planType !== "bike" && (
+                    <div className="rounded-2xl border border-amber-200/20 bg-[#060b26] px-5 py-6 text-center">
+                      <div className="text-3xl font-semibold text-amber-200 sm:text-4xl">{plan.dashboard || 0}/2</div>
+                      <div className="mt-2 text-sm font-medium uppercase tracking-[0.14em] text-amber-100/80 sm:text-base">
+                        Dashboard Polish
+                      </div>
+                    </div>
+                  )}
+
+                  {plan.planType !== "bike" && (
+                    <div className="rounded-2xl border border-amber-200/20 bg-[#060b26] px-5 py-6 text-center">
+                      <div className="text-3xl font-semibold text-amber-200 sm:text-4xl">{plan.tyrePolish || 0}/{plan.planType.includes("shine") ? 4 : 2}</div>
+                      <div className="mt-2 text-sm font-medium uppercase tracking-[0.14em] text-amber-100/80 sm:text-base">
+                        Tyre Polishes
+                      </div>
+                    </div>
+                  )}
+
+                  {plan.planType === "bike" && (
+                    <div className="rounded-2xl border border-amber-200/20 bg-[#060b26] px-5 py-6 text-center">
+                      <div className="text-3xl font-semibold text-amber-200 sm:text-4xl">{plan.wax || 0}/2</div>
+                      <div className="mt-2 text-sm font-medium uppercase tracking-[0.14em] text-amber-100/80 sm:text-base">
+                        Wax
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
+            ))}
           </div>
         ) : (
           <div className="mx-auto w-full max-w-3xl rounded-3xl border border-amber-200/30 bg-[#070f2f] px-6 py-12 text-center shadow-[0_0_22px_rgba(253,230,138,0.12)] sm:px-10">
@@ -165,6 +231,13 @@ export default function DashboardPage() {
             <p className="mt-4 text-lg font-medium text-amber-100/85 sm:text-2xl">
               Please browse our services and choose a plan
             </p>
+            <button
+              type="button"
+              onClick={browsePlans}
+              className="mt-8 rounded-lg bg-linear-to-r from-amber-500 to-orange-500 px-8 py-3 text-white font-semibold cursor-pointer hover:from-amber-600 hover:to-orange-600 transition"
+            >
+              Browse Plans
+            </button>
           </div>
         )}
       </div>
@@ -179,7 +252,7 @@ export default function DashboardPage() {
             className="w-full max-w-md rounded-3xl border border-amber-200/25 bg-[#070f2f] p-6 shadow-[0_0_30px_rgba(253,230,138,0.2)] sm:p-8"
           >
             <h3 className="text-2xl font-bold text-amber-200 mb-4">Send us a Message</h3>
-            <p className="text-amber-100/80 mb-4">Got a question? Send us your message and we'll get back to you soon!</p>
+            <p className="text-amber-100/80 mb-4">Got a question? Send us your message and we&apos;ll get back to you soon!</p>
 
             <textarea
               value={messageText}
