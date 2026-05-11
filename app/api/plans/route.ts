@@ -72,7 +72,7 @@ export async function GET(request: NextRequest) {
     };
 
     const plans = await Promise.all(
-      normalizedPlans.map(async (entry) => {
+      normalizedPlans.map(async (entry: { planType: string; planId: string }) => {
         const planConfig = planMap[entry.planType];
         if (!planConfig) {
           return null;

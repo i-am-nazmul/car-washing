@@ -1,5 +1,5 @@
 "use client"
-import React from "react";
+import React, { Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import * as motion from "motion/react-client";
 import { useIsLoading } from "@/store/store";
@@ -10,11 +10,8 @@ import Message from "@/components/Message";
 import toast from "react-hot-toast";
 import { signIn, signOut } from "next-auth/react";
 import axios from "axios";
- 
 
-
-
-export default function AdminLoginPage(){
+function AdminLoginContent(){
       const router = useRouter();
       const backgroundVideos = React.useMemo(() => ["/washing.mp4", "/washing2.mp4"], []);
       const [activeBackgroundVideoIndex, setActiveBackgroundVideoIndex] = React.useState(0);
@@ -227,5 +224,12 @@ export default function AdminLoginPage(){
                   </div>
             </div>
       )
+}
 
+export default function AdminLoginPage() {
+      return (
+            <Suspense fallback={<div className="min-h-screen w-full flex items-center justify-center bg-black"><Loader /></div>}>
+                  <AdminLoginContent />
+            </Suspense>
+      );
 }
