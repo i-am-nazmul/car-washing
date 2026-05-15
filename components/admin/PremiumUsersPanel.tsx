@@ -120,37 +120,34 @@ export default function PremiumUsersPanel() {
   };
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 flex-1" style={{fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif"}}>
-      <div className="lg:col-span-2"></div>
-      <div className="lg:col-span-1">
-        <div className="rounded-lg border border-gray-300 bg-white p-6 h-full">
-          <h2 className="text-xl font-semibold text-gray-700 mb-4">Users ({premiumUsers.length})</h2>
-          {isLoading ? (
-            <p className="text-gray-500">Loading...</p>
-          ) : premiumUsers.length === 0 ? (
-            <p className="text-gray-500">No premium users yet</p>
-          ) : (
-            <div className="space-y-2 max-h-96 overflow-y-auto">
-              {premiumUsers.map((user) => (
-                <button
-                  key={user._id}
-                  onClick={() => handleUserClick(user)}
-                  className={`w-full text-left p-3 rounded-lg transition cursor-pointer ${
-                    selectedUser?._id === user._id
-                      ? "bg-gray-200 border border-gray-400"
-                      : "bg-gray-50 hover:bg-gray-100 border border-gray-200"
-                  }`}
-                >
-                  <div className="font-semibold text-gray-700">{user.username}</div>
-                  <div className="text-xs text-gray-600 mt-1">{user.email}</div>
-                  {user.phoneNumber && (
-                    <div className="text-xs text-gray-600">{user.phoneNumber}</div>
-                  )}
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
+    <div className="w-full" style={{fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif"}}>
+      <div className="rounded-lg border border-gray-300 bg-white p-6 h-full">
+        <h2 className="text-xl font-semibold text-gray-700 mb-4">Users ({premiumUsers.length})</h2>
+        {isLoading ? (
+          <p className="text-gray-500">Loading...</p>
+        ) : premiumUsers.length === 0 ? (
+          <p className="text-gray-500">No premium users yet</p>
+        ) : (
+          <div className="space-y-2 max-h-96 overflow-y-auto">
+            {premiumUsers.map((user) => (
+              <button
+                key={user._id}
+                onClick={() => handleUserClick(user)}
+                className={`w-full text-left p-3 rounded-lg transition cursor-pointer ${
+                  selectedUser?._id === user._id
+                    ? "bg-gray-200 border border-gray-400"
+                    : "bg-gray-50 hover:bg-gray-100 border border-gray-200"
+                }`}
+              >
+                <div className="font-semibold text-gray-700">{user.username}</div>
+                <div className="text-xs text-gray-600 mt-1">{user.email}</div>
+                {user.phoneNumber && (
+                  <div className="text-xs text-gray-600">{user.phoneNumber}</div>
+                )}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
 
       {selectedUser && selectedPlan && (

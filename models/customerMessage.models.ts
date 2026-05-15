@@ -28,7 +28,14 @@ const customerMessageSchema = new mongoose.Schema({
     minlength: [5, "Message must be at least 5 characters"],
     maxlength: [1000, "Message cannot exceed 1000 characters"],
   },
-  
+  read: {
+    type: Boolean,
+    default: false,
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
 });
 
 const CustomerMessage = mongoose.models.CustomerMessage || mongoose.model("CustomerMessage", customerMessageSchema);

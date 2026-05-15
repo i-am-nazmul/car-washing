@@ -6,6 +6,7 @@ import SiteFooter from "@/components/SiteFooter";
 import Loader from "@/components/Loader";
 import MotionButton from "@/components/MotionButton";
 import PremiumUsersPanel from "@/components/admin/PremiumUsersPanel";
+import AdminMessages from "@/components/admin/AdminMessages";
 import { useIsLoading } from "@/store/store";
 import { signOut } from "next-auth/react";
 
@@ -26,10 +27,6 @@ export default function AdminDashboardPage() {
     } catch {
       setIsLoading(false);
     }
-  }
-
-  const moveToHome = function () {
-    router.push('/');
   }
 
   const getAdminData = useCallback(async function () {
@@ -84,12 +81,13 @@ export default function AdminDashboardPage() {
           <div className="flex relative min-h-[calc(100vh-0.5rem)] w-full flex-col bg-white px-2 py-2 sm:px-4 sm:py-4">
 
             {/* this block contains the header */}
-            <div className="flex justify-between ">
+            <div className="flex justify-between items-center">
               <h1 className="text-4xl font-bold tracking-tight text-gray-700 sm:text-5xl lg:text-7xl">Admin Dashboard</h1>
 
-              <div className=" flex gap-2 items-center">
+              <div className="flex items-center gap-3">
+                <AdminMessages />
                 <MotionButton 
-                  className="bg-gray-700 text-white rounded-lg cursor-pointer px-2 py-1 text-2xl sm:text-6xl sm:py-2 sm:rounded-sm active:bg-gray-600 hover:bg-gray-800"
+                  className="bg-gray-700 text-white rounded-lg cursor-pointer px-3 py-2 text-sm sm:text-base active:bg-gray-600 hover:bg-gray-800"
                   onClick={logout}
                 >
                   Logout
@@ -98,45 +96,34 @@ export default function AdminDashboardPage() {
             </div>
 
             {/* this block contains the body  */}
-            <div className="w-full flex flex-col items-center gap-4 mt-4 sm:flex-row">
-              {loadError && (
-                <div className="w-full rounded-xl border border-gray-300 bg-gray-50 p-4 text-gray-800">
-                  <p className="text-lg font-semibold tracking-tight">{loadError}</p>
-                  <MotionButton
-                    className="mt-3 rounded-lg bg-gray-700 px-4 py-1 text-white cursor-pointer hover:bg-gray-800"
-                    onClick={() => void getAdminData()}
-                  >
-                    Retry
-                  </MotionButton>
-                </div>
-              )}
+            <div className="w-full flex flex-col lg:flex-row gap-4 mt-4">
+              {/* Left side - Admin Info */}
+              <div className="w-full lg:w-auto lg:flex-shrink-0">
+                {loadError && (
+                  <div className="w-full rounded-xl border border-gray-300 bg-gray-50 p-4 text-gray-800 mb-4">
+                    <p className="text-lg font-semibold tracking-tight">{loadError}</p>
+                    <MotionButton
+                      className="mt-3 rounded-lg bg-gray-700 px-4 py-1 text-white cursor-pointer hover:bg-gray-800"
+                      onClick={() => void getAdminData()}
+                    >
+                      Retry
+                    </MotionButton>
+                  </div>
+                )}
 
-              <div className="bg-white w-full h-full border border-gray-300 rounded-xl flex flex-col items-center sm:max-w-fit sm:p-2">
-                <ul className="px-4 mt-2 bg-gray-100 w-max rounded-xl">
-                  <li className="w-full text-start px-4 py-2 rounded-xs font-semibold text-gray-700 text-2xl">👤 {admin}</li>
-                  <li className="w-full text-start px-4 py-2 rounded-xs font-semibold text-gray-700 text-2xl">📧 {email}</li>
-                  <li className="w-full text-start px-4 py-2 rounded-xs font-semibold text-gray-700 text-2xl">🔐 Admin Access</li>
-                </ul>
-                <div className="mt-4 mb-4 flex items-center gap-3">
-                  <MotionButton
-                    className="bg-gray-700 px-4 py-1 text-white text-2xl cursor-pointer hover:bg-gray-800 rounded-lg sm:rounded-sm"
-                    onClick={logout}
-                  >
-                    Logout
-                  </MotionButton>
-                  <MotionButton
-                    className="bg-gray-600 px-4 py-1 text-white text-2xl cursor-pointer hover:bg-gray-700 rounded-lg sm:rounded-sm"
-                    onClick={moveToHome}
-                  >
-                    Home
-                  </MotionButton>
+                <div className="bg-white border border-gray-300 rounded-xl flex flex-col items-center p-4">
+                  <ul className="px-4 bg-gray-100 w-max rounded-xl">
+                    <li className="w-full text-start px-4 py-2 rounded-xs font-semibold text-gray-700 text-lg">👤 {admin}</li>
+                    <li className="w-full text-start px-4 py-2 rounded-xs font-semibold text-gray-700 text-lg">📧 {email}</li>
+                    <li className="w-full text-start px-4 py-2 rounded-xs font-semibold text-gray-700 text-lg">🔐 Admin Access</li>
+                  </ul>
                 </div>
               </div>
-            </div>
 
-            <div className="mt-10 w-full">
-              <h2 className="text-3xl font-bold text-gray-700 mb-4">Subscribed Users</h2>
-              <PremiumUsersPanel />
+              {/* Right side - Users Panel */}
+              <div className="w-full lg:w-1/3 h-[500px] overflow-hidden ml-auto\">
+                <PremiumUsersPanel />
+              </div>
             </div>
 
           </div>

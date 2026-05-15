@@ -6,10 +6,12 @@ import * as motion from "motion/react-client";
 import axios from "axios";
 import toast from "react-hot-toast";
 import SiteFooter from "@/components/SiteFooter";
+import Message from "@/components/Message";
 
 export default function DashboardPage() {
   const router = useRouter();
   const [username, setUsername] = React.useState("");
+  const [phoneNumber, setPhoneNumber] = React.useState("");
 
   type UserPlanEntry = { planType?: string; planId?: string } | string;
   type PlanDetail = {
@@ -26,6 +28,7 @@ export default function DashboardPage() {
   const [userPlan, setUserPlan] = React.useState<UserPlanEntry[]>([]);
   const [planDetails, setPlanDetails] = React.useState<PlanDetail[]>([]);
   const [isMessageModalOpen, setIsMessageModalOpen] = React.useState(false);
+  const [isPhoneWarningOpen, setIsPhoneWarningOpen] = React.useState(false);
   const [messageText, setMessageText] = React.useState("");
   const [isSubmittingMessage, setIsSubmittingMessage] = React.useState(false);
 
@@ -37,10 +40,12 @@ export default function DashboardPage() {
         const response = await axios.get("/api/profile");
         setUsername(response.data?.username || "User");
         setUserPlan(response.data?.plan || []);
+        setPhoneNumber(response.data?.phoneNumber || "");
       } catch (error) {
         console.error("Failed to fetch username:", error);
         setUsername("User");
         setUserPlan([]);
+        setPhoneNumber("");
       }
     };
 
@@ -70,6 +75,14 @@ export default function DashboardPage() {
   const browsePlans = React.useCallback(() => {
     router.push("/#pricing");
   }, [router]);
+
+  const handleMessageIconClick = () => {
+    if (!phoneNumber || !phoneNumber.trim()) {
+      setIsPhoneWarningOpen(true);
+    } else {
+      setIsMessageModalOpen(true);
+    }
+  };
 
   const handleSendMessage = async () => {
     if (!messageText.trim()) {
@@ -128,7 +141,7 @@ export default function DashboardPage() {
               <button
                 type="button"
                 aria-label="Messages"
-                onClick={() => setIsMessageModalOpen(true)}
+                onClick={() => handleMessageIconClick()}
                 className="flex h-12 w-12 items-center justify-center rounded-full border border-white/20 bg-white/5 transition hover:bg-white/15 cursor-pointer sm:h-16 sm:w-16"
               >
                 <svg
@@ -290,6 +303,28 @@ export default function DashboardPage() {
           </motion.div>
         </div>
       )}
+
+      <Message
+        isOpen={isPhoneWarningOpen}
+        title="Update Phone Number"
+        message="Please update your phone number in your profile before sending a message."
+        buttons={[
+          {
+            label: "Go to Profile",
+            onClick: () => {
+              router.push("/user/profile");
+              setIsPhoneWarningOpen(false);
+            },
+            variant: "primary",
+          },
+          {
+            label: "Cancel",
+            onClick: () => setIsPhoneWarningOpen(false),
+            variant: "secondary",
+          },
+        ]}
+        onClose={() => setIsPhoneWarningOpen(false)}
+      />
 
       <SiteFooter />
     </div>
