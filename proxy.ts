@@ -3,7 +3,7 @@ import type { NextRequest } from "next/server";
 import { getToken } from "next-auth/jwt";
 import jwt from "jsonwebtoken";
 
-const protectedRoutes = ["/user/dashboard", "/user/profile"];
+const protectedRoutes = ["/user/dashboard"];
 const adminRoutes = ["/admin/dashboard", "/admin/profile"];
 const guestOnlyRoutes = ["/user/login", "/user/signup"];
 
@@ -75,7 +75,6 @@ export async function proxy(request: NextRequest) {
 export const config = {
   matcher: [
     "/user/dashboard/:path*",
-    "/user/profile/:path*",
     "/user/login",
     "/user/signup",
     "/admin/dashboard/:path*",

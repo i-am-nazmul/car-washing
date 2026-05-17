@@ -7,10 +7,13 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import SiteFooter from "@/components/SiteFooter";
 import Message from "@/components/Message";
+import Loader from "@/components/Loader";
+import ProfileSidebar from "@/components/ProfileSidebar";
 
 export default function DashboardPage() {
   const router = useRouter();
   const [username, setUsername] = React.useState("");
+  const [email, setEmail] = React.useState("");
   const [phoneNumber, setPhoneNumber] = React.useState("");
 
   type UserPlanEntry = { planType?: string; planId?: string } | string;
@@ -31,21 +34,29 @@ export default function DashboardPage() {
   const [isPhoneWarningOpen, setIsPhoneWarningOpen] = React.useState(false);
   const [messageText, setMessageText] = React.useState("");
   const [isSubmittingMessage, setIsSubmittingMessage] = React.useState(false);
+  const [isProfileLoading, setIsProfileLoading] = React.useState(true);
+  const [isPlansLoading, setIsPlansLoading] = React.useState(false);
+  const [isProfileSidebarOpen, setIsProfileSidebarOpen] = React.useState(false);
 
   const hasActiveMembership = userPlan && userPlan.length > 0;
 
   React.useEffect(() => {
     const fetchUsername = async () => {
+      setIsProfileLoading(true);
       try {
         const response = await axios.get("/api/profile");
         setUsername(response.data?.username || "User");
+        setEmail(response.data?.email || "");
         setUserPlan(response.data?.plan || []);
         setPhoneNumber(response.data?.phoneNumber || "");
       } catch (error) {
         console.error("Failed to fetch username:", error);
         setUsername("User");
+        setEmail("");
         setUserPlan([]);
         setPhoneNumber("");
+      } finally {
+        setIsProfileLoading(false);
       }
     };
 
@@ -55,22 +66,24 @@ export default function DashboardPage() {
   React.useEffect(() => {
     const fetchPlanDetails = async () => {
       if (hasActiveMembership) {
+        setIsPlansLoading(true);
         try {
           const response = await axios.get("/api/plans");
           setPlanDetails(response.data?.plans || []);
         } catch (error) {
           console.error("Failed to fetch plan details:", error);
           setPlanDetails([]);
+        } finally {
+          setIsPlansLoading(false);
         }
+      } else {
+        setPlanDetails([]);
+        setIsPlansLoading(false);
       }
     };
 
     void fetchPlanDetails();
   }, [hasActiveMembership]);
-
-  const moveProfile = React.useCallback(() => {
-    router.push("/user/profile");
-  }, [router]);
 
   const browsePlans = React.useCallback(() => {
     router.push("/#pricing");
@@ -117,6 +130,13 @@ export default function DashboardPage() {
       setIsSubmittingMessage(false);
     }
   };
+
+  const isDashboardLoading =
+    isProfileLoading || (hasActiveMembership && isPlansLoading);
+
+  if (isDashboardLoading) {
+    return <Loader />;
+  }
 
   return (
     <div className="min-h-screen w-full bg-[#03061a] p-1 text-amber-100">
@@ -171,7 +191,7 @@ export default function DashboardPage() {
             <button
               type="button"
               aria-label="Go to profile"
-              onClick={moveProfile}
+              onClick={() => setIsProfileSidebarOpen(true)}
               className="flex h-12 w-12 items-center justify-center rounded-full border border-white/20 bg-white/5 transition hover:bg-white/15 cursor-pointer sm:h-16 sm:w-16"
             >
               <svg
@@ -307,13 +327,13 @@ export default function DashboardPage() {
       <Message
         isOpen={isPhoneWarningOpen}
         title="Update Phone Number"
-        message="Please update your phone number in your profile before sending a message."
+        message="Please update your phone number in your profile panel before sending a message."
         buttons={[
           {
-            label: "Go to Profile",
+            label: "Open Profile",
             onClick: () => {
-              router.push("/user/profile");
               setIsPhoneWarningOpen(false);
+              setIsProfileSidebarOpen(true);
             },
             variant: "primary",
           },
@@ -324,6 +344,15 @@ export default function DashboardPage() {
           },
         ]}
         onClose={() => setIsPhoneWarningOpen(false)}
+      />
+
+      <ProfileSidebar
+        isOpen={isProfileSidebarOpen}
+        onClose={() => setIsProfileSidebarOpen(false)}
+        username={username}
+        email={email}
+        phoneNumber={phoneNumber}
+        onPhoneNumberChange={setPhoneNumber}
       />
 
       <SiteFooter />
