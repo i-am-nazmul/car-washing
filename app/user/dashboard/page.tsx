@@ -3,6 +3,7 @@
 import React from "react";
 import { useRouter } from "next/navigation";
 import * as motion from "motion/react-client";
+import { AnimatePresence } from "motion/react";
 import axios from "axios";
 import toast from "react-hot-toast";
 import SiteFooter from "@/components/SiteFooter";
@@ -221,7 +222,7 @@ export default function DashboardPage() {
 
                   {plan.planType !== "bike" && (
                     <div className="rounded-2xl border border-amber-200/20 bg-[#060b26] px-5 py-6 text-center">
-                      <div className="text-3xl font-semibold text-amber-200 sm:text-4xl">{plan.interiorClean || 0}/{plan.planType.includes("shine") ? 4 : 2}</div>
+                      <div className="text-3xl font-semibold text-amber-200 sm:text-4xl">{plan.interiorClean || 0}/{plan.planType.toLowerCase().includes("shine") ? 4 : 2}</div>
                       <div className="mt-2 text-sm font-medium uppercase tracking-[0.14em] text-amber-100/80 sm:text-base">
                         Interior Clean
                       </div>
@@ -239,7 +240,7 @@ export default function DashboardPage() {
 
                   {plan.planType !== "bike" && (
                     <div className="rounded-2xl border border-amber-200/20 bg-[#060b26] px-5 py-6 text-center">
-                      <div className="text-3xl font-semibold text-amber-200 sm:text-4xl">{plan.tyrePolish || 0}/{plan.planType.includes("shine") ? 4 : 2}</div>
+                      <div className="text-3xl font-semibold text-amber-200 sm:text-4xl">{plan.tyrePolish || 0}/{plan.planType.toLowerCase().includes("shine") ? 4 : 2}</div>
                       <div className="mt-2 text-sm font-medium uppercase tracking-[0.14em] text-amber-100/80 sm:text-base">
                         Tyre Polishes
                       </div>
@@ -285,7 +286,6 @@ export default function DashboardPage() {
             className="w-full max-w-md rounded-3xl border border-amber-200/25 bg-[#070f2f] p-6 shadow-[0_0_30px_rgba(253,230,138,0.2)] sm:p-8"
           >
             <h3 className="text-2xl font-bold text-amber-200 mb-4">Send us a Message</h3>
-            <p className="text-amber-100/80 mb-4">Got a question? Send us your message and we&apos;ll get back to you soon!</p>
 
             <textarea
               value={messageText}
@@ -346,14 +346,19 @@ export default function DashboardPage() {
         onClose={() => setIsPhoneWarningOpen(false)}
       />
 
-      <ProfileSidebar
-        isOpen={isProfileSidebarOpen}
-        onClose={() => setIsProfileSidebarOpen(false)}
-        username={username}
-        email={email}
-        phoneNumber={phoneNumber}
-        onPhoneNumberChange={setPhoneNumber}
-      />
+      <AnimatePresence>
+        {isProfileSidebarOpen && (
+          <ProfileSidebar
+            key="profile-sidebar"
+            isOpen={isProfileSidebarOpen}
+            onClose={() => setIsProfileSidebarOpen(false)}
+            username={username}
+            email={email}
+            phoneNumber={phoneNumber}
+            onPhoneNumberChange={setPhoneNumber}
+          />
+        )}
+      </AnimatePresence>
 
       <SiteFooter />
     </div>

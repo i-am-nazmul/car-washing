@@ -98,9 +98,9 @@ export default function PremiumUsersPanel() {
     const currentValue = selectedPlan[field as keyof PlanDetail] as number;
     const maxValues: { [key: string]: number } = {
       wash: 20,
-      interiorClean: selectedPlan.planType.includes("shine") ? 4 : 2,
+      interiorClean: selectedPlan.planType.toLowerCase().includes("shine") ? 4 : 2,
       dashboard: 2,
-      tyrePolish: selectedPlan.planType.includes("shine") ? 4 : 2,
+      tyrePolish: selectedPlan.planType.toLowerCase().includes("shine") ? 4 : 2,
       wax: 2,
     };
     const maxValue = maxValues[field];
@@ -212,10 +212,10 @@ export default function PremiumUsersPanel() {
                       >
                         −
                       </button>
-                      <div className="text-4xl font-bold text-gray-700">{selectedPlan.interiorClean}/{selectedPlan.planType.includes("shine") ? 4 : 2}</div>
+                      <div className="text-4xl font-bold text-gray-700">{selectedPlan.interiorClean}/{selectedPlan.planType.toLowerCase().includes("shine") ? 4 : 2}</div>
                       <button
                         onClick={() => handleIncrement("interiorClean")}
-                        disabled={isUpdating || selectedPlan.interiorClean === (selectedPlan.planType.includes("shine") ? 4 : 2)}
+                        disabled={isUpdating || selectedPlan.interiorClean === (selectedPlan.planType.toLowerCase().includes("shine") ? 4 : 2)}
                         className="w-12 h-12 rounded-lg bg-gray-200 border border-gray-400 text-gray-700 font-bold cursor-pointer hover:bg-gray-300 transition disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         +
@@ -258,10 +258,10 @@ export default function PremiumUsersPanel() {
                       >
                         −
                       </button>
-                      <div className="text-4xl font-bold text-gray-700">{selectedPlan.tyrePolish}/{selectedPlan.planType.includes("shine") ? 4 : 2}</div>
+                      <div className="text-4xl font-bold text-gray-700">{selectedPlan.tyrePolish}/{selectedPlan.planType.toLowerCase().includes("shine") ? 4 : 2}</div>
                       <button
                         onClick={() => handleIncrement("tyrePolish")}
-                        disabled={isUpdating || selectedPlan.tyrePolish === (selectedPlan.planType.includes("shine") ? 4 : 2)}
+                        disabled={isUpdating || selectedPlan.tyrePolish === (selectedPlan.planType.toLowerCase().includes("shine") ? 4 : 2)}
                         className="w-12 h-12 rounded-lg bg-gray-200 border border-gray-400 text-gray-700 font-bold cursor-pointer hover:bg-gray-300 transition disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         +

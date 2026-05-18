@@ -21,7 +21,7 @@ export const SMART_COMBO_FEATURES: string[] = [
   "Wiper fluid top-up",
 ];
 
-export default function ComboCard({ plan, features, vehicleCategory, onCheckout }: PlanCardProps) {
+export default function ComboCard({ plan, features, vehicleCategory, onCheckout, onAddToCart }: PlanCardProps) {
   return (
     <div className="card-trace card-pop relative h-full overflow-hidden rounded-4xl border border-violet-200/90 ring-1 ring-violet-300/70 bg-transparent shadow-[0_0_18px_rgba(139,92,246,0.35)]">
       <div className="relative z-10 flex h-full min-h-72 flex-col px-6 py-7 sm:px-8">
@@ -46,13 +46,13 @@ export default function ComboCard({ plan, features, vehicleCategory, onCheckout 
           ))}
         </ul>
 
-        <div className="mt-auto pt-8">
+        <div className="mt-auto pt-8 flex flex-wrap items-center gap-3">
           <button
             type="button"
-            onClick={() => onCheckout(plan, vehicleCategory)}
-            className={`mx-auto block w-fit rounded-full px-6 py-3 text-lg font-bold tracking-tight transition cursor-pointer ${HOME_CTA_GRADIENT}`}
+            onClick={() => onAddToCart(plan, vehicleCategory)}
+            className={`w-full rounded-full px-6 py-3 text-lg font-bold tracking-tight transition cursor-pointer ${HOME_CTA_GRADIENT}`}
           >
-            Book now
+            Add to cart
           </button>
         </div>
       </div>

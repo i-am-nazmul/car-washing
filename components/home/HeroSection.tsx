@@ -11,6 +11,8 @@ type HeroSectionProps = {
   onPricing: () => void;
   onContact: () => void;
   onLogin: () => void;
+  onCartOpen: () => void;
+  cartCount: number;
 };
 
 function HeroSectionComponent({
@@ -21,6 +23,8 @@ function HeroSectionComponent({
   onPricing,
   onContact,
   onLogin,
+  onCartOpen,
+  cartCount,
 }: HeroSectionProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
 
@@ -65,7 +69,26 @@ function HeroSectionComponent({
   return (
     <section className="relative min-h-svh w-full">
 
-      <div className="absolute right-0 top-5 z-40 md:hidden">
+      <div className="absolute right-0 top-5 z-40 flex items-center gap-2 md:hidden">
+        <button
+          type="button"
+          aria-label="Open cart"
+          onClick={onCartOpen}
+          className="relative rounded-xl border border-white/30 bg-black/35 p-3 text-amber-100 backdrop-blur-sm transition hover:bg-black/50"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+            <path d="M3 3h2l.4 2" />
+            <path d="M7 13h10l4-8H5.4" />
+            <path d="M7 13l-1.2 6H19" />
+            <path d="M9 21a1 1 0 100-2 1 1 0 000 2z" />
+            <path d="M18 21a1 1 0 100-2 1 1 0 000 2z" />
+          </svg>
+          {cartCount > 0 && (
+            <span className="absolute -right-1 -top-1 rounded-full bg-amber-300 px-1.5 py-0.5 text-[10px] font-bold text-black">
+              {cartCount}
+            </span>
+          )}
+        </button>
         <button
           type="button"
           aria-label="Open navigation menu"
@@ -151,6 +174,25 @@ function HeroSectionComponent({
             {item.label}
           </MotionButton>
         ))}
+        <button
+          type="button"
+          aria-label="Open cart"
+          onClick={onCartOpen}
+          className="relative cursor-pointer rounded-full border border-white/30 bg-white/10 p-2.5 text-amber-100 transition hover:bg-white/20"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+            <path d="M3 3h2l.4 2" />
+            <path d="M7 13h10l4-8H5.4" />
+            <path d="M7 13l-1.2 6H19" />
+            <path d="M9 21a1 1 0 100-2 1 1 0 000 2z" />
+            <path d="M18 21a1 1 0 100-2 1 1 0 000 2z" />
+          </svg>
+          {cartCount > 0 && (
+            <span className="absolute -right-1 -top-1 rounded-full bg-amber-300 px-1.5 py-0.5 text-[10px] font-bold text-black">
+              {cartCount}
+            </span>
+          )}
+        </button>
       </motion.nav>
 
       <motion.div

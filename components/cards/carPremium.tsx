@@ -22,7 +22,7 @@ export const SHINE_CARE_FEATURES: string[] = [
   "Air pressure check and maintenance - Monthly once",
 ];
 
-export default function CarPremiumCard({ plan, features, vehicleCategory, onCheckout }: PlanCardProps) {
+export default function CarPremiumCard({ plan, features, vehicleCategory, onCheckout, onAddToCart }: PlanCardProps) {
   return (
     <div className="card-trace card-pop relative h-full overflow-visible rounded-4xl border border-violet-200/90 ring-1 ring-violet-300/70 bg-transparent shadow-[0_0_18px_rgba(139,92,246,0.35)]">
       <span className="absolute right-4 top-4 z-30 rounded-full border border-violet-200 bg-yellow-300 px-3 py-1 text-sm font-extrabold tracking-wide text-black">
@@ -51,13 +51,13 @@ export default function CarPremiumCard({ plan, features, vehicleCategory, onChec
           ))}
         </ul>
 
-        <div className="mt-auto pt-8">
+        <div className="mt-auto pt-8 flex flex-wrap items-center gap-3">
           <button
             type="button"
-            onClick={() => onCheckout(plan, vehicleCategory)}
-            className={`mx-auto block w-fit rounded-full px-6 py-3 text-lg font-bold tracking-tight transition cursor-pointer ${HOME_CTA_GRADIENT}`}
+            onClick={() => onAddToCart(plan, vehicleCategory)}
+            className={`w-full rounded-full px-6 py-3 text-lg font-bold tracking-tight transition cursor-pointer ${HOME_CTA_GRADIENT}`}
           >
-            Book now
+            Add to cart
           </button>
         </div>
 

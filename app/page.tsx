@@ -2,6 +2,7 @@
 import { useRouter } from "next/navigation";
 import React from "react";
 import * as motion from "motion/react-client";
+import { AnimatePresence } from "motion/react";
 import MotionButton from "@/components/MotionButton";
 import SiteFooter from "@/components/SiteFooter";
 import { useIsLoading } from "@/store/store";
@@ -21,6 +22,7 @@ import AboutSection from "@/components/home/AboutSection";
 import ServicesSection from "@/components/home/ServicesSection";
 import PricingSection from "@/components/home/PricingSection";
 import { HOME_CTA_GRADIENT, HOME_SECTION_BODY, HOME_SECTION_SUBTITLE, HOME_SECTION_TITLE } from "@/components/home/typography";
+import CartSidebar from "@/components/CartSidebar";
 
 const WHATSAPP_PHONE = "6366247239";
 const WHATSAPP_WA_PHONE = `91${WHATSAPP_PHONE}`;
@@ -38,6 +40,15 @@ export default function Home() {
   const [isPaying] = React.useState<string | null>(null);
   const [activePlan, setActivePlan] = React.useState<PlanData | null>(null);
   const [isOverlayVisible, setIsOverlayVisible] = React.useState(false);
+  const [cartItems, setCartItems] = React.useState<Array<{
+    id: string;
+    plan: PlanData;
+    vehicleCategory: string;
+    unitPrice: number;
+    displayPrice: string;
+    quantity: number;
+  }>>([]);
+  const [isCartOpen, setIsCartOpen] = React.useState(false);
   const howRef = React.useRef<HTMLElement | null>(null);
   const howStepRef = React.useRef(-1);
   const [howVisibleStep, setHowVisibleStep] = React.useState(0);
@@ -55,6 +66,19 @@ export default function Home() {
     () => Object.fromEntries(pricingPlans.map(({ plan, features }) => [plan.name, features])),
     [pricingPlans]
   );
+
+  const cartTotals = React.useMemo(() => {
+    const itemCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+    const subtotal = cartItems.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0);
+    const discount = itemCount > 1 ? (itemCount - 1) * 100 : 0;
+
+    return {
+      itemCount,
+      subtotal,
+      discount,
+      total: Math.max(subtotal - discount, 0),
+    };
+  }, [cartItems]);
 
   React.useEffect(() => {
     setIsLoading(false);
@@ -219,6 +243,78 @@ export default function Home() {
     void assignPlanToUser(plan, vehicleCategory);
   }, [assignPlanToUser]);
 
+  const handleAddToCart = React.useCallback((plan: PlanData, vehicleCategory: string) => {
+    const priceNumber = Number.parseInt(plan.displayPrice.replace(/[^0-9]/g, ""), 10) || 0;
+    const itemId = `${plan.name}-${vehicleCategory}`;
+
+    setCartItems((current) => {
+      const existing = current.find((item) => item.id === itemId);
+      if (existing) {
+        return current.map((item) =>
+          item.id === itemId ? { ...item, quantity: item.quantity + 1 } : item
+        );
+      }
+
+      return [
+        ...current,
+        {
+          id: itemId,
+          plan,
+          vehicleCategory,
+          unitPrice: priceNumber,
+          displayPrice: plan.displayPrice,
+          quantity: 1,
+        },
+      ];
+    });
+
+    setIsCartOpen(true);
+    toast.success("Added to cart");
+  }, []);
+
+  const handleCartIncrement = React.useCallback((id: string) => {
+    setCartItems((current) =>
+      current.map((item) => (item.id === id ? { ...item, quantity: item.quantity + 1 } : item))
+    );
+  }, []);
+
+  const handleCartDecrement = React.useCallback((id: string) => {
+    setCartItems((current) =>
+      current
+        .map((item) => (item.id === id ? { ...item, quantity: Math.max(1, item.quantity - 1) } : item))
+        .filter((item) => item.quantity > 0)
+    );
+  }, []);
+
+  const handleCartRemove = React.useCallback((id: string) => {
+    setCartItems((current) => current.filter((item) => item.id !== id));
+  }, []);
+
+  const handleCartCheckout = React.useCallback(async () => {
+    if (cartItems.length === 0) {
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      for (const item of cartItems) {
+        for (let i = 0; i < item.quantity; i += 1) {
+          const success = await assignPlanToUser(item.plan, item.vehicleCategory);
+          if (!success) {
+            return;
+          }
+        }
+      }
+
+      toast.success("Plans added to your account");
+      setCartItems([]);
+      setIsCartOpen(false);
+      router.push("/user/dashboard");
+    } finally {
+      setIsLoading(false);
+    }
+  }, [assignPlanToUser, cartItems, router, setIsLoading]);
+
   const closeOverlay = React.useCallback(() => {
     setIsOverlayVisible(false);
     window.setTimeout(() => {
@@ -292,6 +388,8 @@ export default function Home() {
           onPricing={scrollToPricing}
           onContact={scrollToContact}
           onLogin={handleLogin}
+          onCartOpen={() => setIsCartOpen(true)}
+          cartCount={cartTotals.itemCount}
         />
       </section>
 
@@ -305,7 +403,7 @@ export default function Home() {
         <ServicesSection />
       </div>
 
-      <PricingSection pricingPlans={pricingPlans} isPaying={isPaying} onCheckout={handleCheckoutClick} />
+      <PricingSection pricingPlans={pricingPlans} isPaying={isPaying} onCheckout={handleCheckoutClick} onAddToCart={handleAddToCart} />
 
       <div className="mx-auto mt-8 w-full max-w-4xl rounded-3xl border border-violet-300 bg-transparent px-6 py-4 text-center shadow-[0_0_18px_rgba(139,92,246,0.35)]">
         <p className="m-0 text-base sm:text-2xl text-white font-bold">
@@ -431,6 +529,31 @@ export default function Home() {
         </div>
       </div>
     )}
+    <AnimatePresence>
+      {isCartOpen && (
+        <CartSidebar
+          key="cart-sidebar"
+          isOpen={isCartOpen}
+          items={cartItems.map((item) => ({
+            id: item.id,
+            planName: item.plan.name,
+            vehicleCategory: item.vehicleCategory,
+            displayPrice: item.displayPrice,
+            unitPrice: item.unitPrice,
+            quantity: item.quantity,
+          }))}
+          subtotal={cartTotals.subtotal}
+          discount={cartTotals.discount}
+          total={cartTotals.total}
+          onClose={() => setIsCartOpen(false)}
+          onRemove={handleCartRemove}
+          onIncrement={handleCartIncrement}
+          onDecrement={handleCartDecrement}
+          onCheckout={handleCartCheckout}
+        />
+      )}
+    </AnimatePresence>
+
     <SiteFooter />
     </div>
   </div>

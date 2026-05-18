@@ -1,6 +1,6 @@
 export default function SiteFooter() {
   return (
-    <footer className="footer footer-horizontal footer-center bg-black/55 text-white p-6 backdrop-blur-sm sm:p-10 ">
+    <footer className="w-full footer footer-horizontal footer-center bg-black/55 text-white p-6 backdrop-blur-sm sm:p-10 ">
       <nav className="grid grid-flow-col gap-4">
         <a className="link link-hover">About us</a>
         <a className="link link-hover">Contact</a>

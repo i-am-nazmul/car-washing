@@ -15,4 +15,5 @@ export type PlanCardProps = {
   features: string[];
   vehicleCategory: string;
   onCheckout: (plan: PlanData, vehicleCategory: string) => void;
+  onAddToCart: (plan: PlanData, vehicleCategory: string) => void;
 };

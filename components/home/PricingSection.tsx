@@ -99,9 +99,10 @@ type PricingSectionProps = {
   pricingPlans: PricingPlanEntry[];
   isPaying: string | null;
   onCheckout: (plan: PlanData, vehicleCategory: string) => void;
+  onAddToCart: (plan: PlanData, vehicleCategory: string) => void;
 };
 
-function PricingSectionComponent({ pricingPlans, isPaying, onCheckout }: PricingSectionProps) {
+function PricingSectionComponent({ pricingPlans, isPaying, onCheckout, onAddToCart }: PricingSectionProps) {
   const [selectedCategory, setSelectedCategory] = React.useState<VehicleCategory>("Sedan");
   const [selectedCompany, setSelectedCompany] = React.useState("");
   const [selectedModel, setSelectedModel] = React.useState("");
@@ -371,7 +372,7 @@ function PricingSectionComponent({ pricingPlans, isPaying, onCheckout }: Pricing
             {visiblePlans.map(({ plan, features, Card }) => (
               <div key={`mobile-${plan.name}`} className="w-full shrink-0 px-1 pb-16 pt-1">
                 <div className="relative">
-                  <Card plan={plan} isPaying={isPaying} features={features} vehicleCategory={selectedCategory} onCheckout={onCheckout} />
+                  <Card plan={plan} isPaying={isPaying} features={features} vehicleCategory={selectedCategory} onCheckout={onCheckout} onAddToCart={onAddToCart} />
 
                   {selectedCategory !== "Bike" && (
                     <p className="absolute left-1/2 top-full z-30 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap rounded-full border border-violet-300 bg-[#020826]/90 px-8 py-3 text-4xl font-extrabold tracking-tight text-white shadow-[0_0_18px_rgba(139,92,246,0.35)] sm:text-5xl">
@@ -410,7 +411,7 @@ function PricingSectionComponent({ pricingPlans, isPaying, onCheckout }: Pricing
             transition={{ duration: 0.42, delay: index * 0.08 }}
             className="h-full w-full max-w-2xl"
           >
-            <Card plan={plan} isPaying={isPaying} features={features} vehicleCategory={selectedCategory} onCheckout={onCheckout} />
+            <Card plan={plan} isPaying={isPaying} features={features} vehicleCategory={selectedCategory} onCheckout={onCheckout} onAddToCart={onAddToCart} />
           </motion.div>
         ))}
 
