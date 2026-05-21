@@ -13,7 +13,9 @@ type ProfileSidebarProps = {
   username: string;
   email: string;
   phoneNumber: string;
-  onPhoneNumberChange: (value: string) => void;
+  address: string;
+  vehicles: string[];
+  onProfileUpdate: (value: { phoneNumber: string; address: string; vehicles: string[] }) => void;
 };
 
 export default function ProfileSidebar({
@@ -22,49 +24,61 @@ export default function ProfileSidebar({
   username,
   email,
   phoneNumber,
-  onPhoneNumberChange,
+  address,
+  vehicles,
+  onProfileUpdate,
 }: ProfileSidebarProps) {
   const router = useRouter();
-  const [isEditingPhone, setIsEditingPhone] = React.useState(false);
-  const [newPhoneNumber, setNewPhoneNumber] = React.useState("");
+  const [isEditing, setIsEditing] = React.useState(false);
+  const [formPhone, setFormPhone] = React.useState("");
+  const [formAddress, setFormAddress] = React.useState("");
+  const [formVehicles, setFormVehicles] = React.useState("");
   const [isSaving, setIsSaving] = React.useState(false);
   const [isLoggingOut, setIsLoggingOut] = React.useState(false);
 
   React.useEffect(() => {
     if (isOpen) {
-      setNewPhoneNumber(phoneNumber || "");
-      setIsEditingPhone(false);
+      setFormPhone(phoneNumber || "");
+      setFormAddress(address || "");
+      setFormVehicles(vehicles?.length ? vehicles.join(", ") : "");
+      setIsEditing(false);
     }
-  }, [isOpen, phoneNumber]);
+  }, [isOpen, phoneNumber, address, vehicles]);
 
-  const updatePhoneNumber = async () => {
-    if (!newPhoneNumber.trim()) {
-      setIsEditingPhone(false);
-      return;
-    }
-
-    const phoneDigitsOnly = newPhoneNumber.replace(/\D/g, "");
-    if (phoneDigitsOnly.length < 10 || phoneDigitsOnly.length > 15) {
+  const updateProfileInfo = async () => {
+    const phoneDigitsOnly = formPhone.replace(/\D/g, "");
+    if (phoneDigitsOnly && (phoneDigitsOnly.length < 10 || phoneDigitsOnly.length > 15)) {
       toast.error("Please enter a valid phone number (10-15 digits)");
       return;
     }
 
     setIsSaving(true);
     try {
-      const response = await axios.post("/api/profile/update-phone", {
+      const response = await axios.post("/api/profile/update-info", {
         phoneNumber: phoneDigitsOnly,
+        address: formAddress,
+        vehicles: formVehicles
+          .split(",")
+          .map((vehicle) => vehicle.trim())
+          .filter(Boolean),
       });
 
       if (response.status === 200) {
-        onPhoneNumberChange(phoneDigitsOnly);
-        setNewPhoneNumber(phoneDigitsOnly);
-        setIsEditingPhone(false);
-        toast.success("Phone number updated");
+        onProfileUpdate({
+          phoneNumber: phoneDigitsOnly,
+          address: formAddress.trim(),
+          vehicles: formVehicles
+            .split(",")
+            .map((vehicle) => vehicle.trim())
+            .filter(Boolean),
+        });
+        setIsEditing(false);
+        toast.success("Profile updated");
       }
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
         const message = (error.response?.data as { message?: string })?.message;
-        toast.error(message || "Failed to update phone number");
+        toast.error(message || "Failed to update profile");
       } else {
         toast.error("Unexpected error occurred");
       }
@@ -78,7 +92,9 @@ export default function ProfileSidebar({
     try {
       await axios.post("/api/logout");
       await signOut({ redirect: false });
-      router.push("/user/login");
+      onClose();
+      router.replace("/user/login");
+      router.refresh();
     } catch {
       toast.error("Failed to log out");
     } finally {
@@ -135,53 +151,69 @@ export default function ProfileSidebar({
             </div>
             <div>
               <div className="text-amber-200/80">Phone</div>
-              <div className="text-base text-amber-100">
-                {phoneNumber ? phoneNumber : "No phone number"}
-              </div>
+              {isEditing ? (
+                <input
+                  type="tel"
+                  value={formPhone}
+                  onChange={(e) => setFormPhone(e.target.value.replace(/\D/g, ""))}
+                  placeholder="Enter phone number"
+                  className="mt-1 w-full rounded-lg border border-amber-200/30 bg-[#050b28] px-3 py-2 text-amber-100 placeholder:text-amber-100/40 focus:border-amber-200 focus:outline-none"
+                />
+              ) : (
+                <div className="text-base text-amber-100">
+                  {phoneNumber ? phoneNumber : "No phone number"}
+                </div>
+              )}
+            </div>
+            <div>
+              <div className="text-amber-200/80">Address</div>
+              {isEditing ? (
+                <textarea
+                  value={formAddress}
+                  onChange={(e) => setFormAddress(e.target.value)}
+                  placeholder="Add your address"
+                  rows={2}
+                  className="mt-1 w-full rounded-lg border border-amber-200/30 bg-[#050b28] px-3 py-2 text-amber-100 placeholder:text-amber-100/40 focus:border-amber-200 focus:outline-none"
+                />
+              ) : (
+                <div className="text-base text-amber-100">
+                  {address ? address : "No address"}
+                </div>
+              )}
+            </div>
+            <div>
+              <div className="text-amber-200/80">Vehicles</div>
+              {isEditing ? (
+                <input
+                  type="text"
+                  value={formVehicles}
+                  onChange={(e) => setFormVehicles(e.target.value)}
+                  placeholder="Car, Bike, SUV"
+                  className="mt-1 w-full rounded-lg border border-amber-200/30 bg-[#050b28] px-3 py-2 text-amber-100 placeholder:text-amber-100/40 focus:border-amber-200 focus:outline-none"
+                />
+              ) : (
+                <div className="text-base text-amber-100">
+                  {vehicles?.length ? vehicles.join(", ") : "No vehicles"}
+                </div>
+              )}
             </div>
           </div>
         </div>
 
-        {!isEditingPhone ? (
-          <button
-            type="button"
-            onClick={() => setIsEditingPhone(true)}
-            className="mt-4 w-full cursor-pointer rounded-lg bg-linear-to-r from-amber-500 to-orange-500 px-4 py-2 text-white font-semibold hover:from-amber-600 hover:to-orange-600 transition"
-          >
-            Edit Phone
-          </button>
-        ) : (
-          <div className="mt-4 rounded-2xl border border-amber-200/20 bg-[#060b26] p-4">
-            <label className="text-sm text-amber-100/80">Phone Number</label>
-            <input
-              type="tel"
-              value={newPhoneNumber}
-              onChange={(e) => setNewPhoneNumber(e.target.value.replace(/\D/g, ""))}
-              placeholder="Enter phone number"
-              className="mt-2 w-full rounded-lg border border-amber-200/30 bg-[#050b28] px-3 py-2 text-amber-100 placeholder:text-amber-100/40 focus:border-amber-200 focus:outline-none"
-            />
-            <div className="mt-3 flex gap-2">
-              <button
-                type="button"
-                onClick={updatePhoneNumber}
-                disabled={isSaving}
-                className="flex-1 cursor-pointer rounded-lg bg-amber-200/20 px-3 py-2 text-amber-100 font-semibold hover:bg-amber-200/30 transition disabled:opacity-60 disabled:cursor-not-allowed"
-              >
-                {isSaving ? "Saving..." : "Save"}
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setIsEditingPhone(false);
-                  setNewPhoneNumber(phoneNumber || "");
-                }}
-                className="flex-1 cursor-pointer rounded-lg border border-amber-200/30 px-3 py-2 text-amber-100 font-semibold hover:bg-amber-200/10 transition"
-              >
-                Cancel
-              </button>
-            </div>
-          </div>
-        )}
+        <button
+          type="button"
+          onClick={() => {
+            if (isEditing) {
+              void updateProfileInfo();
+              return;
+            }
+            setIsEditing(true);
+          }}
+          disabled={isSaving}
+          className="mt-4 w-full cursor-pointer rounded-lg bg-linear-to-r from-amber-500 to-orange-500 px-4 py-2 text-white font-semibold hover:from-amber-600 hover:to-orange-600 transition disabled:opacity-60 disabled:cursor-not-allowed"
+        >
+          {isSaving ? "Saving..." : isEditing ? "Save" : "Edit"}
+        </button>
 
         <div className="mt-6 flex gap-2">
           <button

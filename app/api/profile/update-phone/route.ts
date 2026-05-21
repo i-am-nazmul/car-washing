@@ -1,5 +1,6 @@
 import { connect } from '@/dbconfig/dbconfig';
 import Users from '@/models/users.models';
+import UserInfo from '@/models/userinfo.models';
 import { NextResponse, NextRequest } from 'next/server';
 import { getServerSession } from "next-auth";
 import { authOptions } from '@/lib/auth';
@@ -37,11 +38,7 @@ export async function POST(request: NextRequest) {
     }
 
     const email = String(session.user.email).trim().toLowerCase();
-    const user = await Users.findOneAndUpdate(
-      { email },
-      { phoneNumber },
-      { new: true }
-    );
+    const user = await Users.findOne({ email }).select("_id");
 
     if (!user) {
       return NextResponse.json(
@@ -49,6 +46,12 @@ export async function POST(request: NextRequest) {
         { status: 404 }
       );
     }
+
+    await UserInfo.findOneAndUpdate(
+      { userId: user._id },
+      { phoneNumber, email },
+      { new: true, upsert: true }
+    );
 
     return NextResponse.json(
       { message: "Phone number updated successfully!" },

@@ -81,10 +81,16 @@ export async function GET(request: NextRequest) {
         if (!planDoc) {
           return null;
         }
+        const createdAt = planDoc.createdAt ? new Date(planDoc.createdAt) : new Date();
+        const endsOn = new Date(createdAt);
+        endsOn.setDate(endsOn.getDate() + 30);
+
         return {
           planType: entry.planType,
           planName: planConfig.name,
           planId: String(planDoc._id),
+          createdAt,
+          endsOn,
           wash: planDoc.wash ?? 0,
           interiorClean: planDoc.interiorClean ?? 0,
           dashboard: planDoc.dashboard ?? 0,

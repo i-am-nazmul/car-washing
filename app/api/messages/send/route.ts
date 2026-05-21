@@ -46,14 +46,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const customerName = String(session.user.name || user.username || customerEmail.split("@")[0]);
-    const customerPhone = user.phoneNumber || "";
-
     const newMessage = await CustomerMessage.create({
       customerId: user._id,
-      customerName,
-      customerEmail,
-      customerPhone,
       message,
     });
 

@@ -16,12 +16,15 @@ export default function DashboardPage() {
   const [username, setUsername] = React.useState("");
   const [email, setEmail] = React.useState("");
   const [phoneNumber, setPhoneNumber] = React.useState("");
+  const [address, setAddress] = React.useState("");
+  const [vehicles, setVehicles] = React.useState<string[]>([]);
 
   type UserPlanEntry = { planType?: string; planId?: string } | string;
   type PlanDetail = {
     planType: string;
     planName: string;
     planId: string;
+    endsOn?: string | Date;
     wash: number;
     interiorClean: number;
     dashboard: number;
@@ -50,12 +53,16 @@ export default function DashboardPage() {
         setEmail(response.data?.email || "");
         setUserPlan(response.data?.plan || []);
         setPhoneNumber(response.data?.phoneNumber || "");
+        setAddress(response.data?.address || "");
+        setVehicles(Array.isArray(response.data?.vehicles) ? response.data.vehicles : []);
       } catch (error) {
         console.error("Failed to fetch username:", error);
         setUsername("User");
         setEmail("");
         setUserPlan([]);
         setPhoneNumber("");
+        setAddress("");
+        setVehicles([]);
       } finally {
         setIsProfileLoading(false);
       }
@@ -89,6 +96,23 @@ export default function DashboardPage() {
   const browsePlans = React.useCallback(() => {
     router.push("/#pricing");
   }, [router]);
+
+  const formatPlanEndDate = React.useCallback((value?: string | Date) => {
+    if (!value) {
+      return "N/A";
+    }
+
+    const date = value instanceof Date ? value : new Date(value);
+    if (Number.isNaN(date.getTime())) {
+      return "N/A";
+    }
+
+    return date.toLocaleDateString("en-IN", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    });
+  }, []);
 
   const handleMessageIconClick = () => {
     if (!phoneNumber || !phoneNumber.trim()) {
@@ -211,7 +235,12 @@ export default function DashboardPage() {
           <div className="mx-auto w-full max-w-4xl">
             {planDetails.map((plan, index) => (
               <div key={index} className="rounded-3xl border border-amber-200/25 bg-[#070f2f] px-6 py-8 shadow-[0_0_22px_rgba(253,230,138,0.1)] sm:px-10 mb-6">
-                <h3 className="text-xl font-semibold text-amber-200 sm:text-2xl">{plan.planName}</h3>
+                <div className="flex flex-wrap items-baseline justify-between gap-3">
+                  <h3 className="text-xl font-semibold text-amber-200 sm:text-2xl">{plan.planName}</h3>
+                  <span className="text-sm font-semibold text-amber-100/80">
+                    Ends on {formatPlanEndDate(plan.endsOn)}
+                  </span>
+                </div>
                 <div className="mt-6 grid gap-4 sm:grid-cols-4">
                   <div className="rounded-2xl border border-amber-200/20 bg-[#060b26] px-5 py-6 text-center">
                     <div className="text-3xl font-semibold text-amber-200 sm:text-4xl">{plan.wash || 0}/20</div>
@@ -355,7 +384,13 @@ export default function DashboardPage() {
             username={username}
             email={email}
             phoneNumber={phoneNumber}
-            onPhoneNumberChange={setPhoneNumber}
+            address={address}
+            vehicles={vehicles}
+            onProfileUpdate={({ phoneNumber: nextPhone, address: nextAddress, vehicles: nextVehicles }) => {
+              setPhoneNumber(nextPhone);
+              setAddress(nextAddress);
+              setVehicles(nextVehicles);
+            }}
           />
         )}
       </AnimatePresence>

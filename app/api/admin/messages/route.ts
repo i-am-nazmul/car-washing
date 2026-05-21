@@ -28,23 +28,34 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Get filter from query params
-    const url = new URL(request.url);
-    const unreadOnly = url.searchParams.get("unread") === "true";
-
-    const filter = unreadOnly ? { read: false } : {};
-
-    const messages = await CustomerMessage.find(filter)
+    const messages = await CustomerMessage.find()
       .sort({ createdAt: -1 })
-      .limit(50);
+      .limit(50)
+      .populate({ path: "customerId", select: "username email phoneNumber" });
 
-    const unreadCount = await CustomerMessage.countDocuments({ read: false });
+    const normalizedMessages = messages.map((message) => {
+      const customer = message.customerId as {
+        _id?: string;
+        username?: string;
+        email?: string;
+        phoneNumber?: string | null;
+      } | null;
+
+      return {
+        _id: message._id,
+        message: message.message,
+        createdAt: message.createdAt,
+        customerId: customer?._id,
+        customerName: customer?.username || "Unknown",
+        customerEmail: customer?.email || "N/A",
+        customerPhone: customer?.phoneNumber || "N/A",
+      };
+    });
 
     return NextResponse.json(
       {
-        messages,
-        unreadCount,
-        total: messages.length,
+        messages: normalizedMessages,
+        total: normalizedMessages.length,
       },
       { status: 200 }
     );

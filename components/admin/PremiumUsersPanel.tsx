@@ -29,7 +29,8 @@ export default function PremiumUsersPanel() {
   const [premiumUsers, setPremiumUsers] = React.useState<PremiumUser[]>([]);
   const [isLoading, setIsLoading] = React.useState(true);
   const [selectedUser, setSelectedUser] = React.useState<PremiumUser | null>(null);
-  const [selectedPlan, setSelectedPlan] = React.useState<PlanDetail | null>(null);
+  const [selectedPlans, setSelectedPlans] = React.useState<PlanDetail[]>([]);
+  const [selectedPlanId, setSelectedPlanId] = React.useState<string | null>(null);
   const [isUpdating, setIsUpdating] = React.useState(false);
 
   React.useEffect(() => {
@@ -42,6 +43,12 @@ export default function PremiumUsersPanel() {
       const response = await axios.get("/api/admin/premium-users");
       setPremiumUsers(response.data?.premiumUsers || []);
     } catch (error) {
+      if (axios.isAxiosError(error)) {
+        const status = error.response?.status;
+        if (status === 401 || status === 403) {
+          return;
+        }
+      }
       console.error("Failed to fetch premium users:", error);
       toast.error("Failed to load premium users");
       setPremiumUsers([]);
@@ -55,13 +62,24 @@ export default function PremiumUsersPanel() {
     try {
       const response = await axios.get(`/api/plans?userId=${user._id}`);
       if (response.data?.plans && response.data.plans.length > 0) {
-        setSelectedPlan(response.data.plans[0]);
+        setSelectedPlans(response.data.plans);
+        setSelectedPlanId(response.data.plans[0].planId);
+      } else {
+        setSelectedPlans([]);
+        setSelectedPlanId(null);
       }
     } catch (error) {
       console.error("Failed to fetch plan details:", error);
       toast.error("Failed to load plan details");
     }
   };
+
+  const selectedPlan = React.useMemo(() => {
+    if (!selectedPlanId) {
+      return null;
+    }
+    return selectedPlans.find((plan) => plan.planId === selectedPlanId) || null;
+  }, [selectedPlanId, selectedPlans]);
 
   const updateServiceCount = async (field: string, newValue: number) => {
     if (!selectedPlan) return;
@@ -76,10 +94,13 @@ export default function PremiumUsersPanel() {
       });
 
       if (response.status === 200) {
-        setSelectedPlan({
-          ...selectedPlan,
-          ...response.data.plan,
-        });
+        setSelectedPlans((prevPlans) =>
+          prevPlans.map((plan) =>
+            plan.planId === selectedPlan.planId
+              ? { ...plan, ...response.data.plan }
+              : plan
+          )
+        );
         toast.success(`${field} updated successfully!`);
       }
     } catch (error) {
@@ -169,7 +190,8 @@ export default function PremiumUsersPanel() {
                 type="button"
                 onClick={() => {
                   setSelectedUser(null);
-                  setSelectedPlan(null);
+                  setSelectedPlans([]);
+                  setSelectedPlanId(null);
                 }}
                 className="rounded-lg border border-gray-300 px-3 py-1 text-gray-700 cursor-pointer hover:bg-gray-100"
               >
@@ -178,6 +200,22 @@ export default function PremiumUsersPanel() {
             </div>
 
             <div className="mt-6">
+              <div className="mb-4 flex flex-wrap items-center gap-2">
+                {selectedPlans.map((plan) => (
+                  <button
+                    key={plan.planId}
+                    type="button"
+                    onClick={() => setSelectedPlanId(plan.planId)}
+                    className={`rounded-full px-3 py-1 text-sm font-semibold transition cursor-pointer ${
+                      selectedPlanId === plan.planId
+                        ? "bg-gray-700 text-white"
+                        : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                    }`}
+                  >
+                    {plan.planName}
+                  </button>
+                ))}
+              </div>
               <h3 className="text-xl font-semibold text-gray-700 mb-4">{selectedPlan.planName} Services</h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div className="rounded-lg border border-gray-300 bg-gray-50 p-6">

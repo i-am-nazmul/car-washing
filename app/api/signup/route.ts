@@ -1,5 +1,6 @@
 import { connect } from '@/dbconfig/dbconfig';
 import Users from '@/models/users.models';
+import UserInfo from '@/models/userinfo.models';
 import { NextResponse,NextRequest } from 'next/server';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
@@ -53,9 +54,14 @@ export async function POST(request:NextRequest) {
       username,
       email,
       password : hashedPassword,
-      phoneNumber: phoneDigitsOnly,
       authProviders: ["credentials"],
       isEmailVerified: false,
+    });
+
+    await UserInfo.create({
+      userId: user._id,
+      email,
+      phoneNumber: phoneDigitsOnly,
     });
 
     const token = jwt.sign(

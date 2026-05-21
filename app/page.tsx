@@ -554,8 +554,8 @@ export default function Home() {
       )}
     </AnimatePresence>
 
-    <SiteFooter />
     </div>
+    <SiteFooter />
   </div>
   </div>
 );

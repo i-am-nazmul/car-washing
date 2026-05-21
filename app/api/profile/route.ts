@@ -1,5 +1,6 @@
 import { connect } from '@/dbconfig/dbconfig';
 import Users from '@/models/users.models';
+import UserInfo from '@/models/userinfo.models';
 import { NextRequest, NextResponse } from 'next/server';
 import jwt from 'jsonwebtoken';
 import { getToken } from 'next-auth/jwt';
@@ -26,7 +27,7 @@ export async function GET(request: NextRequest) {
       });
     }
     if (sessionToken?.email) {
-      const nextAuthUser = await Users.findOne({ email: String(sessionToken.email).toLowerCase() }).select("username email role avatar phoneNumber plan");
+      const nextAuthUser = await Users.findOne({ email: String(sessionToken.email).toLowerCase() }).select("username email role avatar plan");
 
       if (!nextAuthUser) {
         return NextResponse.json(
@@ -42,13 +43,23 @@ export async function GET(request: NextRequest) {
         );
       }
 
+      let userInfo = await UserInfo.findOne({ userId: nextAuthUser._id }).select("phoneNumber address vehicles");
+      if (!userInfo) {
+        userInfo = await UserInfo.create({
+          userId: nextAuthUser._id,
+          email: nextAuthUser.email,
+        });
+      }
+
       return NextResponse.json(
         {
           username: nextAuthUser.username,
           email: nextAuthUser.email,
           role: nextAuthUser.role,
           avatar: nextAuthUser.avatar,
-          phoneNumber: nextAuthUser.phoneNumber || null,
+          phoneNumber: userInfo?.phoneNumber || null,
+          address: userInfo?.address || "",
+          vehicles: userInfo?.vehicles || [],
           plan: nextAuthUser.plan || [],
         },
         { status: 200 }
@@ -74,7 +85,7 @@ export async function GET(request: NextRequest) {
     const decodedToken = jwt.verify(token, tokenSecret) as DecodedToken;
 
     
-    const user = await Users.findById(decodedToken.id).select("username email role avatar phoneNumber plan");
+    const user = await Users.findById(decodedToken.id).select("username email role avatar plan");
 
     if (!user) {
       console.error("No such user exists");
@@ -82,12 +93,22 @@ export async function GET(request: NextRequest) {
     }
 
     
+    let userInfo = await UserInfo.findOne({ userId: user._id }).select("phoneNumber address vehicles");
+    if (!userInfo) {
+      userInfo = await UserInfo.create({
+        userId: user._id,
+        email: user.email,
+      });
+    }
+
     return NextResponse.json({
       username: user.username,
       email: user.email,
       role: user.role,
       avatar: user.avatar,
-      phoneNumber: user.phoneNumber || null,
+      phoneNumber: userInfo?.phoneNumber || null,
+      address: userInfo?.address || "",
+      vehicles: userInfo?.vehicles || [],
       plan: user.plan || [],
     },{status:200});
 

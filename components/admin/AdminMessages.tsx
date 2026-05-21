@@ -11,13 +11,11 @@ interface Message {
   customerEmail: string;
   customerPhone: string;
   message: string;
-  read: boolean;
   createdAt: string;
 }
 
 export default function AdminMessages() {
   const [messages, setMessages] = React.useState<Message[]>([]);
-  const [unreadCount, setUnreadCount] = React.useState(0);
   const [isLoading, setIsLoading] = React.useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = React.useState(false);
   const [selectedMessage, setSelectedMessage] = React.useState<Message | null>(null);
@@ -32,8 +30,13 @@ export default function AdminMessages() {
       setIsLoading(true);
       const response = await axios.get("/api/admin/messages");
       setMessages(response.data?.messages || []);
-      setUnreadCount(response.data?.unreadCount || 0);
     } catch (error) {
+      if (axios.isAxiosError(error)) {
+        const status = error.response?.status;
+        if (status === 401 || status === 403) {
+          return;
+        }
+      }
       console.error("Failed to fetch messages:", error);
       toast.error("Failed to load messages");
     } finally {
@@ -53,7 +56,6 @@ export default function AdminMessages() {
         setSelectedMessage(null);
       }
       
-      setUnreadCount(Math.max(0, unreadCount - 1));
       toast.success("Message deleted successfully");
     } catch (error) {
       console.error("Failed to delete message:", error);
@@ -86,11 +88,6 @@ export default function AdminMessages() {
           className="relative p-2 cursor-pointer hover:bg-gray-100 rounded-lg transition"
         >
           <span className="text-2xl">🔔</span>
-          {unreadCount > 0 && (
-            <span className="absolute top-0 right-0 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-              {unreadCount > 9 ? "9+" : unreadCount}
-            </span>
-          )}
         </button>
 
         {/* Dropdown Messages List */}
@@ -113,9 +110,7 @@ export default function AdminMessages() {
                       setSelectedMessage(msg);
                       setIsDropdownOpen(false);
                     }}
-                    className={`w-full text-left p-3 hover:bg-gray-50 transition cursor-pointer ${
-                      !msg.read ? "bg-blue-50" : ""
-                    }`}
+                    className="w-full text-left p-3 hover:bg-gray-50 transition cursor-pointer"
                   >
                     <div className="flex items-start justify-between gap-2">
                       <div className="flex-1 min-w-0">
@@ -125,9 +120,6 @@ export default function AdminMessages() {
                           {truncateMessage(msg.message, 60)}
                         </div>
                       </div>
-                      {!msg.read && (
-                        <div className="w-2 h-2 rounded-full bg-blue-500 flex-shrink-0 mt-1" />
-                      )}
                     </div>
                   </button>
                 ))}
@@ -169,9 +161,6 @@ export default function AdminMessages() {
             </div>
 
             <div className="flex items-center justify-between gap-4 mt-6 border-t border-gray-200 pt-4">
-              <span className={`text-sm font-semibold ${selectedMessage.read ? "text-gray-500" : "text-blue-600"}`}>
-                {selectedMessage.read ? "✓ Read" : "Unread"}
-              </span>
               <button
                 onClick={() => markAsRead(selectedMessage._id)}
                 className="px-4 py-2 bg-red-600 text-white rounded-lg cursor-pointer hover:bg-red-700 transition"
